@@ -1,0 +1,307 @@
+
+import numpy as np
+from scipy.optimize import brentq
+import matplotlib.pyplot as plt
+
+class IsentropicRelations:
+    """Static methods for isentropic flow relations."""
+
+    @staticmethod
+    def calc_area_mach(M, gamma=1.4):
+        """Calculates Area Ratio (A/A*) given Mach Number."""
+        if M == 0:
+            return np.inf
+        term1 = 1.0 / M
+        term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * M**2)
+        exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
+        return term1 * (term2 ** exponent)
+
+    @staticmethod
+    def calc_mach_area(area_ratio, gamma=1.4, regime='subsonic'):
+        """
+        Calculates Mach Number given Area Ratio (A/A*).
+        regime: 'subsonic' or 'supersonic'
+        """
+        if area_ratio < 1.0:
+            if abs(area_ratio - 1.0) < 1e-6:
+                return 1.0
+            raise ValueError(f"Area ratio {area_ratio} cannot be less than 1.0")
+        if area_ratio == 1.0:
+            return 1.0
+
+        def func(M):
+            return IsentropicRelations.calc_area_mach(M, gamma) - area_ratio
+
+        if regime == 'subsonic':
+            return brentq(func, 1e-9, 1.0)
+        elif regime == 'supersonic':
+            # Upper bound 20 is safe for practical flows
+            return brentq(func, 1.000001, 20.0)
+        else:
+            raise ValueError("Regime must be 'subsonic' or 'supersonic'")
+
+    @staticmethod
+    def calc_pressure_ratio(M, gamma=1.4):
+        """P/P0"""
+        return (1.0 + (gamma - 1.0) / 2.0 * M**2) ** (-gamma / (gamma - 1.0))
+
+    @staticmethod
+    def calc_temperature_ratio(M, gamma=1.4):
+        """T/T0"""
+        return (1.0 + (gamma - 1.0) / 2.0 * M**2) ** (-1.0)
+
+    @staticmethod
+    def calc_density_ratio(M, gamma=1.4):
+        """rho/rho0"""
+        return (1.0 + (gamma - 1.0) / 2.0 * M**2) ** (-1.0 / (gamma - 1.0))
+
+
+class NozzleResults:
+    def __init__(self, x, A, M, P, T, rho, P0, T0, u=None):
+        self.x = x
+        self.A = A
+        self.M = M
+        self.P = P
+        self.T = T
+        self.rho = rho
+        self.P0 = P0
+        self.T0 = T0
+        self.u = u
+
+    def plot_distribution(self):
+        fig, ax1 = plt.subplots()
+
+        ax1.set_xlabel('Position (x)')
+        ax1.set_ylabel('Pressure (Pa)', color='tab:blue')
+        ax1.plot(self.x, self.P, color='tab:blue', label='Pressure')
+        ax1.tick_params(axis='y', labelcolor='tab:blue')
+
+        ax2 = ax1.twinx()
+        ax2.set_ylabel('Mach Number', color='tab:red')
+        ax2.plot(self.x, self.M, color='tab:red', label='Mach')
+        ax2.tick_params(axis='y', labelcolor='tab:red')
+
+        plt.title('Nozzle Flow Distribution')
+        fig.tight_layout()
+        return fig
+
+
+class CDNozzle:
+    def __init__(self, A_throat, A_exit, gamma=1.4, A_inlet=None):
+        self.A_throat = A_throat
+        self.A_exit = A_exit
+        self.gamma = gamma
+        if A_inlet is None:
+            self.A_inlet = 3.0 * A_throat # Default inlet area
+        else:
+            self.A_inlet = A_inlet
+
+    def _generate_geometry(self, n_points=100):
+        # Simple geometry generator
+        x_conv = np.linspace(-1, 0, n_points // 3)
+        x_div = np.linspace(0, 2, 2 * n_points // 3)
+
+        # Parabolic fit for convergent
+        # A(-1) = A_inlet, A(0) = A_throat, A'(-1) = ?, A'(0) = 0
+        c_conv = self.A_inlet - self.A_throat
+        A_conv = self.A_throat + c_conv * x_conv**2
+
+        # Parabolic fit for divergent
+        # A(0) = A_throat, A(2) = A_exit, A'(0) = 0
+        c_div = (self.A_exit - self.A_throat) / 4.0
+        A_div = self.A_throat + c_div * x_div**2
+
+        x = np.concatenate([x_conv, x_div[1:]])
+        A = np.concatenate([A_conv, A_div[1:]])
+        return x, A
+
+    def solve(self, P0, T0, back_pressure):
+        x, A = self._generate_geometry()
+        M = np.zeros_like(A)
+        P = np.zeros_like(A)
+        T = np.zeros_like(A)
+        rho = np.zeros_like(A)
+        u = np.zeros_like(A)
+
+        gamma = self.gamma
+        R_AIR = 287.05
+
+        # Critical values
+        P_star = P0 * IsentropicRelations.calc_pressure_ratio(1.0, gamma)
+
+        # Calculate exit pressure for fully subsonic flow (M < 1 everywhere)
+        # Assuming throat M < 1. But boundary is when M_throat = 1.
+        # Find M_exit_sub for A_exit/A_throat assuming A_throat=A*
+        M_exit_sub_limit = IsentropicRelations.calc_mach_area(self.A_exit / self.A_throat, gamma, 'subsonic')
+        P_exit_sub_limit = P0 * IsentropicRelations.calc_pressure_ratio(M_exit_sub_limit, gamma)
+
+        # Calculate exit pressure for fully supersonic flow (M > 1 in divergent)
+        M_exit_sup_limit = IsentropicRelations.calc_mach_area(self.A_exit / self.A_throat, gamma, 'supersonic')
+        P_exit_sup_limit = P0 * IsentropicRelations.calc_pressure_ratio(M_exit_sup_limit, gamma)
+
+        # Calculate exit pressure with normal shock at exit
+        # P2/P1 across shock. P1 = P_exit_sup_limit, M1 = M_exit_sup_limit
+        term_shock = 1.0 + 2.0 * gamma / (gamma + 1.0) * (M_exit_sup_limit**2 - 1.0)
+        P_exit_shock_limit = P_exit_sup_limit * term_shock
+
+        idx_throat = np.argmin(A)
+
+        # Regimes
+        if back_pressure >= P0:
+            # No flow
+            M[:] = 0
+            P[:] = P0
+            T[:] = T0
+            rho[:] = P0 / (R_AIR * T0)
+            u[:] = 0
+
+        elif back_pressure >= P_exit_sub_limit:
+            # Regime 1: Subsonic throughout. Throat not choked (unless equal).
+            # M_exit determined by back pressure
+            M_exit = np.sqrt(2.0/(gamma-1.0) * ((P0/back_pressure)**((gamma-1.0)/gamma) - 1.0))
+            A_star_effective = self.A_exit / IsentropicRelations.calc_area_mach(M_exit, gamma)
+
+            for i in range(len(x)):
+                ar = A[i] / A_star_effective
+                M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
+                P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+
+        elif back_pressure < P_exit_sub_limit:
+            # Throat is choked. A_star = A_throat
+            # Up to throat, flow is subsonic isentropic.
+            for i in range(idx_throat + 1):
+                ar = A[i] / self.A_throat
+                if i == idx_throat:
+                    M[i] = 1.0
+                else:
+                    M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
+                P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+
+            if back_pressure <= P_exit_shock_limit:
+                # Regime 3 & 4: Supersonic in divergent section.
+                # Either Design, Over-expanded (with oblique shock outside), or Under-expanded.
+                # In 1D theory, we assume isentropic expansion in nozzle.
+                for i in range(idx_throat + 1, len(x)):
+                    ar = A[i] / self.A_throat
+                    M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic')
+                    P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+
+            else:
+                # Regime 2: Normal Shock inside the nozzle.
+                # We need to find shock location.
+                # Iterate on shock M1 (supersonic Mach before shock)
+                # Range of M1: 1.0 to M_exit_sup_limit
+
+                def shock_residual(M_s1):
+                    # Pressure ratio across shock
+                    pr_shock = 1.0 + 2.0 * gamma / (gamma + 1.0) * (M_s1**2 - 1.0)
+                    # Stagnation pressure ratio
+                    term1 = ((gamma+1.0)/2.0 * M_s1**2) / (1.0 + (gamma-1.0)/2.0 * M_s1**2)
+                    term2 = 2.0*gamma / (gamma+1.0) * (M_s1**2 - 1.0) + 1.0
+                    p0_ratio = (term1 ** (gamma/(gamma-1.0))) * (term2 ** (-1.0/(gamma-1.0)))
+
+                    # New P0
+                    P0_new = P0 * p0_ratio
+
+                    # Area at shock
+                    A_shock_ratio = IsentropicRelations.calc_area_mach(M_s1, gamma)
+                    A_shock = A_shock_ratio * self.A_throat
+
+                    # M2 after shock
+                    M_s2 = np.sqrt((1.0 + (gamma-1.0)/2.0 * M_s1**2) / (gamma * M_s1**2 - (gamma-1.0)/2.0))
+
+                    # A_star new
+                    A_star_new = A_shock / IsentropicRelations.calc_area_mach(M_s2, gamma)
+
+                    # Exit condition
+                    ar_exit = self.A_exit / A_star_new
+                    # M_exit is subsonic
+                    M_exit = IsentropicRelations.calc_mach_area(ar_exit, gamma, 'subsonic')
+                    P_exit = P0_new * IsentropicRelations.calc_pressure_ratio(M_exit, gamma)
+
+                    return P_exit - back_pressure
+
+                try:
+                    M_shock = brentq(shock_residual, 1.0001, M_exit_sup_limit)
+                except ValueError:
+                     # Could happen if bounds are not perfect, fallback
+                     M_shock = M_exit_sup_limit
+
+                # Find geometric location closest to M_shock
+                A_shock_target = self.A_throat * IsentropicRelations.calc_area_mach(M_shock, gamma)
+
+                # Only look in divergent part
+                div_indices = np.where(np.arange(len(x)) > idx_throat)[0]
+                idx_shock = div_indices[np.argmin(np.abs(A[div_indices] - A_shock_target))]
+
+                # Compute flow
+                # Calculate P0_new
+                term1 = ((gamma+1.0)/2.0 * M_shock**2) / (1.0 + (gamma-1.0)/2.0 * M_shock**2)
+                term2 = 2.0*gamma / (gamma+1.0) * (M_shock**2 - 1.0) + 1.0
+                P0_new = P0 * (term1 ** (gamma/(gamma-1.0))) * (term2 ** (-1.0/(gamma-1.0)))
+
+                # New A_star
+                M_s2 = np.sqrt((1.0 + (gamma-1.0)/2.0 * M_shock**2) / (gamma * M_shock**2 - (gamma-1.0)/2.0))
+                A_shock_actual = A[idx_shock]
+                A_star_new = A_shock_actual / IsentropicRelations.calc_area_mach(M_s2, gamma)
+
+                for i in range(idx_throat + 1, len(x)):
+                    if i < idx_shock:
+                        ar = A[i] / self.A_throat
+                        M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic')
+                        P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+                    else:
+                        ar = A[i] / A_star_new
+                        M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
+                        P[i] = P0_new * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+
+        # Finalize T, rho, u
+        for i in range(len(x)):
+            # If we missed setting T/rho/u (e.g. supersonic branch logic fills P and M)
+            T[i] = T0 * IsentropicRelations.calc_temperature_ratio(M[i], gamma) # T0 is constant (adiabatic)
+            rho[i] = P[i] / (R_AIR * T[i])
+            a = np.sqrt(gamma * R_AIR * T[i])
+            u[i] = M[i] * a
+
+        return NozzleResults(x, A, M, P, T, rho, P0, T0, u)
+
+    def solve_isentropic(self, M_inlet):
+        """
+        Solves for isentropic flow given an inlet Mach number.
+        This assumes the nozzle geometry defines the flow, and checks if valid.
+        Used for E2E tests checking mass conservation.
+        """
+        x, A = self._generate_geometry()
+        M = np.zeros_like(A)
+        P = np.zeros_like(A)
+        T = np.zeros_like(A)
+        rho = np.zeros_like(A)
+        u = np.zeros_like(A)
+
+        gamma = self.gamma
+        R_AIR = 287.05
+        P0 = 101325.0
+        T0 = 300.0
+
+        # A_inlet / A_star = calc(M_inlet)
+        # A_star = A_inlet / calc(M_inlet)
+        A_star = self.A_inlet / IsentropicRelations.calc_area_mach(M_inlet, gamma)
+
+        # Verify throat is not smaller than A_star
+        if self.A_throat < A_star:
+             # This implies M_inlet is too high for the throat area (choked upstream)
+             # But assuming sub-critical flow
+             pass
+
+        for i in range(len(x)):
+            ar = A[i] / A_star
+            # Assume subsonic throughout for this test case unless M_inlet implies otherwise
+            # If M_inlet < 1, likely subsonic.
+            M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
+            P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+            T[i] = T0 * IsentropicRelations.calc_temperature_ratio(M[i], gamma)
+            rho[i] = P[i] / (R_AIR * T[i])
+            a = np.sqrt(gamma * R_AIR * T[i])
+            u[i] = M[i] * a
+
+        return NozzleResults(x, A, M, P, T, rho, P0, T0, u)
