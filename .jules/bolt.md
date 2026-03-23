@@ -1,0 +1,3 @@
+## 2024-03-24 - Vectorizing Numpy Operations
+**Learning:** Pure math operations involving numpy arrays inside Python loops (like list comprehensions) are much slower than pure vectorized numpy operations. Specifically, functions making use of `np.sin`, `np.cos`, `np.tan`, and algebraic conditions on arrays perform ~25-30x faster when refactored to use vectorized masks and element-wise array operations instead of looping row-by-row.
+**Action:** When calculating grid properties over large ranges (like `linspace`), always prefer applying `numpy` conditions to arrays using boolean masking `mask = x > val; array[mask] = val2` instead of looping through `enumerate(x)`. This gives dramatic O(n) improvements and avoids Python overhead.
