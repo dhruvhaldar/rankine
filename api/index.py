@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, send_file
 import io
 import base64
+from markupsafe import escape
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -45,7 +46,7 @@ def plot_nozzle():
 
         return render_template('index.html', nozzle_plot=plot_url)
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {escape(str(e))}"
 
 @app.route('/plot/shock_polar', methods=['POST'])
 def plot_shock_polar():
@@ -63,7 +64,7 @@ def plot_shock_polar():
 
         return render_template('index.html', polar_plot=plot_url)
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {escape(str(e))}"
 
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
@@ -86,7 +87,7 @@ def plot_shock_tube():
 
         return render_template('index.html', tube_plot=plot_url)
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {escape(str(e))}"
 
 # For local testing
 if __name__ == '__main__':
