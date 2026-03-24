@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, send_file
 import io
 import base64
 from markupsafe import escape
+import logging
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -19,6 +20,8 @@ from rankine.shocks import ObliqueShock
 from rankine.unsteady import ShockTube
 
 app = Flask(__name__, template_folder='../templates')
+
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def home():
@@ -46,7 +49,8 @@ def plot_nozzle():
 
         return render_template('index.html', nozzle_plot=plot_url)
     except Exception as e:
-        return f"Error: {escape(str(e))}"
+        logger.error('Operation failed', exc_info=True)
+        return "Error: An error occurred during calculation. Please check your inputs."
 
 @app.route('/plot/shock_polar', methods=['POST'])
 def plot_shock_polar():
@@ -64,7 +68,8 @@ def plot_shock_polar():
 
         return render_template('index.html', polar_plot=plot_url)
     except Exception as e:
-        return f"Error: {escape(str(e))}"
+        logger.error('Operation failed', exc_info=True)
+        return "Error: An error occurred during calculation. Please check your inputs."
 
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
@@ -87,7 +92,8 @@ def plot_shock_tube():
 
         return render_template('index.html', tube_plot=plot_url)
     except Exception as e:
-        return f"Error: {escape(str(e))}"
+        logger.error('Operation failed', exc_info=True)
+        return "Error: An error occurred during calculation. Please check your inputs."
 
 # For local testing
 if __name__ == '__main__':
