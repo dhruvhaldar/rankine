@@ -1,0 +1,3 @@
+## 2024-05-24 - Manual Focus Styles Needed in Raw HTML Templates
+**Learning:** When working with raw HTML templates that lack a framework-provided CSS reset (like Tailwind or Bootstrap), native focus styles are often inadequate or inconsistent across browsers. This repository required manual `:focus-visible` styles to ensure keyboard accessibility. Additionally, raw HTML inputs with `width: 100%` and `padding` need `box-sizing: border-box` to prevent layout overflow.
+**Action:** Always verify keyboard navigation and focus states in raw HTML projects, and manually add `outline`, `outline-offset`, and `box-sizing` if a CSS reset is absent.
