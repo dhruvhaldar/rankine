@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rankine Compressible Flow</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
@@ -33,6 +34,11 @@
         button:focus-visible {
             outline: 2px solid #0070f3;
             outline-offset: 2px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            color: #666;
         }
         img { max-width: 100%; height: auto; margin-top: 20px; }
     </style>
@@ -84,5 +90,18 @@
             {% endif %}
         </div>
     </div>
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const btn = this.querySelector('button[type="submit"], button:not([type="button"])');
+                if(btn) {
+                    setTimeout(() => {
+                        btn.disabled = true;
+                        btn.innerText = 'Calculating...';
+                    }, 0);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
