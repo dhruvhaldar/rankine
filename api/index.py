@@ -56,7 +56,14 @@ def plot_nozzle():
 def plot_shock_polar():
     try:
         machs_str = request.form.get('machs', '2.0,3.0,5.0')
+
+        # Security: Enforce limits on input to prevent logical DoS
+        if len(machs_str) > 100:
+            return "Error: Input too long.", 400
+
         machs = [float(m.strip()) for m in machs_str.split(',')]
+        if len(machs) > 10:
+            return "Error: Too many Mach numbers requested (max 10).", 400
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
 
