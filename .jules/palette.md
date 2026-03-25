@@ -1,3 +1,6 @@
 ## 2024-05-24 - Manual Focus Styles Needed in Raw HTML Templates
 **Learning:** When working with raw HTML templates that lack a framework-provided CSS reset (like Tailwind or Bootstrap), native focus styles are often inadequate or inconsistent across browsers. This repository required manual `:focus-visible` styles to ensure keyboard accessibility. Additionally, raw HTML inputs with `width: 100%` and `padding` need `box-sizing: border-box` to prevent layout overflow.
 **Action:** Always verify keyboard navigation and focus states in raw HTML projects, and manually add `outline`, `outline-offset`, and `box-sizing` if a CSS reset is absent.
+## 2024-10-25 - Provide Feedback on Synchronous Form Submissions
+**Learning:** In traditional POST-back templates without AJAX/fetch (like simple Flask apps), expensive calculations cause the browser to "hang" while waiting for the response. Without loading feedback, users often click submit multiple times, leading to redundant calculations and frustration.
+**Action:** Always add simple JS to forms that trigger heavy backend processing to disable the submit button and change its text to indicate a loading state (e.g., "Calculating..."). Also, remember to add proper `button:disabled` CSS styles to give visual feedback that the element is inactive.
