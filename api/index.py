@@ -21,6 +21,9 @@ from rankine.unsteady import ShockTube
 
 app = Flask(__name__, template_folder='../templates')
 
+# Security: Set global limit on payload size to prevent DoS attacks
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1 MB
+
 logger = logging.getLogger(__name__)
 
 @app.route('/')
@@ -34,6 +37,10 @@ def plot_nozzle():
         back_pressure = float(request.form.get('back_pressure', 95000))
         A_throat = float(request.form.get('A_throat', 0.05))
         A_exit = float(request.form.get('A_exit', 0.1))
+
+        # Security: Enforce limits on input to prevent physical impossibility or logical DoS
+        if P0 < 0 or back_pressure < 0 or A_throat < 0 or A_exit < 0:
+            return "Error: Input must be non-negative.", 400
 
         nozzle = CDNozzle(gamma=1.4, A_throat=A_throat, A_exit=A_exit)
         res = nozzle.solve(P0=P0, T0=300, back_pressure=back_pressure)
@@ -82,6 +89,10 @@ def plot_shock_polar():
 def plot_shock_tube():
     try:
         time = float(request.form.get('time', 0.25))
+
+        # Security: Enforce limits on input to prevent logical DoS
+        if time < 0:
+            return "Error: Time must be non-negative.", 400
 
         driver = {'p': 1.0, 'rho': 1.0, 'u': 0.0}
         driven = {'p': 0.1, 'rho': 0.125, 'u': 0.0}
