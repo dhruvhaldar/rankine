@@ -161,30 +161,24 @@ class CDNozzle:
             M_exit = np.sqrt(2.0/(gamma-1.0) * ((P0/back_pressure)**((gamma-1.0)/gamma) - 1.0))
             A_star_effective = self.A_exit / IsentropicRelations.calc_area_mach(M_exit, gamma)
 
-            for i in range(len(x)):
-                ar = A[i] / A_star_effective
-                M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
-                P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+            ar_eff = A / A_star_effective
+            M = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff])
+            P = P0 * IsentropicRelations.calc_pressure_ratio(M, gamma)
 
         elif back_pressure < P_exit_sub_limit:
             # Throat is choked. A_star = A_throat
             # Up to throat, flow is subsonic isentropic.
-            for i in range(idx_throat + 1):
-                ar = A[i] / self.A_throat
-                if i == idx_throat:
-                    M[i] = 1.0
-                else:
-                    M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
-                P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+            ar_eff = A[:idx_throat + 1] / self.A_throat
+            M[:idx_throat + 1] = np.array([1.0 if i == idx_throat else IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for i, ar in enumerate(ar_eff)])
+            P[:idx_throat + 1] = P0 * IsentropicRelations.calc_pressure_ratio(M[:idx_throat + 1], gamma)
 
             if back_pressure <= P_exit_shock_limit:
                 # Regime 3 & 4: Supersonic in divergent section.
                 # Either Design, Over-expanded (with oblique shock outside), or Under-expanded.
                 # In 1D theory, we assume isentropic expansion in nozzle.
-                for i in range(idx_throat + 1, len(x)):
-                    ar = A[i] / self.A_throat
-                    M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic')
-                    P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+                ar_eff = A[idx_throat + 1:] / self.A_throat
+                M[idx_throat + 1:] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic') for ar in ar_eff])
+                P[idx_throat + 1:] = P0 * IsentropicRelations.calc_pressure_ratio(M[idx_throat + 1:], gamma)
 
             else:
                 # Regime 2: Normal Shock inside the nozzle.
@@ -245,15 +239,15 @@ class CDNozzle:
                 A_shock_actual = A[idx_shock]
                 A_star_new = A_shock_actual / IsentropicRelations.calc_area_mach(M_s2, gamma)
 
-                for i in range(idx_throat + 1, len(x)):
-                    if i < idx_shock:
-                        ar = A[i] / self.A_throat
-                        M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic')
-                        P[i] = P0 * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
-                    else:
-                        ar = A[i] / A_star_new
-                        M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
-                        P[i] = P0_new * IsentropicRelations.calc_pressure_ratio(M[i], gamma)
+                # Before shock
+                ar_eff1 = A[idx_throat + 1:idx_shock] / self.A_throat
+                M[idx_throat + 1:idx_shock] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic') for ar in ar_eff1])
+                P[idx_throat + 1:idx_shock] = P0 * IsentropicRelations.calc_pressure_ratio(M[idx_throat + 1:idx_shock], gamma)
+
+                # After shock
+                ar_eff2 = A[idx_shock:] / A_star_new
+                M[idx_shock:] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff2])
+                P[idx_shock:] = P0_new * IsentropicRelations.calc_pressure_ratio(M[idx_shock:], gamma)
 
         # ⚡ Bolt Optimization: Vectorized thermodynamic array calculations
         # Expected speedup: ~30-40% overall solver speedup by eliminating Python loop overhead
@@ -293,11 +287,10 @@ class CDNozzle:
              # But assuming sub-critical flow
              pass
 
-        for i in range(len(x)):
-            ar = A[i] / A_star
-            # Assume subsonic throughout for this test case unless M_inlet implies otherwise
-            # If M_inlet < 1, likely subsonic.
-            M[i] = IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic')
+        ar_eff = A / A_star
+        # Assume subsonic throughout for this test case unless M_inlet implies otherwise
+        # If M_inlet < 1, likely subsonic.
+        M = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff])
 
         # ⚡ Bolt Optimization: Vectorized thermodynamic array calculations
         # Expected speedup: ~40% overall solver speedup by avoiding duplicate math in loop
