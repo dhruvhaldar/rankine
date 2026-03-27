@@ -4,3 +4,6 @@
 ## 2024-10-25 - Provide Feedback on Synchronous Form Submissions
 **Learning:** In traditional POST-back templates without AJAX/fetch (like simple Flask apps), expensive calculations cause the browser to "hang" while waiting for the response. Without loading feedback, users often click submit multiple times, leading to redundant calculations and frustration.
 **Action:** Always add simple JS to forms that trigger heavy backend processing to disable the submit button and change its text to indicate a loading state (e.g., "Calculating..."). Also, remember to add proper `button:disabled` CSS styles to give visual feedback that the element is inactive.
+## 2024-11-20 - Expose Backend Constraints in UI via HTML Attributes and Helper Text
+**Learning:** When backend endpoints have implicit constraints (like max length for DoS protection or non-negative requirements for physical quantities), the frontend UI must explicitly communicate these constraints to the user before form submission. Without client-side validation, users experience unstyled plain-text server errors, which is a poor experience.
+**Action:** Always add HTML validation attributes (`min`, `max`, `maxlength`) and clear helper text (e.g., `<small>` tags inside `<label>`) to explicitly display backend constraints in the frontend UI.
