@@ -20,6 +20,7 @@ from rankine.shocks import ObliqueShock
 from rankine.unsteady import ShockTube
 
 app = Flask(__name__, template_folder='../templates')
+app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB limit to prevent large payload DoS
 
 logger = logging.getLogger(__name__)
 
