@@ -7,3 +7,6 @@
 ## 2024-11-20 - Expose Backend Constraints in UI via HTML Attributes and Helper Text
 **Learning:** When backend endpoints have implicit constraints (like max length for DoS protection or non-negative requirements for physical quantities), the frontend UI must explicitly communicate these constraints to the user before form submission. Without client-side validation, users experience unstyled plain-text server errors, which is a poor experience.
 **Action:** Always add HTML validation attributes (`min`, `max`, `maxlength`) and clear helper text (e.g., `<small>` tags inside `<label>`) to explicitly display backend constraints in the frontend UI.
+## 2024-05-24 - Mirroring Backend Array Length Constraints
+**Learning:** In Flask/HTML forms, if a text input expects a comma-separated array (like Mach numbers), it's important to mirror the backend array length limits (e.g., max 10 items) directly on the client side using the HTML `pattern` attribute and a clear `title` description. This provides instant visual feedback and prevents unstyled server error responses from being the first time users learn about the limit.
+**Action:** When implementing new form inputs that expect arrays or delimited strings, always use HTML `pattern` validation to enforce size/length limits and provide helpful tooltips/error messages instead of relying entirely on backend validation.

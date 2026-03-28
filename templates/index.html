@@ -69,8 +69,8 @@
         <div class="section">
             <h2>Oblique Shock Polar</h2>
             <form action="/plot/shock_polar" method="post">
-                <label for="machs">Mach Numbers (comma separated): <small>Max 100 characters</small></label>
-                <input type="text" id="machs" name="machs" maxlength="100" value="2.0, 3.0, 5.0" required>
+                <label for="machs">Mach Numbers (comma separated): <small>Max 10 numbers, max 100 characters</small></label>
+                <input type="text" id="machs" name="machs" maxlength="100" pattern="^\s*\d+(\.\d+)?\s*(,\s*\d+(\.\d+)?\s*){0,9}$" title="Please enter up to 10 comma-separated positive numbers (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" required>
                 <button type="submit">Generate Polar</button>
             </form>
             {% if polar_plot %}
