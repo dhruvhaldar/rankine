@@ -1,6 +1,6 @@
 
 import numpy as np
-from scipy.optimize import brentq
+from scipy.optimize import brentq, newton
 import matplotlib.pyplot as plt
 
 class IsentropicRelations:
@@ -22,23 +22,46 @@ class IsentropicRelations:
         Calculates Mach Number given Area Ratio (A/A*).
         regime: 'subsonic' or 'supersonic'
         """
-        if area_ratio < 1.0:
-            if abs(area_ratio - 1.0) < 1e-6:
-                return 1.0
-            raise ValueError(f"Area ratio {area_ratio} cannot be less than 1.0")
-        if area_ratio == 1.0:
-            return 1.0
+        area_ratio = np.asarray(area_ratio)
+        is_scalar = area_ratio.ndim == 0
+        if is_scalar:
+            area_ratio = np.atleast_1d(area_ratio)
 
-        def func(M):
-            return IsentropicRelations.calc_area_mach(M, gamma) - area_ratio
+        if np.any(area_ratio < 1.0) and not np.allclose(area_ratio[area_ratio < 1.0], 1.0, atol=1e-6):
+            raise ValueError("Area ratio cannot be less than 1.0")
+
+        def func(M, gamma, target_ar):
+            term1 = 1.0 / M
+            term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * M**2)
+            exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
+            return term1 * (term2 ** exponent) - target_ar
 
         if regime == 'subsonic':
-            return brentq(func, 1e-9, 1.0)
+            M_guess = np.where(area_ratio <= 1.0 + 1e-6, 1.0, 1.0 / area_ratio)
         elif regime == 'supersonic':
-            # Upper bound 20 is safe for practical flows
-            return brentq(func, 1.000001, 20.0)
+            M_guess = np.where(area_ratio <= 1.0 + 1e-6, 1.0, 1.0 + area_ratio)
         else:
             raise ValueError("Regime must be 'subsonic' or 'supersonic'")
+
+        try:
+            M = newton(func, M_guess, args=(gamma, area_ratio))
+            # Verify roots are in correct regimes. If not, fallback will catch it.
+            if regime == 'subsonic' and np.any(M > 1.0 + 1e-6):
+                raise RuntimeError("Root crossed regime")
+            if regime == 'supersonic' and np.any(M < 1.0 - 1e-6):
+                raise RuntimeError("Root crossed regime")
+
+            M[np.isclose(area_ratio, 1.0, atol=1e-6)] = 1.0
+            return M[0] if is_scalar else M
+        except RuntimeError:
+            def brentq_scalar(ar, r):
+                if ar <= 1.0 + 1e-6: return 1.0
+                def f(m): return func(m, gamma, ar)
+                if r == 'subsonic': return brentq(f, 1e-9, 1.0)
+                return brentq(f, 1.000001, 20.0)
+
+            M = np.array([brentq_scalar(ar, regime) for ar in area_ratio])
+            return M[0] if is_scalar else M
 
     @staticmethod
     def calc_pressure_ratio(M, gamma=1.4):
@@ -162,14 +185,15 @@ class CDNozzle:
             A_star_effective = self.A_exit / IsentropicRelations.calc_area_mach(M_exit, gamma)
 
             ar_eff = A / A_star_effective
-            M = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff])
+            M = IsentropicRelations.calc_mach_area(ar_eff, gamma, 'subsonic')
             P = P0 * IsentropicRelations.calc_pressure_ratio(M, gamma)
 
         elif back_pressure < P_exit_sub_limit:
             # Throat is choked. A_star = A_throat
             # Up to throat, flow is subsonic isentropic.
             ar_eff = A[:idx_throat + 1] / self.A_throat
-            M[:idx_throat + 1] = np.array([1.0 if i == idx_throat else IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for i, ar in enumerate(ar_eff)])
+            M[:idx_throat + 1] = IsentropicRelations.calc_mach_area(ar_eff, gamma, 'subsonic')
+            M[idx_throat] = 1.0 # Ensure exact 1.0 at throat
             P[:idx_throat + 1] = P0 * IsentropicRelations.calc_pressure_ratio(M[:idx_throat + 1], gamma)
 
             if back_pressure <= P_exit_shock_limit:
@@ -177,7 +201,7 @@ class CDNozzle:
                 # Either Design, Over-expanded (with oblique shock outside), or Under-expanded.
                 # In 1D theory, we assume isentropic expansion in nozzle.
                 ar_eff = A[idx_throat + 1:] / self.A_throat
-                M[idx_throat + 1:] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic') for ar in ar_eff])
+                M[idx_throat + 1:] = IsentropicRelations.calc_mach_area(ar_eff, gamma, 'supersonic')
                 P[idx_throat + 1:] = P0 * IsentropicRelations.calc_pressure_ratio(M[idx_throat + 1:], gamma)
 
             else:
@@ -241,12 +265,14 @@ class CDNozzle:
 
                 # Before shock
                 ar_eff1 = A[idx_throat + 1:idx_shock] / self.A_throat
-                M[idx_throat + 1:idx_shock] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'supersonic') for ar in ar_eff1])
+                if len(ar_eff1) > 0:
+                    M[idx_throat + 1:idx_shock] = IsentropicRelations.calc_mach_area(ar_eff1, gamma, 'supersonic')
                 P[idx_throat + 1:idx_shock] = P0 * IsentropicRelations.calc_pressure_ratio(M[idx_throat + 1:idx_shock], gamma)
 
                 # After shock
                 ar_eff2 = A[idx_shock:] / A_star_new
-                M[idx_shock:] = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff2])
+                if len(ar_eff2) > 0:
+                    M[idx_shock:] = IsentropicRelations.calc_mach_area(ar_eff2, gamma, 'subsonic')
                 P[idx_shock:] = P0_new * IsentropicRelations.calc_pressure_ratio(M[idx_shock:], gamma)
 
         # ⚡ Bolt Optimization: Vectorized thermodynamic array calculations
@@ -290,7 +316,7 @@ class CDNozzle:
         ar_eff = A / A_star
         # Assume subsonic throughout for this test case unless M_inlet implies otherwise
         # If M_inlet < 1, likely subsonic.
-        M = np.array([IsentropicRelations.calc_mach_area(ar, gamma, 'subsonic') for ar in ar_eff])
+        M = IsentropicRelations.calc_mach_area(ar_eff, gamma, 'subsonic')
 
         # ⚡ Bolt Optimization: Vectorized thermodynamic array calculations
         # Expected speedup: ~40% overall solver speedup by avoiding duplicate math in loop
