@@ -31,10 +31,17 @@ def home():
 @app.route('/plot/nozzle', methods=['POST'])
 def plot_nozzle():
     try:
-        P0 = float(request.form.get('P0', 101325))
-        back_pressure = float(request.form.get('back_pressure', 95000))
-        A_throat = float(request.form.get('A_throat', 0.05))
-        A_exit = float(request.form.get('A_exit', 0.1))
+        try:
+            P0 = float(request.form.get('P0', 101325))
+            back_pressure = float(request.form.get('back_pressure', 95000))
+            A_throat = float(request.form.get('A_throat', 0.05))
+            A_exit = float(request.form.get('A_exit', 0.1))
+        except ValueError:
+            return "Error: Invalid physical parameters. Values must be numeric.", 400
+
+        # Security: Validate physical parameter bounds
+        if P0 < 0 or back_pressure < 0 or A_throat <= 0 or A_exit <= 0:
+            return "Error: Invalid physical parameters. Values must be positive.", 400
 
         nozzle = CDNozzle(gamma=1.4, A_throat=A_throat, A_exit=A_exit)
         res = nozzle.solve(P0=P0, T0=300, back_pressure=back_pressure)
@@ -62,9 +69,17 @@ def plot_shock_polar():
         if len(machs_str) > 100:
             return "Error: Input too long.", 400
 
-        machs = [float(m.strip()) for m in machs_str.split(',')]
+        try:
+            machs = [float(m.strip()) for m in machs_str.split(',')]
+        except ValueError:
+            return "Error: Mach numbers must be numeric.", 400
+
         if len(machs) > 10:
             return "Error: Too many Mach numbers requested (max 10).", 400
+
+        # Security: Ensure Mach numbers are physically valid for shock polar
+        if any(m < 1.0 for m in machs):
+            return "Error: Mach numbers must be >= 1.0.", 400
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
 
@@ -82,7 +97,14 @@ def plot_shock_polar():
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
     try:
-        time = float(request.form.get('time', 0.25))
+        try:
+            time = float(request.form.get('time', 0.25))
+        except ValueError:
+            return "Error: Time must be numeric.", 400
+
+        # Security: Validate simulation time bounds
+        if time < 0 or time > 100:
+            return "Error: Time must be between 0 and 100 seconds.", 400
 
         driver = {'p': 1.0, 'rho': 1.0, 'u': 0.0}
         driven = {'p': 0.1, 'rho': 0.125, 'u': 0.0}
