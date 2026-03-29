@@ -12,3 +12,7 @@
 **Vulnerability:** 500 Internal Server Errors and unhandled numerical exceptions (ZeroDivisionError, ValueError) from unvalidated physical inputs.
 **Learning:** In Flask applications like `api/index.py` that interface with scientific solvers (`rankine/`), blindly casting `request.form.get()` directly to `float` without a `try-except` block, and blindly passing these floats into physics routines without bounds checking (e.g., negative time, negative areas, Mach < 1.0) leads to unhandled Python exceptions. Attackers can trigger continuous 500 errors or solver crashes (logical DoS) by submitting mathematically invalid or non-numeric string payloads.
 **Prevention:** Always wrap type casting of user input in a `try...except ValueError` block. Always explicitly validate the physical/logical bounds of numbers (`> 0`, `>= 1.0`) *before* passing them to downstream numerical solvers, failing gracefully with a `400 Bad Request` if invalid.
+## 2026-03-29 - Missing Security Headers
+**Vulnerability:** Defense in Depth: Missing standard HTTP security headers.
+**Learning:** In Flask `api/index.py`, the responses lacked standard security headers such as `X-Content-Type-Options`, `X-Frame-Options`, and `Content-Security-Policy`. This makes the application more susceptible to MIME sniffing and clickjacking attacks.
+**Prevention:** Implement an `@app.after_request` decorator in the Flask app to automatically append security headers to all outgoing responses. This is a crucial layer of defense in depth.

@@ -24,6 +24,14 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB limit to prevent large
 
 logger = logging.getLogger(__name__)
 
+@app.after_request
+def add_security_headers(response):
+    # Security: Defense in depth via HTTP headers
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    return response
+
 @app.route('/')
 def home():
     return render_template('index.html')
