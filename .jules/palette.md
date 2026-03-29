@@ -10,3 +10,7 @@
 ## 2024-05-24 - Mirroring Backend Array Length Constraints
 **Learning:** In Flask/HTML forms, if a text input expects a comma-separated array (like Mach numbers), it's important to mirror the backend array length limits (e.g., max 10 items) directly on the client side using the HTML `pattern` attribute and a clear `title` description. This provides instant visual feedback and prevents unstyled server error responses from being the first time users learn about the limit.
 **Action:** When implementing new form inputs that expect arrays or delimited strings, always use HTML `pattern` validation to enforce size/length limits and provide helpful tooltips/error messages instead of relying entirely on backend validation.
+
+## 2026-03-01 - Prevent Context Loss on Full-Page Form Posts
+**Learning:** Relying on traditional form POSTs in a single long page causes disorienting scroll resets, which drops the user back to the top of the page after they submit a form midway down.
+**Action:** When working with multiple forms on a long page that require full page reloads, append URL anchor hashes (e.g., `#section-id`) to the form `action` URLs to automatically scroll the user back to the relevant section and preserve their context.
