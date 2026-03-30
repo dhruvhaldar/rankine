@@ -35,7 +35,7 @@
             outline: 2px solid #0070f3;
             outline-offset: 2px;
         }
-        button:disabled {
+        button:disabled, button[aria-disabled="true"] {
             background-color: #ccc;
             cursor: not-allowed;
             color: #666;
@@ -59,7 +59,7 @@
                 <input type="number" id="A_throat" name="A_throat" min="0" step="0.01" value="0.05" required>
                 <label for="A_exit">Exit Area (m2): <small>Must be non-negative</small></label>
                 <input type="number" id="A_exit" name="A_exit" min="0" step="0.01" value="0.1" required>
-                <button type="submit">Calculate & Plot</button>
+                <button type="submit" aria-live="polite">Calculate & Plot</button>
             </form>
             {% if nozzle_plot %}
             <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
@@ -71,7 +71,7 @@
             <form action="/plot/shock_polar#shock-polar" method="post">
                 <label for="machs">Mach Numbers (comma separated): <small>Max 10 numbers, max 100 characters</small></label>
                 <input type="text" id="machs" name="machs" maxlength="100" pattern="^\s*\d+(\.\d+)?\s*(,\s*\d+(\.\d+)?\s*){0,9}$" title="Please enter up to 10 comma-separated positive numbers (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" required>
-                <button type="submit">Generate Polar</button>
+                <button type="submit" aria-live="polite">Generate Polar</button>
             </form>
             {% if polar_plot %}
             <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
@@ -83,7 +83,7 @@
             <form action="/plot/shock_tube#shock-tube" method="post">
                 <label for="time">Time (s): <small>Must be non-negative</small></label>
                 <input type="number" id="time" name="time" min="0" step="0.01" value="0.25" required>
-                <button type="submit">Simulate</button>
+                <button type="submit" aria-live="polite">Simulate</button>
             </form>
             {% if tube_plot %}
             <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
@@ -95,8 +95,12 @@
             form.addEventListener('submit', function(e) {
                 const btn = this.querySelector('button[type="submit"], button:not([type="button"])');
                 if(btn) {
+                    if (btn.getAttribute('aria-disabled') === 'true') {
+                        e.preventDefault();
+                        return;
+                    }
                     setTimeout(() => {
-                        btn.disabled = true;
+                        btn.setAttribute('aria-disabled', 'true');
                         btn.innerText = 'Calculating...';
                     }, 0);
                 }
