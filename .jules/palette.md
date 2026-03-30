@@ -14,3 +14,7 @@
 ## 2026-03-01 - Prevent Context Loss on Full-Page Form Posts
 **Learning:** Relying on traditional form POSTs in a single long page causes disorienting scroll resets, which drops the user back to the top of the page after they submit a form midway down.
 **Action:** When working with multiple forms on a long page that require full page reloads, append URL anchor hashes (e.g., `#section-id`) to the form `action` URLs to automatically scroll the user back to the relevant section and preserve their context.
+
+## 2026-03-05 - Maintain Screen Reader Focus During Form Submission
+**Learning:** When adding JavaScript to disable a submit button during form submission (to prevent double-posts and show a loading state), using the native `disabled` attribute (`btn.disabled = true`) drops the keyboard and screen reader focus. This causes screen readers to completely fail to announce the "Calculating..." feedback text because the element they were focused on became inactive.
+**Action:** Use `aria-disabled="true"` instead of the native `disabled` attribute, manually prevent duplicate form submissions in the `submit` event handler (`e.preventDefault()`), and add `aria-live="polite"` to the button. This visually disables the button using CSS (`button[aria-disabled="true"]`) while preserving focus so the screen reader successfully announces the state change.
