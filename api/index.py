@@ -5,6 +5,7 @@ import base64
 from markupsafe import escape
 import logging
 import matplotlib
+import math
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,8 +45,12 @@ def plot_nozzle():
             back_pressure = float(request.form.get('back_pressure', 95000))
             A_throat = float(request.form.get('A_throat', 0.05))
             A_exit = float(request.form.get('A_exit', 0.1))
+
+            # Security: Prevent NaN/Inf validation bypass
+            if not (math.isfinite(P0) and math.isfinite(back_pressure) and math.isfinite(A_throat) and math.isfinite(A_exit)):
+                raise ValueError("Values must be finite.")
         except ValueError:
-            return "Error: Invalid physical parameters. Values must be numeric.", 400
+            return "Error: Invalid physical parameters. Values must be numeric and finite.", 400
 
         # Security: Validate physical parameter bounds
         if P0 < 0 or back_pressure < 0 or A_throat <= 0 or A_exit <= 0:
@@ -79,8 +84,12 @@ def plot_shock_polar():
 
         try:
             machs = [float(m.strip()) for m in machs_str.split(',')]
+
+            # Security: Prevent NaN/Inf validation bypass
+            if not all(math.isfinite(m) for m in machs):
+                raise ValueError("Mach numbers must be finite.")
         except ValueError:
-            return "Error: Mach numbers must be numeric.", 400
+            return "Error: Mach numbers must be numeric and finite.", 400
 
         if len(machs) > 10:
             return "Error: Too many Mach numbers requested (max 10).", 400
@@ -107,8 +116,12 @@ def plot_shock_tube():
     try:
         try:
             time = float(request.form.get('time', 0.25))
+
+            # Security: Prevent NaN/Inf validation bypass
+            if not math.isfinite(time):
+                raise ValueError("Time must be finite.")
         except ValueError:
-            return "Error: Time must be numeric.", 400
+            return "Error: Time must be numeric and finite.", 400
 
         # Security: Validate simulation time bounds
         if time < 0 or time > 100:
