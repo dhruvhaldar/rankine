@@ -16,3 +16,8 @@
 **Vulnerability:** Defense in Depth: Missing standard HTTP security headers.
 **Learning:** In Flask `api/index.py`, the responses lacked standard security headers such as `X-Content-Type-Options`, `X-Frame-Options`, and `Content-Security-Policy`. This makes the application more susceptible to MIME sniffing and clickjacking attacks.
 **Prevention:** Implement an `@app.after_request` decorator in the Flask app to automatically append security headers to all outgoing responses. This is a crucial layer of defense in depth.
+
+## 2026-03-30 - Float NaN/Inf Bound Validation Bypass
+**Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by NaN or Infinity float representations.
+**Learning:** In Python, converting string inputs like `"inf"`, `"-inf"`, or `"nan"` to `float()` succeeds without raising a `ValueError`. More dangerously, `float('nan') < 0` and `float('nan') <= 0` evaluate to `False`, bypassing basic comparative boundary checks (e.g. `if val < 0: raise Error`). This can lead to unhandled runtime exceptions (`RuntimeWarning: invalid value encountered in divide`) inside scientific computation solvers or infinite loop conditions, causing an application crash or resource exhaustion.
+**Prevention:** Always validate parsed float inputs from web requests with `math.isfinite(val)` before proceeding with business logic or passing the data into mathematical functions.
