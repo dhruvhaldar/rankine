@@ -18,3 +18,7 @@
 ## 2026-03-05 - Maintain Screen Reader Focus During Form Submission
 **Learning:** When adding JavaScript to disable a submit button during form submission (to prevent double-posts and show a loading state), using the native `disabled` attribute (`btn.disabled = true`) drops the keyboard and screen reader focus. This causes screen readers to completely fail to announce the "Calculating..." feedback text because the element they were focused on became inactive.
 **Action:** Use `aria-disabled="true"` instead of the native `disabled` attribute, manually prevent duplicate form submissions in the `submit` event handler (`e.preventDefault()`), and add `aria-live="polite"` to the button. This visually disables the button using CSS (`button[aria-disabled="true"]`) while preserving focus so the screen reader successfully announces the state change.
+
+## 2026-03-31 - Aligning Frontend Validation with Backend Constraints
+**Learning:** In traditional server-rendered applications, returning plain-text 400 Bad Request errors for validation failures creates a disorienting user experience. Users lose context and have to click 'Back' to fix their input.
+**Action:** Always ensure that frontend HTML validation attributes (`min`, `max`, `pattern`) and inline helper texts strictly align with backend security constraints (like logical DoS protection limits or physical bounds) to catch input errors client-side before submission.
