@@ -56,6 +56,10 @@ def plot_nozzle():
         if P0 < 0 or back_pressure < 0 or A_throat <= 0 or A_exit <= 0:
             return "Error: Invalid physical parameters. Values must be positive.", 400
 
+        # Security: Ensure Converging-Diverging Nozzle geometry is physically valid
+        if A_exit < A_throat:
+            return "Error: Invalid physical parameters. Exit Area must be >= Throat Area.", 400
+
         nozzle = CDNozzle(gamma=1.4, A_throat=A_throat, A_exit=A_exit)
         res = nozzle.solve(P0=P0, T0=300, back_pressure=back_pressure)
 
