@@ -22,3 +22,7 @@
 ## 2026-03-31 - Aligning Frontend Validation with Backend Constraints
 **Learning:** In traditional server-rendered applications, returning plain-text 400 Bad Request errors for validation failures creates a disorienting user experience. Users lose context and have to click 'Back' to fix their input.
 **Action:** Always ensure that frontend HTML validation attributes (`min`, `max`, `pattern`) and inline helper texts strictly align with backend security constraints (like logical DoS protection limits or physical bounds) to catch input errors client-side before submission.
+
+## 2026-04-01 - Enhance Form Validation with Inline Visual Feedback
+**Learning:** Relying solely on native browser submit-time popups for HTML form validation (like `min`, `max`, `pattern`) can be frustrating because the user doesn't realize their input is invalid until they attempt to submit. This is particularly problematic in forms where inputs have pre-filled valid defaults.
+**Action:** Use CSS pseudo-classes like `:invalid` and `:focus-visible:invalid` to provide immediate, inline visual feedback (e.g., a red border and subtle background color) to inputs when they violate HTML validation constraints. This allows users to catch and correct errors as they type.

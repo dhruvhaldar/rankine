@@ -22,6 +22,14 @@
             outline-offset: 2px;
             border-color: #0070f3;
         }
+        input[type="text"]:invalid, input[type="number"]:invalid {
+            border-color: #d32f2f;
+            background-color: #fff4f4;
+        }
+        input[type="text"]:focus-visible:invalid, input[type="number"]:focus-visible:invalid {
+            outline-color: #d32f2f;
+            border-color: #d32f2f;
+        }
         button {
             padding: 10px 20px;
             background-color: #0070f3;
