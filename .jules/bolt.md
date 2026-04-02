@@ -12,3 +12,7 @@
 ## 2026-03-29 - Vectorized matplotlib plotting
 **Learning:** When generating multiple lines in a single matplotlib plot (like an expansion fan), plotting in a loop over individual lines is slow. The `ax.plot()` function accepts 2D arrays (where columns represent separate data series). Vectorizing the data preparation and passing a 2D array avoids multiple `ax.plot` calls and reduces rendering overhead by ~15-20%.
 **Action:** Instead of `for angle in angles: ax.plot(x, np.tan(angle)*x)`, compute the 2D array `Y = (np.tan(angles)[:, np.newaxis] * x).T` and call `ax.plot(x, Y)` once.
+
+## 2026-03-29 - Providing Analytical Derivatives to SciPy Newton Solvers
+**Learning:** By default, `scipy.optimize.newton` uses the secant method when only an objective function is provided, which requires additional function evaluations to approximate the derivative numerically. Providing the exact analytical derivative via the `fprime` argument forces the solver to use the Newton-Raphson method, which benefits from quadratic convergence rather than superlinear convergence. In physics calculations involving expensive operations (like trigonometric and square root evaluations in the Prandtl-Meyer function), this reduces total evaluation overhead significantly.
+**Action:** Whenever using `scipy.optimize.newton` to solve implicit equations, always manually compute and provide the analytical derivative as `fprime` if possible, to maximize convergence speed and reduce computational overhead.
