@@ -26,3 +26,7 @@
 ## 2026-04-01 - Enhance Form Validation with Inline Visual Feedback
 **Learning:** Relying solely on native browser submit-time popups for HTML form validation (like `min`, `max`, `pattern`) can be frustrating because the user doesn't realize their input is invalid until they attempt to submit. This is particularly problematic in forms where inputs have pre-filled valid defaults.
 **Action:** Use CSS pseudo-classes like `:invalid` and `:focus-visible:invalid` to provide immediate, inline visual feedback (e.g., a red border and subtle background color) to inputs when they violate HTML validation constraints. This allows users to catch and correct errors as they type.
+
+## 2026-04-02 - Inline validation for interdependent fields
+**Learning:** Interdependent field validation (e.g. Exit Area must be >= Throat Area) handled exclusively by backend APIs creates a poor UX because it results in unstyled text errors on submission and drops user context.
+**Action:** Always link physically interdependent inputs directly on the frontend using inline `oninput` handlers to manipulate HTML5 constraint attributes (like `min` or `max`). This leverages existing `:invalid` CSS rules for immediate visual feedback before submission.
