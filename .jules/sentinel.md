@@ -26,3 +26,8 @@
 **Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by physically invalid input combinations (e.g. Exit Area < Throat Area).
 **Learning:** In Flask route `api/index.py`, while individual inputs (like `A_exit` and `A_throat`) were validated to be strictly positive numbers, their relationship was not validated. Providing `A_exit < A_throat` to the Converging-Diverging Nozzle solver caused the calculated area ratio to drop below `1.0`, triggering a `ValueError` inside the `scipy.optimize` root finder in `rankine/isentropic.py`. This bypassed individual bound checks and allowed an attacker to reliably crash the solver endpoint via logical errors.
 **Prevention:** Always validate physical relationships between parameters (e.g., Exit Area must be >= Throat Area for CD nozzles) in the request handler before invoking downstream computational solvers, failing gracefully with a 400 Bad Request if the combination is invalid.
+
+## 2026-04-03 - Hardcoded Debug Mode in Production
+**Vulnerability:** Information Exposure and Remote Code Execution (RCE) via Werkzeug interactive debugger.
+**Learning:** Hardcoding `app.run(debug=True)` in application entry points (`api/index.py`) is dangerous because if the file is accidentally executed or deployed in a way that triggers this block, it exposes the Werkzeug interactive debugger. This debugger allows arbitrary Python code execution from the browser, leading to full server compromise.
+**Prevention:** Never hardcode `debug=True`. Always determine debug mode dynamically using environment variables (e.g., `os.environ.get('FLASK_DEBUG')`).
