@@ -26,3 +26,8 @@
 **Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by physically invalid input combinations (e.g. Exit Area < Throat Area).
 **Learning:** In Flask route `api/index.py`, while individual inputs (like `A_exit` and `A_throat`) were validated to be strictly positive numbers, their relationship was not validated. Providing `A_exit < A_throat` to the Converging-Diverging Nozzle solver caused the calculated area ratio to drop below `1.0`, triggering a `ValueError` inside the `scipy.optimize` root finder in `rankine/isentropic.py`. This bypassed individual bound checks and allowed an attacker to reliably crash the solver endpoint via logical errors.
 **Prevention:** Always validate physical relationships between parameters (e.g., Exit Area must be >= Throat Area for CD nozzles) in the request handler before invoking downstream computational solvers, failing gracefully with a 400 Bad Request if the combination is invalid.
+
+## 2026-04-02 - HSTS and Referrer-Policy Headers
+**Vulnerability:** Defense in Depth: Missing Strict-Transport-Security (HSTS) and Referrer-Policy headers.
+**Learning:** In Flask `api/index.py`, the responses lacked HSTS and Referrer-Policy headers. HSTS enforces secure (HTTPS) connections, preventing protocol downgrade attacks and cookie hijacking. Referrer-Policy prevents leaking sensitive URL information to cross-origin sites via the Referer header.
+**Prevention:** Always include `Strict-Transport-Security` and `Referrer-Policy` headers in the `@app.after_request` decorator to strengthen the application's defense in depth.
