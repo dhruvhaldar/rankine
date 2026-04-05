@@ -30,3 +30,7 @@
 ## 2026-04-02 - Inline validation for interdependent fields
 **Learning:** Interdependent field validation (e.g. Exit Area must be >= Throat Area) handled exclusively by backend APIs creates a poor UX because it results in unstyled text errors on submission and drops user context.
 **Action:** Always link physically interdependent inputs directly on the frontend using inline `oninput` handlers to manipulate HTML5 constraint attributes (like `min` or `max`). This leverages existing `:invalid` CSS rules for immediate visual feedback before submission.
+
+## 2026-04-05 - Support Decimal Input for Physical Data
+**Learning:** HTML5 `<input type="number">` fields have an implicit `step="1"` attribute by default. This causes native browser validation to reject any decimal inputs unless explicitly overridden, which is problematic for physical data that frequently requires precision.
+**Action:** Always add `step="any"` (or a specific decimal precision) to number inputs where floating-point numbers represent valid physical or computational data.
