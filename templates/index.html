@@ -49,6 +49,16 @@
             color: #666;
         }
         img { max-width: 100%; height: auto; margin-top: 20px; }
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f9fafb;
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            color: #6b7280;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +81,10 @@
             </form>
             {% if nozzle_plot %}
             <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
+            {% else %}
+            <div class="empty-state">
+                <p>Fill out the parameters and click <strong>Calculate & Plot</strong> to generate the nozzle flow distribution.</p>
+            </div>
             {% endif %}
         </div>
 
@@ -83,6 +97,10 @@
             </form>
             {% if polar_plot %}
             <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
+            {% else %}
+            <div class="empty-state">
+                <p>Enter up to 10 Mach numbers and click <strong>Generate Polar</strong> to view the shock polars.</p>
+            </div>
             {% endif %}
         </div>
 
@@ -95,6 +113,10 @@
             </form>
             {% if tube_plot %}
             <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
+            {% else %}
+            <div class="empty-state">
+                <p>Specify the simulation time and click <strong>Simulate</strong> to see the unsteady shock tube properties.</p>
+            </div>
             {% endif %}
         </div>
     </div>
