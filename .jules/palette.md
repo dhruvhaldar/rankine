@@ -34,3 +34,7 @@
 ## 2026-04-06 - Allow decimal numbers in physical inputs
 **Learning:** Native `<input type="number">`, elements implicitly use `step="1"`, rejecting valid decimal values. This limits floating-point numbers unless `step="any"` or a specific decimal is applied.
 **Action:** Always add `step="any"` to number inputs representing continuous physical data to avoid unstyled browser validation errors and provide better UX.
+
+## 2026-04-10 - Provide Explicit Empty States for Generated Content
+**Learning:** In templates where content (like charts or images) is generated dynamically after a form submission, omitting an explicit empty state causes the page layout to feel sparse or broken on initial load. Users may be confused about where the result will appear or what action is required to trigger it.
+**Action:** Always provide explicit, visually distinct empty states (e.g., a dashed border container with helpful call-to-action text) in `{% else %}` template blocks. This stabilizes the layout, sets user expectations, and guides them towards their first action.
