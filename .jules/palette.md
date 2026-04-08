@@ -38,3 +38,7 @@
 ## 2026-04-10 - Provide Explicit Empty States for Generated Content
 **Learning:** In templates where content (like charts or images) is generated dynamically after a form submission, omitting an explicit empty state causes the page layout to feel sparse or broken on initial load. Users may be confused about where the result will appear or what action is required to trigger it.
 **Action:** Always provide explicit, visually distinct empty states (e.g., a dashed border container with helpful call-to-action text) in `{% else %}` template blocks. This stabilizes the layout, sets user expectations, and guides them towards their first action.
+
+## 2026-04-15 - Visual Hierarchy and Micro-interactions in Forms
+**Learning:** In forms, putting helper text on the same line as the label can make scanning difficult, especially for long forms. Micro-interactions like `:active` scale states on buttons and transitions on input states can greatly improve the perceived responsiveness of traditional server-rendered applications, providing the tactile feedback that users expect from modern SPAs.
+**Action:** When styling forms, always ensure a clear visual hierarchy by placing helper text on its own line with reduced visual weight. Additionally, include subtle CSS transitions on interactive elements (inputs, buttons) to soften state changes and provide immediate tactile feedback upon interaction.
