@@ -31,3 +31,8 @@
 **Vulnerability:** Defense in Depth: Missing Strict-Transport-Security (HSTS) and Referrer-Policy headers.
 **Learning:** In Flask `api/index.py`, the responses lacked HSTS and Referrer-Policy headers. HSTS enforces secure (HTTPS) connections, preventing protocol downgrade attacks and cookie hijacking. Referrer-Policy prevents leaking sensitive URL information to cross-origin sites via the Referer header.
 **Prevention:** Always include `Strict-Transport-Security` and `Referrer-Policy` headers in the `@app.after_request` decorator to strengthen the application's defense in depth.
+
+## 2026-04-03 - Logical DoS via ZeroDivisionError
+**Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by physically invalid zero inputs.
+**Learning:** In Flask route `api/index.py`, the validation logic allowed `P0` and `back_pressure` to be exactly `0.0` (using `>= 0` indirectly by only blocking `< 0`). If `back_pressure` is `0.0`, the calculation `P0 / back_pressure` triggers a raw Python `ZeroDivisionError: float division by zero`, crashing the endpoint and allowing an attacker to cause resource exhaustion or continuous 500 Internal Server Errors via a logical DoS attack.
+**Prevention:** Always ensure that physical parameter bounds check strictly block boundary edge cases (like `0.0`) when those values are subsequently used as denominators in physical calculations. Use strictly positive bounds (`<= 0`) where mathematically necessary.
