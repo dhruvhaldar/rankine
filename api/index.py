@@ -55,8 +55,8 @@ def plot_nozzle():
             return "Error: Invalid physical parameters. Values must be numeric and finite.", 400
 
         # Security: Validate physical parameter bounds
-        if P0 < 0 or back_pressure < 0 or A_throat <= 0 or A_exit <= 0:
-            return "Error: Invalid physical parameters. Values must be positive.", 400
+        if P0 <= 0 or back_pressure <= 0 or A_throat <= 0 or A_exit <= 0:
+            return "Error: Invalid physical parameters. Values must be strictly positive.", 400
 
         # Security: Ensure Converging-Diverging Nozzle geometry is physically valid
         if A_exit < A_throat:
