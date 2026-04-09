@@ -35,6 +35,14 @@ def add_security_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
 
+@app.errorhandler(404)
+def page_not_found(e):
+    return "Error: The requested URL was not found on the server.", 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return "Error: An internal server error occurred.", 500
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -77,7 +85,7 @@ def plot_nozzle():
         return render_template('index.html', nozzle_plot=plot_url)
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs."
+        return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 @app.route('/plot/shock_polar', methods=['POST'])
 def plot_shock_polar():
@@ -115,7 +123,7 @@ def plot_shock_polar():
         return render_template('index.html', polar_plot=plot_url)
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs."
+        return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
@@ -150,7 +158,7 @@ def plot_shock_tube():
         return render_template('index.html', tube_plot=plot_url)
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs."
+        return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 # For local testing
 if __name__ == '__main__':
