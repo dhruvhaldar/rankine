@@ -42,3 +42,7 @@
 ## 2026-04-15 - Visual Hierarchy and Micro-interactions in Forms
 **Learning:** In forms, putting helper text on the same line as the label can make scanning difficult, especially for long forms. Micro-interactions like `:active` scale states on buttons and transitions on input states can greatly improve the perceived responsiveness of traditional server-rendered applications, providing the tactile feedback that users expect from modern SPAs.
 **Action:** When styling forms, always ensure a clear visual hierarchy by placing helper text on its own line with reduced visual weight. Additionally, include subtle CSS transitions on interactive elements (inputs, buttons) to soften state changes and provide immediate tactile feedback upon interaction.
+
+## 2026-04-20 - Expose Required Fields Visually Without Redundant Announcements
+**Learning:** Adding explicit visual indicators for required fields (like a red asterisk) is important for UX, but simply inserting text like "*" can cause screen readers to read "star" aloud unnecessarily, cluttering the experience, particularly when the `<input>` element already correctly uses the `required` attribute.
+**Action:** When adding explicit visual indicators for required fields to the UI, wrap the indicator in an unstyled HTML tag with `aria-hidden="true"` (e.g., `<span aria-hidden="true">*</span>`). This ensures the visual indicator is hidden from assistive technologies, which will already correctly announce the requirement based on the native `required` attribute.
