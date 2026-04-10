@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, send_file
 import io
 import base64
 from markupsafe import escape
+from werkzeug.exceptions import RequestEntityTooLarge
 import logging
 import matplotlib
 import math
@@ -38,6 +39,14 @@ def add_security_headers(response):
 @app.errorhandler(404)
 def page_not_found(e):
     return "Error: The requested URL was not found on the server.", 404
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return "Error: The method is not allowed for the requested URL.", 405
+
+@app.errorhandler(413)
+def request_entity_too_large(e):
+    return "Error: Request payload is too large.", 413
 
 @app.errorhandler(500)
 def internal_server_error(e):
@@ -83,6 +92,8 @@ def plot_nozzle():
         plt.close(fig)
 
         return render_template('index.html', nozzle_plot=plot_url)
+    except RequestEntityTooLarge:
+        return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
@@ -121,6 +132,8 @@ def plot_shock_polar():
         plt.close(fig)
 
         return render_template('index.html', polar_plot=plot_url)
+    except RequestEntityTooLarge:
+        return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
@@ -156,6 +169,8 @@ def plot_shock_tube():
         plt.close(fig)
 
         return render_template('index.html', tube_plot=plot_url)
+    except RequestEntityTooLarge:
+        return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
