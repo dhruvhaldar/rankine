@@ -70,7 +70,7 @@
         <h1>Rankine Compressible Flow</h1>
         <p>A high-performance Python library for analytic and semi-analytic compressible flow calculations.</p>
 
-        <div class="section" id="nozzle">
+        <div class="section" id="nozzle" tabindex="-1">
             <h2>Quasi-1D Nozzle Flow</h2>
             <form action="/plot/nozzle#nozzle" method="post">
                 <label for="P0">Stagnation Pressure P0 (Pa) <span aria-hidden="true">*</span>: <small>Must be non-negative</small></label>
@@ -92,7 +92,7 @@
             {% endif %}
         </div>
 
-        <div class="section" id="shock-polar">
+        <div class="section" id="shock-polar" tabindex="-1">
             <h2>Oblique Shock Polar</h2>
             <form action="/plot/shock_polar#shock-polar" method="post">
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (≥ 1.0), max 100 characters</small></label>
@@ -108,7 +108,7 @@
             {% endif %}
         </div>
 
-        <div class="section" id="shock-tube">
+        <div class="section" id="shock-tube" tabindex="-1">
             <h2>Sod Shock Tube (Unsteady)</h2>
             <form action="/plot/shock_tube#shock-tube" method="post">
                 <label for="time">Time (s) <span aria-hidden="true">*</span>: <small>Must be between 0 and 100</small></label>
