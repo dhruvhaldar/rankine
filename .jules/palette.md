@@ -46,3 +46,7 @@
 ## 2026-04-20 - Expose Required Fields Visually Without Redundant Announcements
 **Learning:** Adding explicit visual indicators for required fields (like a red asterisk) is important for UX, but simply inserting text like "*" can cause screen readers to read "star" aloud unnecessarily, cluttering the experience, particularly when the `<input>` element already correctly uses the `required` attribute.
 **Action:** When adding explicit visual indicators for required fields to the UI, wrap the indicator in an unstyled HTML tag with `aria-hidden="true"` (e.g., `<span aria-hidden="true">*</span>`). This ensures the visual indicator is hidden from assistive technologies, which will already correctly announce the requirement based on the native `required` attribute.
+
+## 2026-05-15 - Make URL Anchor Hashes Accessible to Screen Readers
+**Learning:** Using URL anchor hashes (e.g., `#section-id`) to prevent scroll resets during full-page form POSTs is good for visual context, but without explicit focus management, keyboard and screen reader focus defaults back to the top of the document after the page reloads.
+**Action:** When using URL anchor hashes for redirecting after a form submission, ensure the target element (usually a container `<div>` or `<section>`) has `tabindex="-1"`. This allows the browser to programmatically shift focus to that container upon reload, ensuring keyboard and assistive technology users maintain their proper context.
