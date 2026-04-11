@@ -37,11 +37,20 @@ class PrandtlMeyer:
         if is_scalar:
             nu_arr = np.atleast_1d(nu_arr)
 
+        # ⚡ Bolt Optimization: Eagerly extract loop-invariant constants and inline Prandtl-Meyer
+        # calculation to avoid `prandtl_meyer_function`'s array allocation overhead in the solver loop.
+        c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
+        c2 = (gamma - 1.0) / (gamma + 1.0)
+        c3 = 0.5 * (gamma - 1.0)
+
         def residual_arr(M_guess, gamma, target_nu):
-            return PrandtlMeyer.prandtl_meyer_function(M_guess, gamma) - target_nu
+            # Inlined PM function for performance inside Newton iterations
+            term2 = np.arctan(np.sqrt(c2 * (M_guess**2 - 1.0)))
+            term3 = np.arctan(np.sqrt(M_guess**2 - 1.0))
+            return c1 * term2 - term3 - target_nu
 
         def residual_arr_fprime(M_guess, gamma, target_nu):
-            return np.sqrt(M_guess**2 - 1.0) / (1.0 + 0.5 * (gamma - 1.0) * M_guess**2) / M_guess
+            return np.sqrt(M_guess**2 - 1.0) / (1.0 + c3 * M_guess**2) / M_guess
 
         # Check max nu (limit to M=50 approximation)
         nu_max = PrandtlMeyer.prandtl_meyer_function(50.0, gamma)
