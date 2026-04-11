@@ -50,3 +50,7 @@
 ## 2026-05-15 - Make URL Anchor Hashes Accessible to Screen Readers
 **Learning:** Using URL anchor hashes (e.g., `#section-id`) to prevent scroll resets during full-page form POSTs is good for visual context, but without explicit focus management, keyboard and screen reader focus defaults back to the top of the document after the page reloads.
 **Action:** When using URL anchor hashes for redirecting after a form submission, ensure the target element (usually a container `<div>` or `<section>`) has `tabindex="-1"`. This allows the browser to programmatically shift focus to that container upon reload, ensuring keyboard and assistive technology users maintain their proper context.
+
+## 2026-05-18 - Continuous Visual Feedback for Length-Constrained Inputs
+**Learning:** When inputs have strict `maxlength` constraints (e.g., to prevent logical DoS from processing long array strings), relying solely on the browser silently refusing more keystrokes is a frustrating UX. Users don't know why they can't type or how close they are to the limit.
+**Action:** When implementing an input with a `maxlength` attribute, always pair it with a dynamic character counter (e.g., `X / 100 characters`) updated via an inline `oninput` handler. Use `aria-live="polite"` on the counter to ensure screen readers also announce the changing length without interrupting the user.
