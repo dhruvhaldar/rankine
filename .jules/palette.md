@@ -54,3 +54,7 @@
 ## 2026-05-18 - Continuous Visual Feedback for Length-Constrained Inputs
 **Learning:** When inputs have strict `maxlength` constraints (e.g., to prevent logical DoS from processing long array strings), relying solely on the browser silently refusing more keystrokes is a frustrating UX. Users don't know why they can't type or how close they are to the limit.
 **Action:** When implementing an input with a `maxlength` attribute, always pair it with a dynamic character counter (e.g., `X / 100 characters`) updated via an inline `oninput` handler. Use `aria-live="polite"` on the counter to ensure screen readers also announce the changing length without interrupting the user.
+
+## 2026-05-20 - Accessible Landmarks Without Visual Changes
+**Learning:** In projects that heavily rely on raw HTML and basic CSS targeting classes, using generic `<div>` tags for major page regions (like wrappers and sections) results in a flat accessibility tree, making it hard for screen reader users to navigate between tools.
+**Action:** Always replace generic structural `<div>` tags with semantic HTML landmarks (e.g., `<main>`, `<section>`) when possible. You can safely assign them existing layout CSS classes (`class="container"`, `class="section"`) to improve screen reader accessibility (using `aria-labelledby`) without risking visual regressions or needing custom CSS.
