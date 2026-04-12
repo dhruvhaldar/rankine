@@ -78,7 +78,7 @@
                 <label for="back_pressure">Back Pressure (Pa) <span aria-hidden="true">*</span>: <small>Must be non-negative</small></label>
                 <input type="number" id="back_pressure" name="back_pressure" min="0" step="any" value="95000" required>
                 <label for="A_throat">Throat Area (m2) <span aria-hidden="true">*</span>: <small>Must be strictly positive</small></label>
-                <input type="number" id="A_throat" name="A_throat" min="0.01" step="any" value="0.05" oninput="document.getElementById('A_exit').min = this.value;" required>
+                <input type="number" id="A_throat" name="A_throat" min="0.01" step="any" value="0.05" required>
                 <label for="A_exit">Exit Area (m2) <span aria-hidden="true">*</span>: <small>Must be &ge; Throat Area</small></label>
                 <input type="number" id="A_exit" name="A_exit" min="0.05" step="any" value="0.1" required>
                 <button type="submit" aria-live="polite">Calculate & Plot</button>
@@ -96,7 +96,7 @@
             <h2>Oblique Shock Polar</h2>
             <form action="/plot/shock_polar#shock-polar" method="post">
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (≥ 1.0), max 100 characters</small></label>
-                <input type="text" id="machs" name="machs" maxlength="100" pattern="^\s*[1-9]\d*(\.\d+)?\s*(,\s*[1-9]\d*(\.\d+)?\s*){0,9}$" title="Please enter up to 10 comma-separated numbers ≥ 1.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" oninput="document.getElementById('machs-counter').innerText = this.value.length;" required>
+                <input type="text" id="machs" name="machs" maxlength="100" pattern="^\s*[1-9]\d*(\.\d+)?\s*(,\s*[1-9]\d*(\.\d+)?\s*){0,9}$" title="Please enter up to 10 comma-separated numbers ≥ 1.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" required>
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
                     <small style="color: #6b7280;"><span id="machs-counter" aria-live="polite">13</span> / 100 characters</small>
                 </div>
@@ -127,7 +127,23 @@
             {% endif %}
         </div>
     </div>
-    <script>
+    <script nonce="{{ csp_nonce }}">
+        document.addEventListener('DOMContentLoaded', () => {
+            const aThroatInput = document.getElementById('A_throat');
+            if (aThroatInput) {
+                aThroatInput.addEventListener('input', function() {
+                    document.getElementById('A_exit').min = this.value;
+                });
+            }
+
+            const machsInput = document.getElementById('machs');
+            if (machsInput) {
+                machsInput.addEventListener('input', function() {
+                    document.getElementById('machs-counter').innerText = this.value.length;
+                });
+            }
+        });
+
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 const btn = this.querySelector('button[type="submit"], button:not([type="button"])');
