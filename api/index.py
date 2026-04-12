@@ -1,7 +1,8 @@
 
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, g
 import io
 import base64
+import secrets
 from markupsafe import escape
 from werkzeug.exceptions import RequestEntityTooLarge
 import logging
@@ -26,12 +27,21 @@ app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB limit to prevent large
 
 logger = logging.getLogger(__name__)
 
+@app.before_request
+def generate_csp_nonce():
+    g.csp_nonce = secrets.token_hex(16)
+
+@app.context_processor
+def inject_csp_nonce():
+    return dict(csp_nonce=g.csp_nonce)
+
 @app.after_request
 def add_security_headers(response):
     # Security: Defense in depth via HTTP headers
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    # Use nonce for inline scripts to prevent XSS while allowing valid functionality
+    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{g.csp_nonce}'; img-src 'self' data:;"
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     return response
