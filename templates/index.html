@@ -66,12 +66,12 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <main class="container">
         <h1>Rankine Compressible Flow</h1>
         <p>A high-performance Python library for analytic and semi-analytic compressible flow calculations.</p>
 
-        <div class="section" id="nozzle" tabindex="-1">
-            <h2>Quasi-1D Nozzle Flow</h2>
+        <section class="section" id="nozzle" tabindex="-1" aria-labelledby="nozzle-heading">
+            <h2 id="nozzle-heading">Quasi-1D Nozzle Flow</h2>
             <form action="/plot/nozzle#nozzle" method="post">
                 <label for="P0">Stagnation Pressure P0 (Pa) <span aria-hidden="true">*</span>: <small>Must be non-negative</small></label>
                 <input type="number" id="P0" name="P0" min="0" step="any" value="101325" required>
@@ -90,10 +90,10 @@
                 <p>Fill out the parameters and click <strong>Calculate & Plot</strong> to generate the nozzle flow distribution.</p>
             </div>
             {% endif %}
-        </div>
+        </section>
 
-        <div class="section" id="shock-polar" tabindex="-1">
-            <h2>Oblique Shock Polar</h2>
+        <section class="section" id="shock-polar" tabindex="-1" aria-labelledby="shock-polar-heading">
+            <h2 id="shock-polar-heading">Oblique Shock Polar</h2>
             <form action="/plot/shock_polar#shock-polar" method="post">
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (≥ 1.0), max 100 characters</small></label>
                 <input type="text" id="machs" name="machs" maxlength="100" pattern="^\s*[1-9]\d*(\.\d+)?\s*(,\s*[1-9]\d*(\.\d+)?\s*){0,9}$" title="Please enter up to 10 comma-separated numbers ≥ 1.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" required>
@@ -109,10 +109,10 @@
                 <p>Enter up to 10 Mach numbers and click <strong>Generate Polar</strong> to view the shock polars.</p>
             </div>
             {% endif %}
-        </div>
+        </section>
 
-        <div class="section" id="shock-tube" tabindex="-1">
-            <h2>Sod Shock Tube (Unsteady)</h2>
+        <section class="section" id="shock-tube" tabindex="-1" aria-labelledby="shock-tube-heading">
+            <h2 id="shock-tube-heading">Sod Shock Tube (Unsteady)</h2>
             <form action="/plot/shock_tube#shock-tube" method="post">
                 <label for="time">Time (s) <span aria-hidden="true">*</span>: <small>Must be between 0 and 100</small></label>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" value="0.25" required>
@@ -125,8 +125,8 @@
                 <p>Specify the simulation time and click <strong>Simulate</strong> to see the unsteady shock tube properties.</p>
             </div>
             {% endif %}
-        </div>
-    </div>
+        </section>
+    </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
             const aThroatInput = document.getElementById('A_throat');
