@@ -58,3 +58,11 @@
 ## 2026-06-01 - Enhance Screen Reader Accessibility Tree with Semantic Landmarks
 **Learning:** Replacing generic `<div>` tags with semantic HTML landmarks (like `<main>` and `<section>`) significantly improves the accessibility tree for screen readers, allowing users to easily navigate to distinct regions of the page. Combining `<section>` with `aria-labelledby` pointing to the section's heading ID explicitly names the region without relying on visual structure alone.
 **Action:** When structuring raw HTML layouts, prefer semantic landmarks (`<main>`, `<section>`, `<aside>`, `<nav>`) over generic `<div>`s. Retain existing layout classes (e.g., `class="container"`) on the new tags to avoid visual CSS regressions, and use `aria-labelledby` to associate regions with their visible headings.
+
+## 2026-04-14 - Scientific Typography in UI
+**Learning:** In technical and scientific applications, using plain text representations like 'P0' or 'm2' looks unprofessional and makes scanning difficult compared to standard notation.
+**Action:** Use proper HTML entities like `<sub>` and `&sup2;` for physical variables and units to improve readability and visual polish without needing custom CSS.
+
+## 2026-04-14 - Programmatic Initialization of Character Counters
+**Learning:** Character counters updated via `oninput` handlers can display incorrect initial counts on page load if the browser auto-fills the field or reloads with cached data, leaving the counter at its hardcoded HTML default.
+**Action:** Always manually dispatch an `input` event using JavaScript (e.g., `dispatchEvent(new Event('input'))`) during script initialization to ensure dynamic UI elements correctly reflect the initial state of the input field.
