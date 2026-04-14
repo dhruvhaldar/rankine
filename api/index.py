@@ -89,6 +89,13 @@ def plot_nozzle():
         if A_exit < A_throat:
             return "Error: Invalid physical parameters. Exit Area must be >= Throat Area.", 400
 
+        # Security: Prevent logical DoS and OverflowError in solvers
+        if P0 > 1e7 or back_pressure > 1e7 or A_throat > 100 or A_exit > 100:
+            return "Error: Invalid physical parameters. Values exceed maximum bounds.", 400
+
+        if A_exit / A_throat > 100:
+            return "Error: Area ratio (Exit/Throat) must be <= 100.", 400
+
         nozzle = CDNozzle(gamma=1.4, A_throat=A_throat, A_exit=A_exit)
         res = nozzle.solve(P0=P0, T0=300, back_pressure=back_pressure)
 
@@ -132,6 +139,10 @@ def plot_shock_polar():
         # Security: Ensure Mach numbers are physically valid for shock polar
         if any(m < 1.0 for m in machs):
             return "Error: Mach numbers must be >= 1.0.", 400
+
+        # Security: Prevent mathematical overflow and DoS in numerical solvers
+        if any(m > 100.0 for m in machs):
+            return "Error: Mach numbers must be <= 100.0.", 400
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
 
