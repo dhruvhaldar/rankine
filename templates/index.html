@@ -141,6 +141,8 @@
                 machsInput.addEventListener('input', function() {
                     document.getElementById('machs-counter').innerText = this.value.length;
                 });
+                // Initialize counter on load to account for cached or autofilled values
+                machsInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
 
