@@ -58,3 +58,7 @@
 ## 2026-06-01 - Enhance Screen Reader Accessibility Tree with Semantic Landmarks
 **Learning:** Replacing generic `<div>` tags with semantic HTML landmarks (like `<main>` and `<section>`) significantly improves the accessibility tree for screen readers, allowing users to easily navigate to distinct regions of the page. Combining `<section>` with `aria-labelledby` pointing to the section's heading ID explicitly names the region without relying on visual structure alone.
 **Action:** When structuring raw HTML layouts, prefer semantic landmarks (`<main>`, `<section>`, `<aside>`, `<nav>`) over generic `<div>`s. Retain existing layout classes (e.g., `class="container"`) on the new tags to avoid visual CSS regressions, and use `aria-labelledby` to associate regions with their visible headings.
+
+## 2026-06-15 - Initialize Dynamic UI States for Autofilled Forms
+**Learning:** When updating character counters or other dynamic UI elements via `oninput` handlers, the initial page load may leave the UI out of sync if the browser autofills the input or restores cached data. The counter might say "0 / 100" even when there's text in the field.
+**Action:** When initializing dynamic UI states linked to input fields (like character counters), always manually dispatch an `input` event on page load (e.g., `element.dispatchEvent(new Event('input', { bubbles: true }))`) to ensure the state immediately and accurately reflects the input's current value.
