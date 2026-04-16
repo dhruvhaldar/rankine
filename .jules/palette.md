@@ -62,3 +62,7 @@
 ## 2026-06-15 - Initialize Dynamic UI States for Autofilled Forms
 **Learning:** When updating character counters or other dynamic UI elements via `oninput` handlers, the initial page load may leave the UI out of sync if the browser autofills the input or restores cached data. The counter might say "0 / 100" even when there's text in the field.
 **Action:** When initializing dynamic UI states linked to input fields (like character counters), always manually dispatch an `input` event on page load (e.g., `element.dispatchEvent(new Event('input', { bubbles: true }))`) to ensure the state immediately and accurately reflects the input's current value.
+
+## 2026-06-20 - Improve Typography for Scientific Units
+**Learning:** In scientific or technical interfaces, plain text representations of units and variables (like `P0` or `m2`) look unpolished and can be less readable than proper notation.
+**Action:** Use proper HTML entities (e.g., `<sub>` for subscripts, `&sup2;` for superscripts) for physical variables and units to improve readability and visual polish without requiring custom CSS.
