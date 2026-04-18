@@ -50,3 +50,8 @@
 **Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by physically invalid large inputs.
 **Learning:** In Flask route `api/index.py`, while individual inputs were validated to be strictly positive numbers, they lacked upper bounds. Providing extreme values (e.g., `1e100`) or extreme ratios (e.g., Area Ratio > 1e15) to scientific solvers caused numerical overflows (e.g., `OverflowError`, `ValueError`) inside `scipy.optimize` root finders and `numpy` arrays. This bypassed basic positive checks and allowed an attacker to reliably crash the solver endpoint via logical errors and math overflows.
 **Prevention:** Always validate reasonable upper bounds for physical parameters (e.g., `P0 <= 1e7`, Mach <= 100) and interdependent parameter ratios (e.g., Area Ratio <= 100) in the request handler before invoking downstream computational solvers, failing gracefully with a 400 Bad Request if the values or combinations are out of bounds.
+
+## 2026-04-15 - Parsing DoS via Missing Input Length Limits
+**Vulnerability:** Application-level Denial of Service (DoS) caused by parsing extremely large strings into floats.
+**Learning:** While `MAX_CONTENT_LENGTH` limits the total HTTP payload size to 1MB, passing a ~1MB string of digits directly into `float()` blocks the thread and consumes unnecessary CPU time before any mathematical bounds checking occurs. This allows attackers to exhaust server resources through concurrent requests without exceeding payload limits.
+**Prevention:** Always validate the maximum string length of numerical inputs (e.g. `len(str(val)) <= 100`) before casting them to float, even if global payload limits are in place.

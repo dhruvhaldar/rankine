@@ -70,10 +70,19 @@ def home():
 def plot_nozzle():
     try:
         try:
-            P0 = float(request.form.get('P0', 101325))
-            back_pressure = float(request.form.get('back_pressure', 95000))
-            A_throat = float(request.form.get('A_throat', 0.05))
-            A_exit = float(request.form.get('A_exit', 0.1))
+            p0_str = str(request.form.get('P0', 101325))
+            bp_str = str(request.form.get('back_pressure', 95000))
+            at_str = str(request.form.get('A_throat', 0.05))
+            ae_str = str(request.form.get('A_exit', 0.1))
+
+            # Security: Prevent parsing DoS with extremely long strings
+            if max(len(p0_str), len(bp_str), len(at_str), len(ae_str)) > 100:
+                return "Error: Input too long.", 400
+
+            P0 = float(p0_str)
+            back_pressure = float(bp_str)
+            A_throat = float(at_str)
+            A_exit = float(ae_str)
 
             # Security: Prevent NaN/Inf validation bypass
             if not (math.isfinite(P0) and math.isfinite(back_pressure) and math.isfinite(A_throat) and math.isfinite(A_exit)):
@@ -118,7 +127,7 @@ def plot_nozzle():
 @app.route('/plot/shock_polar', methods=['POST'])
 def plot_shock_polar():
     try:
-        machs_str = request.form.get('machs', '2.0,3.0,5.0')
+        machs_str = str(request.form.get('machs', '2.0,3.0,5.0'))
 
         # Security: Enforce limits on input to prevent logical DoS
         if len(machs_str) > 100:
@@ -163,7 +172,13 @@ def plot_shock_polar():
 def plot_shock_tube():
     try:
         try:
-            time = float(request.form.get('time', 0.25))
+            time_str = str(request.form.get('time', 0.25))
+
+            # Security: Prevent parsing DoS with extremely long strings
+            if len(time_str) > 100:
+                return "Error: Input too long.", 400
+
+            time = float(time_str)
 
             # Security: Prevent NaN/Inf validation bypass
             if not math.isfinite(time):
