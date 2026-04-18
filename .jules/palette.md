@@ -66,3 +66,7 @@
 ## 2026-06-20 - Improve Typography for Scientific Units
 **Learning:** In scientific or technical interfaces, plain text representations of units and variables (like `P0` or `m2`) look unpolished and can be less readable than proper notation.
 **Action:** Use proper HTML entities (e.g., `<sub>` for subscripts, `&sup2;` for superscripts) for physical variables and units to improve readability and visual polish without requiring custom CSS.
+
+## 2026-06-25 - Enhance Guidance for Pre-filled Inputs
+**Learning:** Providing form inputs with default values is helpful, but if users clear the field, they lose all context of what a valid input looks like. The empty input can be confusing, especially for complex or multi-part expected values (like arrays).
+**Action:** Always include a `placeholder` attribute (e.g., `placeholder="e.g., 101325"`) as a fallback for pre-filled form inputs to provide continuous guidance and examples of expected formats, ensuring users are never left guessing what to enter if they delete the default value.
