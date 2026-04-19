@@ -69,11 +69,20 @@ def home():
 @app.route('/plot/nozzle', methods=['POST'])
 def plot_nozzle():
     try:
+        raw_p0 = request.form.get('P0', 101325)
+        raw_bp = request.form.get('back_pressure', 95000)
+        raw_at = request.form.get('A_throat', 0.05)
+        raw_ae = request.form.get('A_exit', 0.1)
+
+        # Security: Prevent parsing Denial of Service (DoS) by massive strings
+        if any(len(str(val)) > 100 for val in [raw_p0, raw_bp, raw_at, raw_ae]):
+            return "Error: Input too long.", 400
+
         try:
-            P0 = float(request.form.get('P0', 101325))
-            back_pressure = float(request.form.get('back_pressure', 95000))
-            A_throat = float(request.form.get('A_throat', 0.05))
-            A_exit = float(request.form.get('A_exit', 0.1))
+            P0 = float(raw_p0)
+            back_pressure = float(raw_bp)
+            A_throat = float(raw_at)
+            A_exit = float(raw_ae)
 
             # Security: Prevent NaN/Inf validation bypass
             if not (math.isfinite(P0) and math.isfinite(back_pressure) and math.isfinite(A_throat) and math.isfinite(A_exit)):
@@ -162,8 +171,14 @@ def plot_shock_polar():
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
     try:
+        raw_time = request.form.get('time', 0.25)
+
+        # Security: Prevent parsing Denial of Service (DoS) by massive strings
+        if len(str(raw_time)) > 100:
+            return "Error: Input too long.", 400
+
         try:
-            time = float(request.form.get('time', 0.25))
+            time = float(raw_time)
 
             # Security: Prevent NaN/Inf validation bypass
             if not math.isfinite(time):

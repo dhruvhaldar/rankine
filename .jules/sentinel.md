@@ -50,3 +50,8 @@
 **Vulnerability:** Application-level Denial of Service (DoS) and unhandled mathematical exceptions caused by physically invalid large inputs.
 **Learning:** In Flask route `api/index.py`, while individual inputs were validated to be strictly positive numbers, they lacked upper bounds. Providing extreme values (e.g., `1e100`) or extreme ratios (e.g., Area Ratio > 1e15) to scientific solvers caused numerical overflows (e.g., `OverflowError`, `ValueError`) inside `scipy.optimize` root finders and `numpy` arrays. This bypassed basic positive checks and allowed an attacker to reliably crash the solver endpoint via logical errors and math overflows.
 **Prevention:** Always validate reasonable upper bounds for physical parameters (e.g., `P0 <= 1e7`, Mach <= 100) and interdependent parameter ratios (e.g., Area Ratio <= 100) in the request handler before invoking downstream computational solvers, failing gracefully with a 400 Bad Request if the values or combinations are out of bounds.
+
+## 2026-04-18 - Float Parsing CPU Exhaustion DoS
+**Vulnerability:** Application-level Denial of Service (DoS) caused by parsing massive strings into floats.
+**Learning:** In Flask `api/index.py`, taking user input from `request.form.get()` and passing it directly into `float()` blocks the thread and consumes significant CPU time if the string is massively long (e.g., hundreds of thousands of characters, even if within global `MAX_CONTENT_LENGTH` limits). This occurs *before* any numerical bounds checking can take place.
+**Prevention:** Always validate the string length of numerical inputs (e.g., `len(str(val)) <= 100`) *before* attempting to cast them to `float()`.
