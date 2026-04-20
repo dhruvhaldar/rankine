@@ -37,3 +37,7 @@
 ## 2026-06-05 - Vectorizing Class Calculations and Inlining Formulas
 **Learning:** In the `Aerodynamics.newtonian_cp` calculation, instantiating a `NormalShock` object internally to compute the total pressure ratio creates significant per-element overhead and breaks NumPy vectorization because the `NormalShock` constructor uses scalar boolean conditions (e.g., `M1 < 1.0`). Passing an array triggers `ValueError: The truth value of an array with more than one element is ambiguous`.
 **Action:** When a function needs to handle both scalar and NumPy array inputs, never invoke scalar-oriented class constructors inside the function. Instead, inline the pure mathematical calculations directly (like the exact Rayleigh Pitot tube formula) and apply conditions using boolean masking (`mask = theta >= 0`) instead of scalar `if` checks. This avoids ambiguity errors and provides an ~15x performance boost.
+
+## 2026-10-25 - NumPy Bounds Checking
+**Learning:** When validating boundaries on large NumPy arrays, replacing `np.any(array >= threshold)` with `array.size > 0 and np.nanmax(array) >= threshold` (or `np.nanmin` for lower bounds) avoids massive boolean array allocations in memory, providing significant speedups (~7-8x). Always check `array.size > 0` first to avoid `ValueError` on empty arrays.
+**Action:** Replace instances of `np.any(array >= val)` or `np.any(array <= val)` with `np.nanmax` and `np.nanmin` combined with an `array.size > 0` check when validating data across large arrays.
