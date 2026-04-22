@@ -132,8 +132,17 @@
             const aThroatInput = document.getElementById('A_throat');
             if (aThroatInput) {
                 aThroatInput.addEventListener('input', function() {
-                    document.getElementById('A_exit').min = this.value;
+                    const throatVal = parseFloat(this.value);
+                    const exitInput = document.getElementById('A_exit');
+                    exitInput.min = this.value;
+                    if (!isNaN(throatVal)) {
+                        exitInput.max = Math.min(100, throatVal * 100);
+                    } else {
+                        exitInput.max = 100;
+                    }
                 });
+                // Initialize dependent constraints on load for default/autofilled values
+                aThroatInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
 
             const machsInput = document.getElementById('machs');
