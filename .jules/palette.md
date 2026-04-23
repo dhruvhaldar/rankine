@@ -70,3 +70,11 @@
 ## 2026-06-25 - Provide Fallback Placeholders for Pre-filled Inputs
 **Learning:** When form inputs are pre-filled with valid default values, users might clear the input and then forget the expected format or unit. Relying solely on `value` attributes without `placeholder` attributes leads to a loss of continuous guidance if the input is cleared.
 **Action:** When pre-filling form inputs with default values, always include a matching `placeholder` attribute (e.g., `placeholder="e.g., 101325"`) as a fallback to ensure continuous context and guidance is provided even if the user deletes the content.
+
+## 2026-07-01 - Force Proper Keypads for Physical Data on Mobile
+**Learning:** Native `<input type="number">` on mobile devices (like iOS Safari) often defaults to a numeric keypad that lacks a decimal separator, or worse, shows a full alphanumeric keyboard. Since physical simulations frequently require floating-point numbers, this blocks users from inputting valid data like `0.05`.
+**Action:** Always add `inputmode="decimal"` to number inputs representing continuous physical data to guarantee that mobile users are presented with a numeric keypad that includes a decimal separator.
+
+## 2026-07-05 - Connect Screen Reader Focus to Dynamic Context
+**Learning:** Character counters are visually useful, but screen reader users typing in the field only hear the number of characters updating (due to `aria-live`). They don't hear the *context* (e.g., "Max 100 characters") unless they happen to navigate to the counter element first.
+**Action:** When using isolated character counters or helper text, always use `aria-describedby` on the `<input>` element pointing to the `id` of the descriptive text or counter container. This ensures the screen reader announces the full context when the user first focuses the input.
