@@ -42,11 +42,13 @@ class PrandtlMeyer:
         c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
         c2 = (gamma - 1.0) / (gamma + 1.0)
         c3 = 0.5 * (gamma - 1.0)
+        c2_sqrt = np.sqrt(c2)
 
         def residual_arr(M_guess, gamma, target_nu):
             # Inlined PM function for performance inside Newton iterations
-            term2 = np.arctan(np.sqrt(c2 * (M_guess**2 - 1.0)))
-            term3 = np.arctan(np.sqrt(M_guess**2 - 1.0))
+            s = np.sqrt(M_guess**2 - 1.0)
+            term2 = np.arctan(c2_sqrt * s)
+            term3 = np.arctan(s)
             return c1 * term2 - term3 - target_nu
 
         def residual_arr_fprime(M_guess, gamma, target_nu):
