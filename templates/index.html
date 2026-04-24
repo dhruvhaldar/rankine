@@ -96,7 +96,7 @@
             <h2 id="shock-polar-heading">Oblique Shock Polar</h2>
             <form action="/plot/shock_polar#shock-polar" method="post" aria-labelledby="shock-polar-heading">
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (between 1.0 and 100.0), max 100 characters</small></label>
-                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]?\d(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]?\d(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
+                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
                     <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter" aria-live="polite">13</span> / 100 characters</small>
                 </div>
