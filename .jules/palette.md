@@ -78,3 +78,7 @@
 ## 2026-07-05 - Connect Screen Reader Focus to Dynamic Context
 **Learning:** Character counters are visually useful, but screen reader users typing in the field only hear the number of characters updating (due to `aria-live`). They don't hear the *context* (e.g., "Max 100 characters") unless they happen to navigate to the counter element first.
 **Action:** When using isolated character counters or helper text, always use `aria-describedby` on the `<input>` element pointing to the `id` of the descriptive text or counter container. This ensures the screen reader announces the full context when the user first focuses the input.
+
+## 2026-07-06 - Auto-Select Pre-filled Inputs to Reduce Friction
+**Learning:** In forms heavily reliant on pre-filled numerical data (e.g., physical defaults like 101325), failing to auto-select the text upon focus introduces significant UX friction. Users are forced to manually backspace or highlight long numbers to enter their own data.
+**Action:** When working with forms populated by continuous numerical defaults, always attach a `focus` event listener that uses `setTimeout(() => this.select(), 0)` to automatically highlight the entire input value. This allows users to instantly overwrite the default value with a single keystroke.
