@@ -187,8 +187,8 @@ def plot_shock_tube():
             return "Error: Time must be numeric and finite.", 400
 
         # Security: Validate simulation time bounds
-        if time < 0 or time > 100:
-            return "Error: Time must be between 0 and 100 seconds.", 400
+        if time <= 0 or time > 100:
+            return "Error: Time must be strictly positive and less than or equal to 100 seconds.", 400
 
         driver = {'p': 1.0, 'rho': 1.0, 'u': 0.0}
         driven = {'p': 0.1, 'rho': 0.125, 'u': 0.0}
