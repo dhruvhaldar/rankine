@@ -44,6 +44,7 @@ def add_security_headers(response):
     response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{g.csp_nonce}'; img-src 'self' data:;"
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
     return response
 
 @app.errorhandler(404)
