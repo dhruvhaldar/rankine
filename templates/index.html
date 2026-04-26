@@ -129,6 +129,39 @@
     </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
+            // Restore form states from sessionStorage to prevent data loss on reload
+            // Namespaced by path to prevent cross-page collisions
+            const storagePrefix = 'form_state_' + window.location.pathname + '_';
+            const excludedTypes = ['hidden', 'submit', 'button', 'checkbox', 'radio', 'password', 'file'];
+
+            // If the server rendered a plot, the submission was successful. Clear the stale stored data for that form.
+            const hasNozzlePlot = document.querySelector('img[alt="Nozzle Plot"]') !== null;
+            const hasPolarPlot = document.querySelector('img[alt="Shock Polar"]') !== null;
+            const hasTubePlot = document.querySelector('img[alt="Shock Tube Plot"]') !== null;
+
+            if (hasNozzlePlot) {
+                document.querySelectorAll('#nozzle input, #nozzle textarea, #nozzle select').forEach(el => sessionStorage.removeItem(storagePrefix + el.id));
+            }
+            if (hasPolarPlot) {
+                document.querySelectorAll('#shock-polar input, #shock-polar textarea, #shock-polar select').forEach(el => sessionStorage.removeItem(storagePrefix + el.id));
+            }
+            if (hasTubePlot) {
+                document.querySelectorAll('#shock-tube input, #shock-tube textarea, #shock-tube select').forEach(el => sessionStorage.removeItem(storagePrefix + el.id));
+            }
+
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                if (element.id && (element.tagName !== 'INPUT' || !excludedTypes.includes(element.type))) {
+                    const storageKey = storagePrefix + element.id;
+                    const storedValue = sessionStorage.getItem(storageKey);
+                    if (storedValue !== null) {
+                        element.value = storedValue;
+                    }
+                    element.addEventListener('input', () => {
+                        sessionStorage.setItem(storageKey, element.value);
+                    });
+                }
+            });
+
             const aThroatInput = document.getElementById('A_throat');
             if (aThroatInput) {
                 aThroatInput.addEventListener('input', function() {

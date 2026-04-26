@@ -82,3 +82,11 @@
 ## 2026-07-06 - Auto-Select Pre-filled Inputs to Reduce Friction
 **Learning:** In forms heavily reliant on pre-filled numerical data (e.g., physical defaults like 101325), failing to auto-select the text upon focus introduces significant UX friction. Users are forced to manually backspace or highlight long numbers to enter their own data.
 **Action:** When working with forms populated by continuous numerical defaults, always attach a `focus` event listener that uses `setTimeout(() => this.select(), 0)` to automatically highlight the entire input value. This allows users to instantly overwrite the default value with a single keystroke.
+
+## 2026-07-10 - Preserve User Input Across Full-Page Submissions
+**Learning:** In applications using full-page POST submissions rather than AJAX, users experience intense frustration if they submit a form, hit an error (e.g., rate limit, network failure, or unhandled validation), and lose all their typed data. If the backend cannot reliably re-render the form with the submitted values, the data is permanently lost.
+**Action:** Use client-side `sessionStorage` to save form input values on the `input` event and restore them upon `DOMContentLoaded`. This ensures that even if a full page reload occurs or an unhandled error drops the backend context, the user's hard work is preserved and instantly recovered.
+
+## 2026-07-10 - Securely Implementing sessionStorage for Form State
+**Learning:** While `sessionStorage` is excellent for preserving form data across full-page reloads, naive implementations (`document.querySelectorAll('input')`) can cause critical regressions. Using empty IDs as storage keys overwrites unrelated elements, and failing to clear the storage upon successful form submission permanently forces stale data on users, severely degrading the UX.
+**Action:** When implementing `sessionStorage` preservation, strictly filter out inputs without IDs, exclude incompatible types (`hidden`, `submit`, `button`, `checkbox`, `radio`), and always hook into the `submit` event to explicitly `sessionStorage.removeItem()` for the submitted form's inputs, ensuring a clean slate for future interactions.
