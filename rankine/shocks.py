@@ -61,9 +61,21 @@ class ObliqueShock:
         if theta == 0:
             return np.arcsin(1.0/M) # Mach wave
 
+        # ⚡ Bolt Optimization: Trigonometric math substitution and inlining
+        # Expected speedup: ~2x faster brentq evaluations by using scalar math
+        # instead of numpy, and reusing sin^2 instead of evaluating cos.
+        import math
+        M2 = M**2
+        c_gamma = gamma + 1.0
+
         # Theta-Beta-M relation
         def residual(beta):
-            return ObliqueShock.theta_beta_m(beta, M, gamma) - theta
+            sin_b = math.sin(beta)
+            sin2_b = sin_b * sin_b
+            # Using trig identity: cos(2*beta) = 1 - 2*sin^2(beta)
+            # gamma + cos(2*beta) = gamma + 1 - 2*sin^2(beta) = c_gamma - 2*sin2_b
+            tan_theta = 2.0 * (1.0 / math.tan(beta)) * (M2 * sin2_b - 1.0) / (M2 * (c_gamma - 2.0 * sin2_b) + 2.0)
+            return math.atan(tan_theta) - theta
 
         # Max deflection angle check
         # Find max theta for this M

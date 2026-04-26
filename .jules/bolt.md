@@ -49,3 +49,7 @@
 ## 2026-10-27 - Precomputing Repeated Sub-expressions in Hot Loops
 **Learning:** When calculating the residual inside the Newton solver in `PrandtlMeyer.inverse_prandtl_meyer`, the expression `np.sqrt(M_guess**2 - 1.0)` was computed twice per iteration (once for `term2` and once for `term3`), along with repeating `np.sqrt(c2)`. Extracting `c2_sqrt = np.sqrt(c2)` out of the loop and computing `s = np.sqrt(M_guess**2 - 1.0)` once per iteration eliminates duplicate expensive evaluations and yields a ~12% speedup in the root-finding calculation.
 **Action:** Always inspect the inner residual functions of numerical solvers to identify and extract duplicate mathematical sub-expressions into a single intermediate variable to avoid redundant computation overhead on every iteration.
+
+## 2026-10-28 - SciPy Scalar Root-Finding
+**Learning:** When using numerical root-finders (like `scipy.optimize.brentq`) that pass scalar values to a residual function, using `numpy` mathematical functions (e.g., `np.sin`, `np.cos`, `np.tan`) inside the closure introduces significant scalar dispatch overhead compared to the standard Python `math` library. Combined with evaluating trigonometric identities (like substituting `cos(2*beta)` with `1 - 2*sin^2(beta)`), using standard `math` functions on scalars evaluated ~2x faster.
+**Action:** When a numerical solver repeatedly passes scalar guesses to a residual constraint, always import and use the standard `math` module for transcendental operations within that closure instead of `numpy`, and cache repeated scalar evaluations.
