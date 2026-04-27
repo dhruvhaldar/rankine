@@ -72,7 +72,7 @@
 
         <section class="section" id="nozzle" tabindex="-1" aria-labelledby="nozzle-heading">
             <h2 id="nozzle-heading">Quasi-1D Nozzle Flow</h2>
-            <form action="/plot/nozzle#nozzle" method="post" aria-labelledby="nozzle-heading">
+            <form action="/plot/nozzle#nozzle" method="post" aria-labelledby="nozzle-heading" autocomplete="off">
                 <label for="P0">Stagnation Pressure P<sub>0</sub> (Pa) <span aria-hidden="true">*</span>: <small>Must be between 0 and 10,000,000</small></label>
                 <input type="number" id="P0" name="P0" min="0" max="10000000" step="any" inputmode="decimal" value="101325" placeholder="e.g., 101325" required>
                 <label for="back_pressure">Back Pressure (Pa) <span aria-hidden="true">*</span>: <small>Must be between 0 and 10,000,000</small></label>
@@ -87,14 +87,14 @@
             <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
             {% else %}
             <div class="empty-state">
-                <p>Fill out the parameters and click <strong>Calculate & Plot</strong> to generate the nozzle flow distribution.</p>
+                <p><span aria-hidden="true">🚀</span> Fill out the parameters and click <strong>Calculate & Plot</strong> to generate the nozzle flow distribution.</p>
             </div>
             {% endif %}
         </section>
 
         <section class="section" id="shock-polar" tabindex="-1" aria-labelledby="shock-polar-heading">
             <h2 id="shock-polar-heading">Oblique Shock Polar</h2>
-            <form action="/plot/shock_polar#shock-polar" method="post" aria-labelledby="shock-polar-heading">
+            <form action="/plot/shock_polar#shock-polar" method="post" aria-labelledby="shock-polar-heading" autocomplete="off">
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (between 1.0 and 100.0), max 100 characters</small></label>
                 <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
@@ -106,14 +106,14 @@
             <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
             {% else %}
             <div class="empty-state">
-                <p>Enter up to 10 Mach numbers and click <strong>Generate Polar</strong> to view the shock polars.</p>
+                <p><span aria-hidden="true">📈</span> Enter up to 10 Mach numbers and click <strong>Generate Polar</strong> to view the shock polars.</p>
             </div>
             {% endif %}
         </section>
 
         <section class="section" id="shock-tube" tabindex="-1" aria-labelledby="shock-tube-heading">
             <h2 id="shock-tube-heading">Sod Shock Tube (Unsteady)</h2>
-            <form action="/plot/shock_tube#shock-tube" method="post" aria-labelledby="shock-tube-heading">
+            <form action="/plot/shock_tube#shock-tube" method="post" aria-labelledby="shock-tube-heading" autocomplete="off">
                 <label for="time">Time (s) <span aria-hidden="true">*</span>: <small>Must be between 0 and 100</small></label>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" required>
                 <button type="submit" aria-live="polite">Simulate</button>
@@ -122,7 +122,7 @@
             <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
             {% else %}
             <div class="empty-state">
-                <p>Specify the simulation time and click <strong>Simulate</strong> to see the unsteady shock tube properties.</p>
+                <p><span aria-hidden="true">💥</span> Specify the simulation time and click <strong>Simulate</strong> to see the unsteady shock tube properties.</p>
             </div>
             {% endif %}
         </section>
@@ -205,7 +205,7 @@
                     }
                     setTimeout(() => {
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerText = 'Calculating...';
+                        btn.innerText = '⏳ Calculating...';
                     }, 0);
                 }
             });
