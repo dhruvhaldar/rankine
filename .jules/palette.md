@@ -90,3 +90,7 @@
 ## 2026-07-10 - Securely Implementing sessionStorage for Form State
 **Learning:** While `sessionStorage` is excellent for preserving form data across full-page reloads, naive implementations (`document.querySelectorAll('input')`) can cause critical regressions. Using empty IDs as storage keys overwrites unrelated elements, and failing to clear the storage upon successful form submission permanently forces stale data on users, severely degrading the UX.
 **Action:** When implementing `sessionStorage` preservation, strictly filter out inputs without IDs, exclude incompatible types (`hidden`, `submit`, `button`, `checkbox`, `radio`), and always hook into the `submit` event to explicitly `sessionStorage.removeItem()` for the submitted form's inputs, ensuring a clean slate for future interactions.
+
+## 2024-04-27 - Scientific Form Autocomplete
+**Learning:** In scientific web tools containing heavy arrays of complex inputs (e.g., pressure ratios, nozzle areas) paired with inline helper text, native browser autocomplete history often visually overlaps and obscures critical context limits. When the tool includes its own state preservation mechanism (like `sessionStorage`), the default browser autofill behavior becomes redundant and actively detrimental to the user experience.
+**Action:** Always add `autocomplete="off"` to `<form>` tags in technical, calculation-heavy interfaces to ensure a clean UI and prevent browser history drop-downs from interfering with helper text or inline validation.
