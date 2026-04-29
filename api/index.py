@@ -112,11 +112,13 @@ def plot_nozzle():
         fig = res.plot_distribution()
 
         # Save to buffer
-        buf = io.BytesIO()
-        fig.savefig(buf, format='png')
-        buf.seek(0)
-        plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
-        plt.close(fig)
+        try:
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png')
+            buf.seek(0)
+            plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
+        finally:
+            plt.close(fig)
 
         return render_template('index.html', nozzle_plot=plot_url)
     except RequestEntityTooLarge:
@@ -156,11 +158,13 @@ def plot_shock_polar():
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
 
-        buf = io.BytesIO()
-        fig.savefig(buf, format='png')
-        buf.seek(0)
-        plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
-        plt.close(fig)
+        try:
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png')
+            buf.seek(0)
+            plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
+        finally:
+            plt.close(fig)
 
         return render_template('index.html', polar_plot=plot_url)
     except RequestEntityTooLarge:
@@ -199,11 +203,13 @@ def plot_shock_tube():
 
         fig = tube.plot_properties()
 
-        buf = io.BytesIO()
-        fig.savefig(buf, format='png')
-        buf.seek(0)
-        plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
-        plt.close(fig)
+        try:
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png')
+            buf.seek(0)
+            plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
+        finally:
+            plt.close(fig)
 
         return render_template('index.html', tube_plot=plot_url)
     except RequestEntityTooLarge:
