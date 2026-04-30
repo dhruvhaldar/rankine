@@ -205,7 +205,7 @@
                     }
                     setTimeout(() => {
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerText = '⏳ Calculating...';
+                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
                     }, 0);
                 }
             });
