@@ -94,3 +94,7 @@
 ## 2024-04-27 - Scientific Form Autocomplete
 **Learning:** In scientific web tools containing heavy arrays of complex inputs (e.g., pressure ratios, nozzle areas) paired with inline helper text, native browser autocomplete history often visually overlaps and obscures critical context limits. When the tool includes its own state preservation mechanism (like `sessionStorage`), the default browser autofill behavior becomes redundant and actively detrimental to the user experience.
 **Action:** Always add `autocomplete="off"` to `<form>` tags in technical, calculation-heavy interfaces to ensure a clean UI and prevent browser history drop-downs from interfering with helper text or inline validation.
+
+## 2025-04-28 - ARIA-Live Regions & Dynamically Injected Emojis
+**Learning:** When updating `aria-live` regions (like a button's text changing to "⏳ Calculating..."), screen readers will announce the literal names of any dynamically injected emojis (e.g., "Hourglass with flowing sand"). This creates a verbose and confusing user experience.
+**Action:** When dynamically injecting status updates containing decorative emojis via JavaScript, use `innerHTML` instead of `innerText` and wrap the emojis in `<span aria-hidden="true">` to ensure screen readers focus solely on the semantic text.
