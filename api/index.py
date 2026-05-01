@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, send_file, g
 import io
 import base64
 import secrets
-from markupsafe import escape
 from werkzeug.exceptions import RequestEntityTooLarge
 import logging
 import matplotlib
@@ -41,10 +40,14 @@ def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     # Use nonce for inline scripts to prevent XSS while allowing valid functionality
-    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{g.csp_nonce}'; img-src 'self' data:;"
+    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{g.csp_nonce}'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none';"
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+    response.headers['Cross-Origin-Resource-Policy'] = 'same-origin'
+    response.headers['Cache-Control'] = 'no-store, max-age=0'
     return response
 
 @app.errorhandler(404)
