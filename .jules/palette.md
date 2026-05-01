@@ -98,3 +98,7 @@
 ## 2025-04-28 - ARIA-Live Regions & Dynamically Injected Emojis
 **Learning:** When updating `aria-live` regions (like a button's text changing to "⏳ Calculating..."), screen readers will announce the literal names of any dynamically injected emojis (e.g., "Hourglass with flowing sand"). This creates a verbose and confusing user experience.
 **Action:** When dynamically injecting status updates containing decorative emojis via JavaScript, use `innerHTML` instead of `innerText` and wrap the emojis in `<span aria-hidden="true">` to ensure screen readers focus solely on the semantic text.
+
+## 2024-05-18 - Form Submission Focus Management
+**Learning:** In a server-rendered application where form submissions reload the page with results below the form, default behavior leaves focus at the top of the page, forcing screen reader and keyboard users to navigate past all the inputs again to reach the result.
+**Action:** Append a hash fragment to the form's `action` URL (e.g., `#result`) and ensure the result container has a matching `id="result"` and `tabindex="-1"`. This causes the browser to natively scroll and shift focus directly to the new content upon load.
