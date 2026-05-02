@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, send_file, g
 import io
 import base64
 import secrets
-from werkzeug.exceptions import RequestEntityTooLarge
+from werkzeug.exceptions import RequestEntityTooLarge, BadRequest
 import logging
 import matplotlib
 import math
@@ -53,6 +53,10 @@ def add_security_headers(response):
 @app.errorhandler(404)
 def page_not_found(e):
     return "Error: The requested URL was not found on the server.", 404
+
+@app.errorhandler(400)
+def bad_request(e):
+    return "Error: Bad request.", 400
 
 @app.errorhandler(405)
 def method_not_allowed(e):
@@ -124,6 +128,8 @@ def plot_nozzle():
             plt.close(fig)
 
         return render_template('index.html', nozzle_plot=plot_url)
+    except BadRequest:
+        return "Error: Bad request.", 400
     except RequestEntityTooLarge:
         return "Error: Request payload is too large.", 413
     except Exception as e:
@@ -170,6 +176,8 @@ def plot_shock_polar():
             plt.close(fig)
 
         return render_template('index.html', polar_plot=plot_url)
+    except BadRequest:
+        return "Error: Bad request.", 400
     except RequestEntityTooLarge:
         return "Error: Request payload is too large.", 413
     except Exception as e:
@@ -215,6 +223,8 @@ def plot_shock_tube():
             plt.close(fig)
 
         return render_template('index.html', tube_plot=plot_url)
+    except BadRequest:
+        return "Error: Bad request.", 400
     except RequestEntityTooLarge:
         return "Error: Request payload is too large.", 413
     except Exception as e:
