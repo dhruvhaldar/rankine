@@ -102,3 +102,7 @@
 ## 2024-05-18 - Form Submission Focus Management
 **Learning:** In a server-rendered application where form submissions reload the page with results below the form, default behavior leaves focus at the top of the page, forcing screen reader and keyboard users to navigate past all the inputs again to reach the result.
 **Action:** Append a hash fragment to the form's `action` URL (e.g., `#result`) and ensure the result container has a matching `id="result"` and `tabindex="-1"`. This causes the browser to natively scroll and shift focus directly to the new content upon load.
+
+## 2024-05-18 - Prevent Accidental Number Input Scrolling
+**Learning:** Browsers natively change the value of `<input type="number">` fields when scrolling the mouse wheel while the input is focused. In data-dense applications with long pages, users often click an input, type a value, and then scroll down to the submit button without explicitly clicking away to blur the input. This unintentionally alters their input value by several ticks, causing silent data corruption and frustrating recalculations.
+**Action:** Prevent this hidden UX failure mode by attaching a global `wheel` event listener to the document that actively calls `.blur()` on `document.activeElement` if the focused element is a `type="number"` input.
