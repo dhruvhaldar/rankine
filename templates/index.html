@@ -63,6 +63,27 @@
             margin-top: 20px;
             font-size: 0.95em;
         }
+        a.download-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            color: #1f2937;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        a.download-btn:hover {
+            background-color: #e5e7eb;
+        }
+        a.download-btn:active {
+            transform: scale(0.98);
+        }
+        a.download-btn:focus-visible {
+            outline: 2px solid #0070f3;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
@@ -87,7 +108,7 @@
             <div id="nozzle-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" style="display:inline-block;padding:8px 16px;background:#f3f4f6;color:#1f2937;border-radius:4px;text-decoration:none;font-size:14px;border:1px solid #d1d5db;">Download Plot</a>
+                    <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn">Download Plot</a>
                 </div>
             </div>
             {% else %}
@@ -111,7 +132,7 @@
             <div id="shock-polar-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" style="display:inline-block;padding:8px 16px;background:#f3f4f6;color:#1f2937;border-radius:4px;text-decoration:none;font-size:14px;border:1px solid #d1d5db;">Download Plot</a>
+                    <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn">Download Plot</a>
                 </div>
             </div>
             {% else %}
@@ -132,7 +153,7 @@
             <div id="shock-tube-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" style="display:inline-block;padding:8px 16px;background:#f3f4f6;color:#1f2937;border-radius:4px;text-decoration:none;font-size:14px;border:1px solid #d1d5db;">Download Plot</a>
+                    <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn">Download Plot</a>
                 </div>
             </div>
             {% else %}
@@ -208,6 +229,14 @@
                     setTimeout(() => this.select(), 0);
                 });
             });
+
+            // Prevent accidental mouse wheel scrolling from changing number inputs
+            document.addEventListener('wheel', function(e) {
+                const activeEl = document.activeElement;
+                if (activeEl && activeEl.tagName === 'INPUT' && activeEl.type === 'number') {
+                    activeEl.blur();
+                }
+            }, { passive: true });
         });
 
         document.querySelectorAll('form').forEach(form => {
