@@ -106,3 +106,7 @@
 ## 2024-05-18 - Prevent Accidental Number Input Scrolling
 **Learning:** Browsers natively change the value of `<input type="number">` fields when scrolling the mouse wheel while the input is focused. In data-dense applications with long pages, users often click an input, type a value, and then scroll down to the submit button without explicitly clicking away to blur the input. This unintentionally alters their input value by several ticks, causing silent data corruption and frustrating recalculations.
 **Action:** Prevent this hidden UX failure mode by attaching a global `wheel` event listener to the document that actively calls `.blur()` on `document.activeElement` if the focused element is a `type="number"` input.
+
+## 2026-07-25 - Avoid ARIA-Live on High-Frequency Inputs
+**Learning:** Using `aria-live="polite"` on a dynamic character counter attached to a text input creates a terrible screen reader experience because it announces the new character count after *every single keystroke*, constantly interrupting the user's natural typing flow and causing them to lose track of what they are writing.
+**Action:** Never use `aria-live` on text input character counters. Instead, use `aria-describedby` on the input element pointing to the counter's ID to provide initial context, and optionally add visual feedback (like color changes) when approaching limits. Screen reader users can manually query the counter text if they need to check it without being bombarded while typing.

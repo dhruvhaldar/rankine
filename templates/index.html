@@ -124,7 +124,7 @@
                 <label for="machs">Mach Numbers (comma separated) <span aria-hidden="true">*</span>: <small>Max 10 numbers (between 1.0 and 100.0), max 100 characters</small></label>
                 <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
-                    <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter" aria-live="polite">13</span> / 100 characters</small>
+                    <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
                 <button type="submit" aria-live="polite">Generate Polar</button>
             </form>
@@ -217,7 +217,16 @@
             const machsInput = document.getElementById('machs');
             if (machsInput) {
                 machsInput.addEventListener('input', function() {
-                    document.getElementById('machs-counter').innerText = this.value.length;
+                    const counter = document.getElementById('machs-counter');
+                    const len = this.value.length;
+                    counter.innerText = len;
+                    if (len >= 90) {
+                        counter.style.color = '#d32f2f';
+                        counter.style.fontWeight = 'bold';
+                    } else {
+                        counter.style.color = '';
+                        counter.style.fontWeight = '';
+                    }
                 });
                 // Initialize counter on load to account for cached or autofilled values
                 machsInput.dispatchEvent(new Event('input', { bubbles: true }));
