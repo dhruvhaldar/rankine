@@ -1,4 +1,5 @@
 
+import math
 import numpy as np
 from scipy.optimize import brentq
 import matplotlib.pyplot as plt
@@ -53,18 +54,24 @@ class ShockTube:
         B_R = (gamma - 1.0) / (gamma + 1.0) * p_R
         exp_const_R = 2.0 * self.R['a'] / (gamma - 1.0)
 
+        # ⚡ Bolt Optimization: Algebraically expand power operations
+        # and precompute the constants to avoid redundant divisions and powers
+        pow_pL_inv = (1.0 / p_L) ** pow_const
+        pow_pR_inv = (1.0 / p_R) ** pow_const
+
         def residual(P):
             # Inline fL calculation
             if P > p_L:
-                fL = (P - p_L) * np.sqrt(A_L / (P + B_L))
+                # ⚡ Bolt Optimization: Use scalar math.sqrt instead of numpy
+                fL = (P - p_L) * math.sqrt(A_L / (P + B_L))
             else:
-                fL = exp_const_L * ((P / p_L) ** pow_const - 1.0)
+                fL = exp_const_L * ((P ** pow_const) * pow_pL_inv - 1.0)
 
             # Inline fR calculation
             if P > p_R:
-                fR = (P - p_R) * np.sqrt(A_R / (P + B_R))
+                fR = (P - p_R) * math.sqrt(A_R / (P + B_R))
             else:
-                fR = exp_const_R * ((P / p_R) ** pow_const - 1.0)
+                fR = exp_const_R * ((P ** pow_const) * pow_pR_inv - 1.0)
 
             return fL + fR + (uR - uL)
 
