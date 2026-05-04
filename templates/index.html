@@ -108,7 +108,7 @@
             <div id="nozzle-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn">Download Plot</a>
+                    <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn" aria-label="Download Nozzle Flow Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
             {% else %}
@@ -132,7 +132,7 @@
             <div id="shock-polar-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn">Download Plot</a>
+                    <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn" aria-label="Download Shock Polar Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
             {% else %}
@@ -153,7 +153,7 @@
             <div id="shock-tube-result" tabindex="-1" aria-label="Calculation Result">
                 <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
                 <div style="margin-top:10px;text-align:center;">
-                    <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn">Download Plot</a>
+                    <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn" aria-label="Download Shock Tube Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
             {% else %}
