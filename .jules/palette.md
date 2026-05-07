@@ -7,3 +7,7 @@
 ## 2026-05-06 - Context-Specific ARIA Labels and Respecting Reduced Motion
 **Learning:** When displaying dynamically generated result blocks to screen readers, using a generic `aria-label="Calculation Result"` across multiple forms causes ambiguity about which result is being presented. Additionally, when using CSS animations (like a fade-in) to smooth out server-rendered page load state changes, failing to respect `prefers-reduced-motion` can negatively affect users with vestibular disorders.
 **Action:** Always provide context-specific `aria-label` attributes for dynamic results (e.g., `"Nozzle Flow Result"`) and wrap any state transition animations in a `@media (prefers-reduced-motion: reduce)` block to ensure they gracefully degrade to `animation: none` for users who require it.
+
+## 2024-05-18 - Prevent iOS Safari Auto-Zoom on Inputs
+**Learning:** By default, iOS Safari will aggressively auto-zoom the page when a user focuses on a text or number `<input>` field if its font size is smaller than 16px. This creates a jarring UX where users are forced to manually pinch-to-zoom out after typing, particularly on mobile calculation tools.
+**Action:** Always ensure that `input[type="text"]` and `input[type="number"]` have a CSS `font-size: 16px;` rule (or larger) to prevent this automatic scaling while preserving the mobile layout.
