@@ -40,8 +40,19 @@ RATE_LIMIT_MAX_REQUESTS = 30
 def rate_limiter():
     # Only limit POST requests (computational endpoints)
     if request.method == 'POST':
-        client_ip = request.remote_addr
         current_time = time.time()
+
+        # Security: Prevent memory exhaustion from too many unique IPs
+        # Periodically evict stale IPs to prevent rate-limit bypass from blunt clear()
+        if len(rate_limit_data) > 10000:
+            for ip in list(rate_limit_data.keys()):
+                rate_limit_data[ip] = [t for t in rate_limit_data[ip] if current_time - t < RATE_LIMIT_WINDOW]
+                if not rate_limit_data[ip]:
+                    del rate_limit_data[ip]
+            if len(rate_limit_data) > 10000:
+                rate_limit_data.clear()
+
+        client_ip = request.remote_addr
 
         # Clean up old requests outside the window
         rate_limit_data[client_ip] = [t for t in rate_limit_data[client_ip] if current_time - t < RATE_LIMIT_WINDOW]
