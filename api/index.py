@@ -63,6 +63,26 @@ def rate_limiter():
         rate_limit_data[client_ip].append(current_time)
 
 @app.before_request
+def csrf_protect():
+    # Security: CSRF protection for state-changing POST requests
+    # Validates Origin or Referer header against expected host to prevent cross-site request forgery
+    if request.method == "POST":
+        origin = request.headers.get("Origin")
+        referer = request.headers.get("Referer")
+
+        from urllib.parse import urlparse
+        expected_host = request.host
+
+        if origin:
+            if urlparse(origin).netloc != expected_host:
+                return "Error: Invalid Origin.", 403
+        elif referer:
+            if urlparse(referer).netloc != expected_host:
+                return "Error: Invalid Referer.", 403
+        else:
+            return "Error: Missing Origin or Referer header.", 403
+
+@app.before_request
 def generate_csp_nonce():
     g.csp_nonce = secrets.token_hex(16)
 
@@ -76,7 +96,8 @@ def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     # Use nonce for inline scripts to prevent XSS while allowing valid functionality
-    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{g.csp_nonce}'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
+    csp_nonce = getattr(g, 'csp_nonce', '')
+    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'nonce-{csp_nonce}'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), fullscreen=()'
