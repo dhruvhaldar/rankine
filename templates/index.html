@@ -62,6 +62,20 @@
         /* Remove default focus ring on programmatic focus for result containers */
         [tabindex="-1"]:focus { outline: none; }
         .required-asterisk { color: #d32f2f; font-weight: bold; margin-left: 2px; }
+        kbd.submit-shortcut {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 0.8em;
+            margin-left: 6px;
+            font-family: monospace;
+        }
+        @media (pointer: coarse) {
+            kbd.submit-shortcut {
+                display: none;
+            }
+        }
         .empty-state {
             padding: 40px 20px;
             text-align: center;
@@ -124,7 +138,7 @@
                 <input type="number" id="A_throat" name="A_throat" min="0.01" max="100" step="any" inputmode="decimal" value="0.05" placeholder="e.g., 0.05" required>
                 <label for="A_exit">Exit Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be &ge; Throat Area, &le; 100, and exit/throat ratio &le; 100</small></label>
                 <input type="number" id="A_exit" name="A_exit" min="0.05" max="100" step="any" inputmode="decimal" value="0.1" placeholder="e.g., 0.1" required>
-                <button type="submit" aria-live="polite">Calculate & Plot</button>
+                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to calculate">Calculate & Plot <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if nozzle_plot %}
             <div id="nozzle-result" tabindex="-1" role="region" aria-label="Nozzle Flow Result">
@@ -148,7 +162,7 @@
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
                     <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
-                <button type="submit" aria-live="polite">Generate Polar</button>
+                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to generate polar">Generate Polar <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if polar_plot %}
             <div id="shock-polar-result" tabindex="-1" role="region" aria-label="Shock Polar Result">
@@ -169,7 +183,7 @@
             <form action="/plot/shock_tube#shock-tube-result" method="post" aria-labelledby="shock-tube-heading" autocomplete="off">
                 <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be between 0 and 100</small></label>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" required>
-                <button type="submit" aria-live="polite">Simulate</button>
+                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if tube_plot %}
             <div id="shock-tube-result" tabindex="-1" role="region" aria-label="Shock Tube Result">
@@ -268,6 +282,17 @@
                     activeEl.blur();
                 }
             }, { passive: true });
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                const activeEl = document.activeElement;
+                const form = activeEl ? activeEl.closest('form') : null;
+                if (form) {
+                    e.preventDefault();
+                    form.requestSubmit();
+                }
+            }
         });
 
         document.querySelectorAll('form').forEach(form => {
