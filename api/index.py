@@ -58,6 +58,7 @@ def rate_limiter():
         rate_limit_data[client_ip] = [t for t in rate_limit_data[client_ip] if current_time - t < RATE_LIMIT_WINDOW]
 
         if len(rate_limit_data[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+            logger.warning(f"Security: Rate limit exceeded for IP {client_ip} on endpoint {request.path}")
             return "Error: Too many requests. Please try again later.", 429
 
         rate_limit_data[client_ip].append(current_time)
@@ -75,11 +76,14 @@ def csrf_protect():
 
         if origin:
             if urlparse(origin).netloc != expected_host:
+                logger.warning(f"Security: CSRF validation failed - Invalid Origin: {origin} from IP {request.remote_addr}")
                 return "Error: Invalid Origin.", 403
         elif referer:
             if urlparse(referer).netloc != expected_host:
+                logger.warning(f"Security: CSRF validation failed - Invalid Referer: {referer} from IP {request.remote_addr}")
                 return "Error: Invalid Referer.", 403
         else:
+            logger.warning(f"Security: CSRF validation failed - Missing Origin and Referer from IP {request.remote_addr}")
             return "Error: Missing Origin or Referer header.", 403
 
 @app.before_request
@@ -121,6 +125,7 @@ def method_not_allowed(e):
 
 @app.errorhandler(413)
 def request_entity_too_large(e):
+    logger.warning(f"Security: Request payload too large (413) from IP {request.remote_addr} on endpoint {request.path}")
     return "Error: Request payload is too large.", 413
 
 @app.errorhandler(429)
