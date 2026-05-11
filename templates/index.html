@@ -282,6 +282,21 @@
                     activeEl.blur();
                 }
             }, { passive: true });
+
+            // Dynamically update keyboard shortcuts based on OS
+            const isMac = navigator.userAgent.includes('Mac');
+            document.querySelectorAll('button[aria-keyshortcuts]').forEach(btn => {
+                const kbd = btn.querySelector('kbd.submit-shortcut');
+                if (isMac) {
+                    btn.setAttribute('aria-keyshortcuts', 'Meta+Enter');
+                    btn.title = btn.title.replace('Ctrl+Enter or ', '');
+                    if (kbd) kbd.innerText = '⌘↵';
+                } else {
+                    btn.setAttribute('aria-keyshortcuts', 'Control+Enter');
+                    btn.title = btn.title.replace(' or Cmd+Enter', '');
+                    if (kbd) kbd.innerText = 'Ctrl+↵';
+                }
+            });
         });
 
         document.addEventListener('keydown', function(e) {
