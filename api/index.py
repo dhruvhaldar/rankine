@@ -76,14 +76,14 @@ def csrf_protect():
 
         if origin:
             if urlparse(origin).netloc != expected_host:
-                logger.warning(f"Security: CSRF validation failed - Invalid Origin: {origin} from IP {request.remote_addr}")
+                logger.warning(f"Security: CSRF validation failed - Invalid Origin: {origin} from IP {request.remote_addr} on endpoint {request.path}")
                 return "Error: Invalid Origin.", 403
         elif referer:
             if urlparse(referer).netloc != expected_host:
-                logger.warning(f"Security: CSRF validation failed - Invalid Referer: {referer} from IP {request.remote_addr}")
+                logger.warning(f"Security: CSRF validation failed - Invalid Referer: {referer} from IP {request.remote_addr} on endpoint {request.path}")
                 return "Error: Invalid Referer.", 403
         else:
-            logger.warning(f"Security: CSRF validation failed - Missing Origin and Referer from IP {request.remote_addr}")
+            logger.warning(f"Security: CSRF validation failed - Missing Origin and Referer from IP {request.remote_addr} on endpoint {request.path}")
             return "Error: Missing Origin or Referer header.", 403
 
 @app.before_request
@@ -197,6 +197,7 @@ def plot_nozzle():
     except BadRequest:
         return "Error: Bad request.", 400
     except RequestEntityTooLarge:
+        logger.warning(f"Security: Request payload too large (413) from IP {request.remote_addr} on endpoint {request.path}")
         return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
@@ -245,6 +246,7 @@ def plot_shock_polar():
     except BadRequest:
         return "Error: Bad request.", 400
     except RequestEntityTooLarge:
+        logger.warning(f"Security: Request payload too large (413) from IP {request.remote_addr} on endpoint {request.path}")
         return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
@@ -292,6 +294,7 @@ def plot_shock_tube():
     except BadRequest:
         return "Error: Bad request.", 400
     except RequestEntityTooLarge:
+        logger.warning(f"Security: Request payload too large (413) from IP {request.remote_addr} on endpoint {request.path}")
         return "Error: Request payload is too large.", 413
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
