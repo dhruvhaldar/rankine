@@ -20,3 +20,6 @@
 ## 2026-05-11 - Dynamic OS-Specific Keyboard Shortcut Hints
 **Learning:** Hardcoding a Mac-specific shortcut hint like `⌘↵` (or a verbose `Ctrl+Enter / Cmd+Enter`) in forms with keyboard shortcuts can confuse non-Mac users or clutter the UI. Furthermore, static `aria-keyshortcuts` attributes are not optimal when the exact OS shortcut differs.
 **Action:** Always dynamically detect the user's OS via `navigator.userAgent.includes('Mac')` on the client side to cleanly update `<kbd>` text, `title` attributes, and explicit `aria-keyshortcuts` attributes to match their specific operating system (`Meta+Enter` vs `Control+Enter`).
+## 2026-05-12 - Separate Form Helper Text from Labels
+**Learning:** Nesting verbose helper text or instructions (like `<small>`) inside a `<label>` element forces screen readers to read the entire monolithic block of text as the accessible name for the input. This is confusing and disrupts the user's ability to quickly identify the input.
+**Action:** Always extract helper text out of the `<label>`, assign it a unique ID, and programmatically link it to the `<input>` using the `aria-describedby` attribute. This allows the screen reader to clearly announce the label first, followed by the description.

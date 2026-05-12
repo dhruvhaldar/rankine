@@ -10,8 +10,8 @@
         .container { max-width: 800px; margin: 0 auto; }
         :target { scroll-margin-top: 2rem; }
         .section { margin-bottom: 40px; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; cursor: pointer; }
-        label small { display: block; color: #6b7280; font-weight: normal; margin-top: 2px; }
+        label { display: block; margin-bottom: 5px; cursor: pointer; font-weight: bold; }
+        .form-help { display: block; color: #6b7280; font-size: 0.85em; margin-bottom: 8px; margin-top: -3px; }
         input[type="text"], input[type="number"] {
             width: 100%;
             padding: 8px;
@@ -130,14 +130,18 @@
         <section class="section" id="nozzle" tabindex="-1" aria-labelledby="nozzle-heading">
             <h2 id="nozzle-heading">Quasi-1D Nozzle Flow</h2>
             <form action="/plot/nozzle#nozzle-result" method="post" aria-labelledby="nozzle-heading" autocomplete="off">
-                <label for="P0">Stagnation Pressure P<sub>0</sub> (Pa) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be between 0 and 10,000,000</small></label>
-                <input type="number" id="P0" name="P0" min="0" max="10000000" step="any" inputmode="decimal" value="101325" placeholder="e.g., 101325" required>
-                <label for="back_pressure">Back Pressure (Pa) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be between 0 and 10,000,000</small></label>
-                <input type="number" id="back_pressure" name="back_pressure" min="0" max="10000000" step="any" inputmode="decimal" value="95000" placeholder="e.g., 95000" required>
-                <label for="A_throat">Throat Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be strictly positive and &le; 100</small></label>
-                <input type="number" id="A_throat" name="A_throat" min="0.01" max="100" step="any" inputmode="decimal" value="0.05" placeholder="e.g., 0.05" required>
-                <label for="A_exit">Exit Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be &ge; Throat Area, &le; 100, and exit/throat ratio &le; 100</small></label>
-                <input type="number" id="A_exit" name="A_exit" min="0.05" max="100" step="any" inputmode="decimal" value="0.1" placeholder="e.g., 0.1" required>
+                <label for="P0">Stagnation Pressure P<sub>0</sub> (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="P0-help" class="form-help">Must be between 0 and 10,000,000</span>
+                <input type="number" id="P0" name="P0" min="0" max="10000000" step="any" inputmode="decimal" value="101325" placeholder="e.g., 101325" aria-describedby="P0-help" required>
+                <label for="back_pressure">Back Pressure (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="back_pressure-help" class="form-help">Must be between 0 and 10,000,000</span>
+                <input type="number" id="back_pressure" name="back_pressure" min="0" max="10000000" step="any" inputmode="decimal" value="95000" placeholder="e.g., 95000" aria-describedby="back_pressure-help" required>
+                <label for="A_throat">Throat Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="A_throat-help" class="form-help">Must be strictly positive and &le; 100</span>
+                <input type="number" id="A_throat" name="A_throat" min="0.01" max="100" step="any" inputmode="decimal" value="0.05" placeholder="e.g., 0.05" aria-describedby="A_throat-help" required>
+                <label for="A_exit">Exit Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="A_exit-help" class="form-help">Must be &ge; Throat Area, &le; 100, and exit/throat ratio &le; 100</span>
+                <input type="number" id="A_exit" name="A_exit" min="0.05" max="100" step="any" inputmode="decimal" value="0.1" placeholder="e.g., 0.1" aria-describedby="A_exit-help" required>
                 <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to calculate">Calculate & Plot <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if nozzle_plot %}
@@ -157,8 +161,9 @@
         <section class="section" id="shock-polar" tabindex="-1" aria-labelledby="shock-polar-heading">
             <h2 id="shock-polar-heading">Oblique Shock Polar</h2>
             <form action="/plot/shock_polar#shock-polar-result" method="post" aria-labelledby="shock-polar-heading" autocomplete="off">
-                <label for="machs">Mach Numbers (comma separated) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Max 10 numbers (between 1.0 and 100.0), max 100 characters</small></label>
-                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
+                <label for="machs">Mach Numbers (comma separated) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="machs-help" class="form-help">Max 10 numbers (between 1.0 and 100.0), max 100 characters</span>
+                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-help machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" required>
                 <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
                     <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
@@ -181,8 +186,9 @@
         <section class="section" id="shock-tube" tabindex="-1" aria-labelledby="shock-tube-heading">
             <h2 id="shock-tube-heading">Sod Shock Tube (Unsteady)</h2>
             <form action="/plot/shock_tube#shock-tube-result" method="post" aria-labelledby="shock-tube-heading" autocomplete="off">
-                <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>: <small>Must be between 0 and 100</small></label>
-                <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" required>
+                <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
+                <span id="time-help" class="form-help">Must be between 0 and 100</span>
+                <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" aria-describedby="time-help" required>
                 <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if tube_plot %}
