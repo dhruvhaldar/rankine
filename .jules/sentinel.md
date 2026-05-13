@@ -7,3 +7,8 @@
 **Vulnerability:** The application was missing audit logs for security mechanisms, specifically rate limit violations, CSRF origin/referer mismatches, and oversized payload errors (413). Without these logs, it is difficult or impossible to identify and analyze attack attempts against the API.
 **Learning:** Defense-in-depth mechanisms, while effective at preventing immediate exploitation, must also provide visibility. A silent failure pattern allows attackers to probe endpoints indefinitely without triggering alerts.
 **Prevention:** Always add explicit logging (e.g., `logger.warning`) capturing relevant context (IP, path, headers) when security protections (rate limiting, CSRF validation, payload limits) reject a request.
+
+## 2026-05-13 - Mitigate Log Injection (CRLF) via unescaped path and headers
+**Vulnerability:** The application was vulnerable to Log Forging (CRLF Injection) because user-controllable input from `request.path` and header values (`Origin`, `Referer`) were written directly to `logger.warning` without sanitization. An attacker could embed `\r\n` characters in these fields to inject fake log entries, potentially confusing automated log analysis tools or hiding malicious activity.
+**Learning:** Even built-in framework attributes like `request.path` and standard HTTP headers can contain unescaped newline characters. Standard Python logging does not automatically escape these.
+**Prevention:** Always implement a dedicated string sanitization function (e.g., replacing `\n` and `\r` with their escaped representations `\\n` and `\\r`) and apply it to all user-controlled data before passing it to logging functions.
