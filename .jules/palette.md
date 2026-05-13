@@ -23,3 +23,10 @@
 ## 2026-05-12 - Separate Form Helper Text from Labels
 **Learning:** Nesting verbose helper text or instructions (like `<small>`) inside a `<label>` element forces screen readers to read the entire monolithic block of text as the accessible name for the input. This is confusing and disrupts the user's ability to quickly identify the input.
 **Action:** Always extract helper text out of the `<label>`, assign it a unique ID, and programmatically link it to the `<input>` using the `aria-describedby` attribute. This allows the screen reader to clearly announce the label first, followed by the description.
+## 2024-05-13 - Prevent Browser Interference on Technical Text Inputs
+**Learning:** Browsers natively apply spellcheck, autocapitalize, and autocorrect to `<input type="text">` fields. For technical strings like a comma-separated list of Mach numbers (e.g., "2.0, 3.0"), these corrections cause squiggly error lines and disruptive auto-corrections, harming the UX.
+**Action:** When creating text inputs intended for technical data or formatting (like code or mathematical arrays), always explicitly add `spellcheck="false" autocorrect="off" autocapitalize="none"` to prevent unhelpful browser interference.
+
+## 2024-05-13 - Improve Loading Button Semantics
+**Learning:** While `cursor: not-allowed` is appropriate for a truly disabled button, a button temporarily deactivated during an async submission (often indicated by `aria-disabled="true"` and a loading spinner) should communicate that it is processing, not permanently blocked. Using `cursor: not-allowed` creates cognitive dissonance when the user is explicitly waiting for the result of their click.
+**Action:** Split the CSS for disabled states. Use `cursor: not-allowed` for `button:disabled` (permanently unclickable), and `cursor: wait` for `button[aria-disabled="true"]` (temporarily processing).
