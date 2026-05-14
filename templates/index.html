@@ -136,10 +136,10 @@
             <h2 id="nozzle-heading">Quasi-1D Nozzle Flow</h2>
             <form action="/plot/nozzle#nozzle-result" method="post" aria-labelledby="nozzle-heading" autocomplete="off">
                 <label for="P0">Stagnation Pressure P<sub>0</sub> (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
-                <span id="P0-help" class="form-help">Must be between 0 and 10,000,000</span>
+                <span id="P0-help" class="form-help">Must be strictly positive and &le; 10,000,000</span>
                 <input type="number" id="P0" name="P0" min="0" max="10000000" step="any" inputmode="decimal" value="101325" placeholder="e.g., 101325" aria-describedby="P0-help" required>
                 <label for="back_pressure">Back Pressure (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
-                <span id="back_pressure-help" class="form-help">Must be between 0 and 10,000,000</span>
+                <span id="back_pressure-help" class="form-help">Must be strictly positive and &le; 10,000,000</span>
                 <input type="number" id="back_pressure" name="back_pressure" min="0" max="10000000" step="any" inputmode="decimal" value="95000" placeholder="e.g., 95000" aria-describedby="back_pressure-help" required>
                 <label for="A_throat">Throat Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="A_throat-help" class="form-help">Must be strictly positive and &le; 100</span>
@@ -192,7 +192,7 @@
             <h2 id="shock-tube-heading">Sod Shock Tube (Unsteady)</h2>
             <form action="/plot/shock_tube#shock-tube-result" method="post" aria-labelledby="shock-tube-heading" autocomplete="off">
                 <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
-                <span id="time-help" class="form-help">Must be between 0 and 100</span>
+                <span id="time-help" class="form-help">Must be strictly positive and &le; 100</span>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" aria-describedby="time-help" required>
                 <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
@@ -242,6 +242,23 @@
                     element.addEventListener('input', () => {
                         sessionStorage.setItem(storageKey, element.value);
                     });
+                }
+            });
+
+            // Add inline validation for strictly positive inputs to prevent 400 errors on 0
+            ['P0', 'back_pressure', 'time'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const val = parseFloat(this.value);
+                        if (!isNaN(val) && val <= 0) {
+                            this.setCustomValidity('Value must be strictly positive (greater than 0).');
+                        } else {
+                            this.setCustomValidity('');
+                        }
+                    });
+                    // Initialize constraint on load for default/autofilled values
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
                 }
             });
 
