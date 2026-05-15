@@ -70,7 +70,7 @@ class ObliqueShock:
         # Expected speedup: ~2x faster brentq evaluations by using scalar math
         # instead of numpy, and reusing sin^2 instead of evaluating cos.
         import math
-        M2 = M**2
+        M2 = M * M
         c_gamma = gamma + 1.0
 
         # Theta-Beta-M relation
@@ -106,9 +106,10 @@ class ObliqueShock:
         # Find peak by minimizing -theta(beta)
         # ⚡ Bolt Optimization: Replacing minimize_scalar with analytical exact solution
         # Expected speedup: ~4x faster for oblique shock solving
-        term1 = (gamma + 1.0) * M**2 - 4.0
-        term2 = np.sqrt((gamma + 1.0) * ((gamma + 1.0) * M**4 + 8.0 * (gamma - 1.0) * M**2 + 16.0))
-        sin2_beta = (term1 + term2) / (4.0 * gamma * M**2)
+        # Further optimization: algebra extraction and replacing **2 overhead with scalar multiplication
+        term1 = c_gamma * M2 - 4.0
+        term2 = np.sqrt(c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0))
+        sin2_beta = (term1 + term2) / (4.0 * gamma * M2)
         beta_at_max = np.arcsin(np.sqrt(sin2_beta))
 
         max_theta = ObliqueShock.theta_beta_m(beta_at_max, M, gamma)
