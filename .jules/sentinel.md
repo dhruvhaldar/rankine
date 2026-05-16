@@ -12,3 +12,8 @@
 **Vulnerability:** The application was vulnerable to Log Forging (CRLF Injection) because user-controllable input from `request.path` and header values (`Origin`, `Referer`) were written directly to `logger.warning` without sanitization. An attacker could embed `\r\n` characters in these fields to inject fake log entries, potentially confusing automated log analysis tools or hiding malicious activity.
 **Learning:** Even built-in framework attributes like `request.path` and standard HTTP headers can contain unescaped newline characters. Standard Python logging does not automatically escape these.
 **Prevention:** Always implement a dedicated string sanitization function (e.g., replacing `\n` and `\r` with their escaped representations `\\n` and `\\r`) and apply it to all user-controlled data before passing it to logging functions.
+
+## 2026-05-16 - Fix rate limit bypass via dictionary clear
+**Vulnerability:** The rate limiter implemented via `collections.defaultdict` had a naive eviction mechanism where it cleared the entire dictionary if the number of tracked IPs exceeded 10,000. An attacker could exploit this by making requests from 10,000 spoofed or distributed IPs to trigger the clear, effectively resetting the rate limits for everyone and bypassing the DoS protection.
+**Learning:** In-memory tracking structures with hard limits must use safe eviction strategies (e.g., popping the oldest entries) rather than blunt `.clear()` resets, which inherently cause system-wide state resets.
+**Prevention:** When enforcing size limits on state tracking dictionaries, always evict only the oldest or least recently used entries. In Python 3.7+, dictionary insertion order is preserved, allowing safe O(1) eviction via `dict.pop(next(iter(dict)))`.
