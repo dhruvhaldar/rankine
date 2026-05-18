@@ -55,8 +55,8 @@ def rate_limiter():
                 rate_limit_data[ip] = [t for t in rate_limit_data[ip] if current_time - t < RATE_LIMIT_WINDOW]
                 if not rate_limit_data[ip]:
                     del rate_limit_data[ip]
-            if len(rate_limit_data) > 10000:
-                rate_limit_data.clear()
+            while len(rate_limit_data) > 10000:
+                rate_limit_data.pop(next(iter(rate_limit_data)))
 
         client_ip = request.remote_addr
 
