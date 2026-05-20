@@ -39,3 +39,7 @@
 ## 2024-05-18 - Preserve Calculator Input State
 **Learning:** When building iterative calculation tools that reload the page on submission without server-side input re-population, aggressively clearing `sessionStorage` upon successful submission forces users to re-enter all data if they want to tweak a single parameter. This causes significant friction for exploration.
 **Action:** For iterative tools and calculators, do NOT clear `sessionStorage` form state upon submission. Allow the stored state to persist so users can seamlessly tweak inputs and recalculate without starting over.
+
+## 2024-05-18 - Preserve State Across Path Changes
+**Learning:** When using `sessionStorage` to preserve form inputs, namespacing keys by `window.location.pathname` breaks state preservation for forms that change the URL path upon submission (e.g., from `/` to `/plot/nozzle`), causing inputs to reset and frustrating users who want to tweak parameters.
+**Action:** For single-page tools where form submissions alter the URL path, use a static, app-wide `sessionStorage` prefix (e.g., `const storagePrefix = 'form_state_rankine_';`) instead of dynamically relying on `window.location.pathname`.
