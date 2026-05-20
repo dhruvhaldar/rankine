@@ -245,8 +245,8 @@
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
             // Restore form states from sessionStorage to prevent data loss on reload
-            // Namespaced by path to prevent cross-page collisions
-            const storagePrefix = 'form_state_' + window.location.pathname + '_';
+            // Use a static namespace to prevent data loss when form actions change the path
+            const storagePrefix = 'form_state_rankine_';
             const excludedTypes = ['hidden', 'submit', 'button', 'checkbox', 'radio', 'password', 'file'];
 
             document.querySelectorAll('input, textarea, select').forEach(element => {
