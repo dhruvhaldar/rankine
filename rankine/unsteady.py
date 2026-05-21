@@ -286,7 +286,7 @@ class ShockTube:
 
         x = self.results['x']
 
-        fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+        fig, axs = plt.subplots(2, 2, figsize=(10, 8), layout='tight')
 
         axs[0, 0].plot(x, self.results['rho'])
         axs[0, 0].set_title('Density')
@@ -304,5 +304,4 @@ class ShockTube:
         axs[1, 1].set_title('Temperature')
         axs[1, 1].grid(True)
 
-        plt.tight_layout()
         return fig
