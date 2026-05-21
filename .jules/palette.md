@@ -43,3 +43,6 @@
 ## 2024-05-18 - Preserve State Across Path Changes
 **Learning:** When using `sessionStorage` to preserve form inputs, namespacing keys by `window.location.pathname` breaks state preservation for forms that change the URL path upon submission (e.g., from `/` to `/plot/nozzle`), causing inputs to reset and frustrating users who want to tweak parameters.
 **Action:** For single-page tools where form submissions alter the URL path, use a static, app-wide `sessionStorage` prefix (e.g., `const storagePrefix = 'form_state_rankine_';`) instead of dynamically relying on `window.location.pathname`.
+## 2024-05-21 - Fix stuck loading buttons on back navigation (BFCache)
+**Learning:** When using JavaScript to change button states to "Calculating..." upon form submission, users navigating "back" via the browser's Back-Forward Cache (BFCache) will see a stuck loading button.
+**Action:** Always listen for the `pageshow` event and check `event.persisted` to restore the button's original state and `aria-disabled` attributes if the page is restored from cache.
