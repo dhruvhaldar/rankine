@@ -46,3 +46,7 @@
 ## 2024-05-21 - Fix stuck loading buttons on back navigation (BFCache)
 **Learning:** When using JavaScript to change button states to "Calculating..." upon form submission, users navigating "back" via the browser's Back-Forward Cache (BFCache) will see a stuck loading button.
 **Action:** Always listen for the `pageshow` event and check `event.persisted` to restore the button's original state and `aria-disabled` attributes if the page is restored from cache.
+
+## 2024-05-22 - Dynamic Page Titles for Server-Rendered Form Results
+**Learning:** When a form submission relies on a full server-side reload rather than AJAX, screen readers announce the page title again. If the title is static (e.g., just the app name), users lose context about whether their submission was successful or what state the page is in without navigating through the DOM.
+**Action:** Always dynamically update the `<title>` tag for server-rendered result pages (e.g., prepending "Result - ") to immediately inform screen readers of the new state upon load.
