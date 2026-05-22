@@ -138,7 +138,7 @@ class NozzleResults:
         self.u = u
 
     def plot_distribution(self):
-        fig, ax1 = plt.subplots()
+        fig, ax1 = plt.subplots(layout='tight')
 
         ax1.set_xlabel('Position (x)')
         ax1.set_ylabel('Pressure (Pa)', color='tab:blue')
@@ -151,7 +151,6 @@ class NozzleResults:
         ax2.tick_params(axis='y', labelcolor='tab:red')
 
         plt.title('Nozzle Flow Distribution')
-        fig.tight_layout()
         return fig
 
 

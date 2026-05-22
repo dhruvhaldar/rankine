@@ -9,3 +9,6 @@
 ## 2024-05-19 - Numpy Array Fast Path Polymorphism
 **Learning:** In highly mathematical Python functions relying on NumPy arrays (like `rankine` isentropic flow calculations), adding a simple `if M == 0` scalar fast path can throw a `ValueError` for array inputs. To cleanly handle both scalars and arrays without explicit `isinstance` checks (which are slow), you can use an EAFP pattern: wrap the fast scalar operations (`m_sq = M * M`) in a `try...except (ValueError, TypeError): pass` block. It handles array logic (`ValueError`) and Python list logic (`TypeError`) cleanly while bypassing the performance penalty of `pow(M, 2)` for scalars.
 **Action:** Always wrap standard scalar math fast-paths using a `try...except (ValueError, TypeError): pass` block when poly-morphic math functions need to process both fast scalars and slower numpy arrays/lists.
+## 2024-05-21 - Matplotlib Plot Layout Initialization
+**Learning:** In Matplotlib (>= 3.6.0), calling `fig.tight_layout()` or `plt.tight_layout()` after plotting triggers a secondary layout computation and an expensive re-draw.
+**Action:** To significantly speed up plot generation, pass the `layout='tight'` parameter directly during initialization (e.g., `plt.subplots(layout='tight')`) to calculate the optimal layout just-in-time during the primary draw pipeline.
