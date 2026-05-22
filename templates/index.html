@@ -364,11 +364,25 @@
                         return;
                     }
                     setTimeout(() => {
+                        btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
                         btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
                     }, 0);
                 }
             });
+        });
+
+        // Restore button state when navigating back via Back-Forward Cache (BFCache)
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                document.querySelectorAll('button[aria-disabled="true"]').forEach(btn => {
+                    btn.removeAttribute('aria-disabled');
+                    const originalHtml = btn.getAttribute('data-original-html');
+                    if (originalHtml) {
+                        btn.innerHTML = originalHtml;
+                    }
+                });
+            }
         });
     </script>
 </body>
