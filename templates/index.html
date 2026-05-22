@@ -3,7 +3,15 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if nozzle_plot %}
+    <title>Nozzle Flow Result - Rankine Compressible Flow</title>
+    {% elif polar_plot %}
+    <title>Shock Polar Result - Rankine Compressible Flow</title>
+    {% elif tube_plot %}
+    <title>Shock Tube Result - Rankine Compressible Flow</title>
+    {% else %}
     <title>Rankine Compressible Flow</title>
+    {% endif %}
     <style>
         html { scroll-behavior: smooth; }
         body { font-family: Arial, sans-serif; margin: 20px; }
