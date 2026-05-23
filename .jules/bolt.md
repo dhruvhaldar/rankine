@@ -12,3 +12,7 @@
 ## 2024-05-21 - Matplotlib Plot Layout Initialization
 **Learning:** In Matplotlib (>= 3.6.0), calling `fig.tight_layout()` or `plt.tight_layout()` after plotting triggers a secondary layout computation and an expensive re-draw.
 **Action:** To significantly speed up plot generation, pass the `layout='tight'` parameter directly during initialization (e.g., `plt.subplots(layout='tight')`) to calculate the optimal layout just-in-time during the primary draw pipeline.
+
+## 2024-05-23 - NumPy Polymorphic Math Optimization
+**Learning:** When attempting to optimize functions that handle both scalars and NumPy arrays, avoid brittle type-checking or hacky `try/except ValueError` blocks on mathematical operations. Instead, rely on universally faster math constructs like replacing `M**2` with `M * M` and replacing `(** -1.0)` with direct division `1.0 / (...)`. These mathematical identities execute faster across both data types without any branching logic.
+**Action:** Always prefer direct division operations (`1.0 / M`) over negative exponentiation (`M ** -1.0`), and multiplication (`M * M`) over exponentiation (`M ** 2`), letting NumPy and Python natively handle the polymorphism.
