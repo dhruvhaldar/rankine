@@ -159,6 +159,23 @@
                 animation: none;
             }
         }
+        @media print {
+            .quick-nav, button, a.download-btn, .empty-state, .form-help, kbd.submit-shortcut, #machs-counter-desc {
+                display: none !important;
+            }
+            input[type="text"], input[type="number"] {
+                border: none;
+                background: transparent;
+                padding: 0;
+                margin-bottom: 5px;
+            }
+            .section, img {
+                page-break-inside: avoid;
+            }
+            body {
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body>

@@ -50,3 +50,7 @@
 ## 2024-05-22 - Dynamic Page Titles for Server-Rendered Form Results
 **Learning:** When a form submission relies on a full server-side reload rather than AJAX, screen readers announce the page title again. If the title is static (e.g., just the app name), users lose context about whether their submission was successful or what state the page is in without navigating through the DOM.
 **Action:** Always dynamically update the `<title>` tag for server-rendered result pages (e.g., prepending "Result - ") to immediately inform screen readers of the new state upon load.
+
+## 2024-05-23 - Print Stylesheets for Engineering Tools
+**Learning:** Users of scientific/engineering tools often print or save calculation results as PDFs for reporting. Without print stylesheets, the resulting PDF contains UI clutter like navigation links, buttons, and form helper text, making it look unprofessional.
+**Action:** Always include a `@media print` block to hide interactive UI elements (`nav`, `button`, `.empty-state`, etc.), remove styling from input fields to display them as raw text, and use `page-break-inside: avoid` on sections and images to ensure cleanly formatted printed reports.
