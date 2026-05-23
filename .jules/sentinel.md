@@ -17,3 +17,8 @@
 **Vulnerability:** The in-memory rate limiter in `api/index.py` used `rate_limit_data.clear()` when the dictionary size exceeded 10000. An attacker could flood the server with requests from spoofed or distributed IPs to trigger the clear, resetting rate limits for all active users and allowing them to bypass the limit on their own IP.
 **Learning:** Using a blunt `clear()` to prevent memory exhaustion in a dictionary-based rate limiter inadvertently creates a DoS vulnerability or rate limit bypass. When evicting elements to maintain a size limit, older elements should be removed iteratively instead of wiping the entire state.
 **Prevention:** Instead of `.clear()`, safely pop the oldest entries (e.g., `while len(d) > limit: d.pop(next(iter(d)))`) when limits are reached to only remove the oldest tracked IPs.
+
+## 2026-05-20 - Prevent Log Injection via Spoofed IP
+**Vulnerability:** Log forging/CRLF injection through unsanitized `request.remote_addr`.
+**Learning:** Even when `ProxyFix` is used, the resolved `request.remote_addr` originates from the `X-Forwarded-For` header, which is user-controlled. If an attacker injects newlines into this header, it could corrupt log files and hide malicious activity if logged unsanitized.
+**Prevention:** Always wrap `request.remote_addr` (and any variables derived from it, like `client_ip`) in a sanitization function (e.g., `sanitize_for_log()`) before passing it to `logger` methods.
