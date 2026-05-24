@@ -16,3 +16,7 @@
 ## 2024-05-23 - NumPy Polymorphic Math Optimization
 **Learning:** When attempting to optimize functions that handle both scalars and NumPy arrays, avoid brittle type-checking or hacky `try/except ValueError` blocks on mathematical operations. Instead, rely on universally faster math constructs like replacing `M**2` with `M * M` and replacing `(** -1.0)` with direct division `1.0 / (...)`. These mathematical identities execute faster across both data types without any branching logic.
 **Action:** Always prefer direct division operations (`1.0 / M`) over negative exponentiation (`M ** -1.0`), and multiplication (`M * M`) over exponentiation (`M ** 2`), letting NumPy and Python natively handle the polymorphism.
+
+## 2026-05-30 - EAFP Polymorphism over `isinstance` overhead
+**Learning:** In highly mathematical Python functions serving both scalars and numpy arrays, explicitly checking types with `isinstance` and `np.asarray` adds significant overhead (often halving performance for scalars). The Pythonic "Easier to Ask for Forgiveness than Permission" (EAFP) pattern using `try/except ValueError` naturally bifurcates the execution path. For example, a scalar evaluates normally, while a NumPy array triggers a `ValueError` on ambiguous boolean logic (e.g., `M > 1.0`), safely falling through to the vectorized logic.
+**Action:** Replace `isinstance` checks with a `try/except (ValueError, TypeError)` wrapper around a fast mathematical path for scalars.
