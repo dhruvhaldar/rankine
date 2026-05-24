@@ -208,7 +208,7 @@
             </form>
             {% if nozzle_plot %}
             <div id="nozzle-result" tabindex="-1" role="region" aria-label="Nozzle Flow Result">
-                <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Nozzle Plot">
+                <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Line graph showing pressure and Mach number distribution through the converging-diverging nozzle">
                 <div style="margin-top:10px;text-align:center;">
                     <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn" aria-label="Download Nozzle Flow Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
@@ -233,7 +233,7 @@
             </form>
             {% if polar_plot %}
             <div id="shock-polar-result" tabindex="-1" role="region" aria-label="Shock Polar Result">
-                <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock Polar">
+                <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock polar graph showing the relationship between flow deflection angle and shock wave angle">
                 <div style="margin-top:10px;text-align:center;">
                     <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn" aria-label="Download Shock Polar Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
@@ -255,7 +255,7 @@
             </form>
             {% if tube_plot %}
             <div id="shock-tube-result" tabindex="-1" role="region" aria-label="Shock Tube Result">
-                <img src="data:image/png;base64,{{ tube_plot }}" alt="Shock Tube Plot">
+                <img src="data:image/png;base64,{{ tube_plot }}" alt="Four subplots showing density, pressure, temperature, and velocity versus position for the shock tube Riemann problem">
                 <div style="margin-top:10px;text-align:center;">
                     <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn" aria-label="Download Shock Tube Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
