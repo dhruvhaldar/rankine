@@ -54,3 +54,7 @@
 ## 2024-05-23 - Print Stylesheets for Engineering Tools
 **Learning:** Users of scientific/engineering tools often print or save calculation results as PDFs for reporting. Without print stylesheets, the resulting PDF contains UI clutter like navigation links, buttons, and form helper text, making it look unprofessional.
 **Action:** Always include a `@media print` block to hide interactive UI elements (`nav`, `button`, `.empty-state`, etc.), remove styling from input fields to display them as raw text, and use `page-break-inside: avoid` on sections and images to ensure cleanly formatted printed reports.
+
+## 2026-05-24 - Descriptive Image Alt Text for Data Visualizations
+**Learning:** Screen readers rely on the `alt` attribute of `<img>` tags to describe visual content. When rendering complex, dynamically generated data visualizations (like Matplotlib charts), using generic, unhelpful `alt` text (e.g., "Nozzle Plot" or "Shock Polar") provides no value and deprives visually impaired users of essential context.
+**Action:** Always provide highly descriptive, context-specific `alt` text for generated charts and plots. Describe the type of chart, what the axes represent, and what relationship or trend is being visualized (e.g., "Line graph showing pressure and Mach number distribution through the converging-diverging nozzle").
