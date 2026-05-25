@@ -58,3 +58,7 @@
 ## 2026-05-24 - Descriptive Image Alt Text for Data Visualizations
 **Learning:** Screen readers rely on the `alt` attribute of `<img>` tags to describe visual content. When rendering complex, dynamically generated data visualizations (like Matplotlib charts), using generic, unhelpful `alt` text (e.g., "Nozzle Plot" or "Shock Polar") provides no value and deprives visually impaired users of essential context.
 **Action:** Always provide highly descriptive, context-specific `alt` text for generated charts and plots. Describe the type of chart, what the axes represent, and what relationship or trend is being visualized (e.g., "Line graph showing pressure and Mach number distribution through the converging-diverging nozzle").
+
+## 2024-05-25 - Visually Indicating Stale Form Results
+**Learning:** In calculator applications where results are displayed statically below the form, editing inputs without submitting immediately makes the visible result "stale" (no longer matching the inputs). Users can easily mistake the old graph for the new parameters. Dimming the result and adding an explicit aria-label/title indicating it is stale provides essential visual and screen reader feedback that a recalculation is necessary.
+**Action:** For forms that generate static plots or complex results, add an `input` event listener that safely applies a stale visual state (`opacity`, `grayscale`) and updates accessibility attributes (`aria-label`, `title`) on the result container as soon as the user alters an input.
