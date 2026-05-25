@@ -159,6 +159,11 @@
                 animation: none;
             }
         }
+        .stale-result {
+            opacity: 0.6;
+            filter: grayscale(50%);
+            transition: all 0.3s ease;
+        }
         @media print {
             .quick-nav, button, a.download-btn, .empty-state, .form-help, kbd.submit-shortcut, #machs-counter-desc {
                 display: none !important;
@@ -337,6 +342,26 @@
                 // Initialize counter on load to account for cached or autofilled values
                 machsInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
+
+            // Indicate stale results when inputs change
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('input', (e) => {
+                    if (e.isTrusted) { // Only react to real user input
+                        const section = form.closest('.section');
+                        if (section) {
+                            const result = section.querySelector('div[id$="-result"]');
+                            if (result && !result.classList.contains('stale-result')) {
+                                result.classList.add('stale-result');
+                                result.setAttribute('title', 'Result is stale. Please recalculate.');
+                                const currentAria = result.getAttribute('aria-label');
+                                if (currentAria && !currentAria.includes('(Stale)')) {
+                                    result.setAttribute('aria-label', currentAria + ' (Stale)');
+                                }
+                            }
+                        }
+                    }
+                });
+            });
 
             // Auto-select text on focus for quicker data entry
             document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
