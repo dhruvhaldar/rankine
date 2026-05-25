@@ -35,7 +35,7 @@ class NormalShock:
             # Fallback to vector array logic
             pass
 
-        M1_sq = M1**2
+        M1_sq = M1 * M1
         term_M1 = 1.0 + (gamma - 1.0) / 2.0 * M1_sq
 
         # M2

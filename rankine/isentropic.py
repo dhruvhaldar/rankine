@@ -33,7 +33,7 @@ class IsentropicRelations:
         if np.any(valid):
             M_val = M_arr[valid]
             term1 = 1.0 / M_val
-            term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * M_val**2)
+            term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * (M_val * M_val))
             exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
             ar[valid] = term1 * (term2 ** exponent)
 
@@ -312,12 +312,12 @@ class CDNozzle:
 
                 # Compute flow
                 # Calculate P0_new
-                term1 = ((gamma+1.0)/2.0 * M_shock**2) / (1.0 + (gamma-1.0)/2.0 * M_shock**2)
-                term2 = 2.0*gamma / (gamma+1.0) * (M_shock**2 - 1.0) + 1.0
+                term1 = ((gamma+1.0)/2.0 * (M_shock * M_shock)) / (1.0 + (gamma-1.0)/2.0 * (M_shock * M_shock))
+                term2 = 2.0*gamma / (gamma+1.0) * ((M_shock * M_shock) - 1.0) + 1.0
                 P0_new = P0 * (term1 ** (gamma/(gamma-1.0))) * (term2 ** (-1.0/(gamma-1.0)))
 
                 # New A_star
-                M_s2 = np.sqrt((1.0 + (gamma-1.0)/2.0 * M_shock**2) / (gamma * M_shock**2 - (gamma-1.0)/2.0))
+                M_s2 = np.sqrt((1.0 + (gamma-1.0)/2.0 * (M_shock * M_shock)) / (gamma * (M_shock * M_shock) - (gamma-1.0)/2.0))
                 A_shock_actual = A[idx_shock]
                 A_star_new = A_shock_actual / IsentropicRelations.calc_area_mach(M_s2, gamma)
 

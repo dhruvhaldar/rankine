@@ -29,7 +29,7 @@ class PrandtlMeyer:
             # ⚡ Bolt Optimization: Extract constants and reduce np calls for array evaluations (~1.5x speedup)
             c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
             c2_sqrt = np.sqrt((gamma - 1.0) / (gamma + 1.0))
-            s = np.sqrt(M_val**2 - 1.0)
+            s = np.sqrt(M_val * M_val - 1.0)
             nu[valid] = c1 * np.arctan(c2_sqrt * s) - np.arctan(s)
 
         return nu
@@ -55,11 +55,11 @@ class PrandtlMeyer:
 
         def residual_arr(M_guess, gamma, target_nu):
             # Inlined PM function for performance inside Newton iterations
-            s = np.sqrt(M_guess**2 - 1.0)
+            s = np.sqrt(M_guess * M_guess - 1.0)
             return c1 * np.arctan(c2_sqrt * s) - np.arctan(s) - target_nu
 
         def residual_arr_fprime(M_guess, gamma, target_nu):
-            M_sq = M_guess**2
+            M_sq = M_guess * M_guess
             return np.sqrt(M_sq - 1.0) / (1.0 + c3 * M_sq) / M_guess
 
         # Check max nu (limit to M=50 approximation)
