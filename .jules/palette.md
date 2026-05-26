@@ -62,3 +62,7 @@
 ## 2024-05-25 - Visually Indicating Stale Form Results
 **Learning:** In calculator applications where results are displayed statically below the form, editing inputs without submitting immediately makes the visible result "stale" (no longer matching the inputs). Users can easily mistake the old graph for the new parameters. Dimming the result and adding an explicit aria-label/title indicating it is stale provides essential visual and screen reader feedback that a recalculation is necessary.
 **Action:** For forms that generate static plots or complex results, add an `input` event listener that safely applies a stale visual state (`opacity`, `grayscale`) and updates accessibility attributes (`aria-label`, `title`) on the result container as soon as the user alters an input.
+
+## 2026-05-26 - High Contrast for Keyboard Shortcut Hints
+**Learning:** Using a white semi-transparent overlay (`rgba(255, 255, 255, 0.2)`) for keyboard shortcut hints (`<kbd>`) placed inside a colored button (like a primary blue submit button) often fails WCAG text contrast requirements because the white text inside the `<kbd>` blends into the lightened background.
+**Action:** When designing `<kbd>` elements to sit inside colored buttons, use a dark semi-transparent overlay (`rgba(0, 0, 0, 0.2)`) instead. This darkens the background behind the shortcut, ensuring the white text remains legible and achieves proper contrast.
