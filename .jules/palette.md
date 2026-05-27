@@ -66,3 +66,7 @@
 ## 2026-05-26 - High Contrast for Keyboard Shortcut Hints
 **Learning:** Using a white semi-transparent overlay (`rgba(255, 255, 255, 0.2)`) for keyboard shortcut hints (`<kbd>`) placed inside a colored button (like a primary blue submit button) often fails WCAG text contrast requirements because the white text inside the `<kbd>` blends into the lightened background.
 **Action:** When designing `<kbd>` elements to sit inside colored buttons, use a dark semi-transparent overlay (`rgba(0, 0, 0, 0.2)`) instead. This darkens the background behind the shortcut, ensuring the white text remains legible and achieves proper contrast.
+
+## 2026-05-27 - Auto-format Technical String Inputs on Blur
+**Learning:** Native HTML5 `pattern` validation on technical strings (like comma-separated lists) is extremely strict and unforgiving of minor formatting typos (like trailing commas or erratic spacing), blocking submission and frustrating users.
+**Action:** Instead of just failing validation, attach a `blur` event listener to technical string inputs that automatically cleans up and normalizes the input formatting (e.g., stripping trailing commas, normalizing spaces) when the user clicks away, providing a magical, frictionless UX.
