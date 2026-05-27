@@ -339,6 +339,18 @@
                         counter.style.fontWeight = '';
                     }
                 });
+
+                machsInput.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = this.value
+                            .split(',')
+                            .map(v => v.trim())
+                            .filter(v => v !== '')
+                            .join(', ');
+                        this.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                });
+
                 // Initialize counter on load to account for cached or autofilled values
                 machsInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
