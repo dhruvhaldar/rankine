@@ -70,6 +70,19 @@ class ObliqueShock:
         # ⚡ Bolt Optimization: Trigonometric identity substitution and avoiding **2
         # Expected speedup: ~30% faster by reusing sin^2 instead of computing cos(2*beta)
         M2 = M * M
+        try:
+            # ⚡ Bolt Optimization: Scalar fast-path using math module
+            # Expected speedup: ~3x faster for scalars by avoiding numpy overhead
+            b_val = float(beta)
+            m_val = float(M)
+
+            sin_b = math.sin(b_val)
+            sin2_b = sin_b * sin_b
+            tan_theta = 2.0 * (1.0 / math.tan(b_val)) * (m_val*m_val * sin2_b - 1.0) / (m_val*m_val * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
+            return math.atan(tan_theta)
+        except (ValueError, TypeError, ZeroDivisionError):
+            pass
+
         sin_b = np.sin(beta)
         sin2_b = sin_b * sin_b
         tan_theta = 2.0 * (1.0 / np.tan(beta)) * (M2 * sin2_b - 1.0) / (M2 * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
