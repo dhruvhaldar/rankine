@@ -70,3 +70,7 @@
 ## 2026-05-27 - Auto-format Technical String Inputs on Blur
 **Learning:** Native HTML5 `pattern` validation on technical strings (like comma-separated lists) is extremely strict and unforgiving of minor formatting typos (like trailing commas or erratic spacing), blocking submission and frustrating users.
 **Action:** Instead of just failing validation, attach a `blur` event listener to technical string inputs that automatically cleans up and normalizes the input formatting (e.g., stripping trailing commas, normalizing spaces) when the user clicks away, providing a magical, frictionless UX.
+
+## 2024-06-01 - Context for External Links
+**Learning:** Links that open in a new tab (`target="_blank"`) without explicit warning disrupt the browsing experience, especially for screen reader users whose back button workflow is broken without their knowledge.
+**Action:** Always append a visual indicator (like an `↗` arrow with `aria-hidden="true"`) to external links, and provide an explicit `aria-label` (e.g., `aria-label="Link Name (opens in a new tab)"`) or a visually hidden span to warn screen reader users of the context shift before they click.
