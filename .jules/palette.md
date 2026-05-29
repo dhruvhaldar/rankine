@@ -74,3 +74,7 @@
 ## 2024-06-01 - Context for External Links
 **Learning:** Links that open in a new tab (`target="_blank"`) without explicit warning disrupt the browsing experience, especially for screen reader users whose back button workflow is broken without their knowledge.
 **Action:** Always append a visual indicator (like an `↗` arrow with `aria-hidden="true"`) to external links, and provide an explicit `aria-label` (e.g., `aria-label="Link Name (opens in a new tab)"`) or a visually hidden span to warn screen reader users of the context shift before they click.
+
+## 2026-05-29 - Explicit Visual Overlays for Stale States
+**Learning:** Relying solely on dimming (`opacity`) or grayscale effects to indicate a stale state on data visualizations can be ambiguous for users, who might mistake the dimming for an error or a loading state.
+**Action:** Always combine dimming with an explicit text overlay (e.g., using an `::after` pseudo-element with `content: "Stale - Please Recalculate"`) positioned absolutely over the result container to unambiguously communicate the state and required action to the user.

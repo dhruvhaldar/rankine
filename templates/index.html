@@ -163,9 +163,23 @@
             }
         }
         .stale-result {
+            position: relative;
             opacity: 0.6;
             filter: grayscale(50%);
             transition: all 0.3s ease;
+        }
+        .stale-result::after {
+            content: "Stale - Please Recalculate";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            pointer-events: none;
         }
         footer {
             margin-top: 30px;
