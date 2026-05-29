@@ -194,7 +194,7 @@ class ObliqueShock:
 
         ax.set_xlabel(r'Deflection Angle $\theta$ (degrees)')
         ax.set_ylabel(r'Shock Angle $\beta$ (degrees)')
-        ax.set_title(f'Oblique Shock Properties ($\gamma={gamma}$)')
+        ax.set_title(rf'Oblique Shock Properties ($\gamma={gamma}$)')
         ax.grid(True)
         ax.legend()
         ax.set_xlim(left=0)

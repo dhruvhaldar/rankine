@@ -12,7 +12,10 @@
     {% else %}
     <title>Rankine Compressible Flow</title>
     {% endif %}
-    <style>
+    <style nonce="{{ csp_nonce }}">
+        .result-actions { margin-top: 10px; text-align: center; }
+        .counter-container { text-align: right; margin-top: -8px; margin-bottom: 10px; }
+        .counter-text { color: #6b7280; }
         html { scroll-behavior: smooth; }
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { max-width: 800px; margin: 0 auto; }
@@ -233,7 +236,7 @@
             {% if nozzle_plot %}
             <div id="nozzle-result" tabindex="-1" role="region" aria-label="Nozzle Flow Result">
                 <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Line graph showing pressure and Mach number distribution through the converging-diverging nozzle">
-                <div style="margin-top:10px;text-align:center;">
+                <div class="result-actions">
                     <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn" aria-label="Download Nozzle Flow Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
@@ -250,15 +253,15 @@
                 <label for="machs">Mach Numbers (comma separated) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="machs-help" class="form-help">Max 10 numbers (between 1.0 and 100.0), max 100 characters</span>
                 <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-help machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" spellcheck="false" autocorrect="off" autocapitalize="none" required>
-                <div style="text-align: right; margin-top: -8px; margin-bottom: 10px;">
-                    <small id="machs-counter-desc" style="color: #6b7280;"><span id="machs-counter">13</span> / 100 characters</small>
+                <div class="counter-container">
+                    <small id="machs-counter-desc" class="counter-text"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
                 <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to generate polar">Generate Polar <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if polar_plot %}
             <div id="shock-polar-result" tabindex="-1" role="region" aria-label="Shock Polar Result">
                 <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock polar graph showing the relationship between flow deflection angle and shock wave angle">
-                <div style="margin-top:10px;text-align:center;">
+                <div class="result-actions">
                     <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn" aria-label="Download Shock Polar Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
@@ -280,7 +283,7 @@
             {% if tube_plot %}
             <div id="shock-tube-result" tabindex="-1" role="region" aria-label="Shock Tube Result">
                 <img src="data:image/png;base64,{{ tube_plot }}" alt="Four subplots showing density, pressure, temperature, and velocity versus position for the shock tube Riemann problem">
-                <div style="margin-top:10px;text-align:center;">
+                <div class="result-actions">
                     <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn" aria-label="Download Shock Tube Plot"><span aria-hidden="true">📥</span> Download Plot</a>
                 </div>
             </div>
