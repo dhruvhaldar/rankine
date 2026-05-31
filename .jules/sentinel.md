@@ -22,3 +22,8 @@
 **Vulnerability:** Log forging/CRLF injection through unsanitized `request.remote_addr`.
 **Learning:** Even when `ProxyFix` is used, the resolved `request.remote_addr` originates from the `X-Forwarded-For` header, which is user-controlled. If an attacker injects newlines into this header, it could corrupt log files and hide malicious activity if logged unsanitized.
 **Prevention:** Always wrap `request.remote_addr` (and any variables derived from it, like `client_ip`) in a sanitization function (e.g., `sanitize_for_log()`) before passing it to `logger` methods.
+
+## 2026-05-31 - Fix swallowed HTTPException in global error handlers
+**Vulnerability:** General `except Exception as e:` blocks in Flask routes swallow `werkzeug.exceptions.HTTPException` errors, causing them to return generic 500 internal server errors instead of the correct HTTP status codes (e.g., 400, 404, 429).
+**Learning:** Catching a broad `Exception` in specific routes or middleware can unintentionally mask valid HTTP errors thrown by the framework or application logic, misleading clients and obscuring actual error conditions.
+**Prevention:** Explicitly catch and re-raise `werkzeug.exceptions.HTTPException` before the broad `Exception` handler so Flask can handle and return the correct HTTP status codes appropriately.

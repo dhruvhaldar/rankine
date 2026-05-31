@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, send_file, g
 import io
 import base64
 import secrets
-from werkzeug.exceptions import RequestEntityTooLarge, BadRequest
+from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 import matplotlib
@@ -205,6 +205,8 @@ def plot_nozzle():
     except RequestEntityTooLarge:
         logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
         return "Error: Request payload is too large.", 413
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
@@ -254,6 +256,8 @@ def plot_shock_polar():
     except RequestEntityTooLarge:
         logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
         return "Error: Request payload is too large.", 413
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
@@ -302,6 +306,8 @@ def plot_shock_tube():
     except RequestEntityTooLarge:
         logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
         return "Error: Request payload is too large.", 413
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error('Operation failed', exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
