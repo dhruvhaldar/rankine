@@ -78,3 +78,7 @@
 ## 2026-05-29 - Explicit Visual Overlays for Stale States
 **Learning:** Relying solely on dimming (`opacity`) or grayscale effects to indicate a stale state on data visualizations can be ambiguous for users, who might mistake the dimming for an error or a loading state.
 **Action:** Always combine dimming with an explicit text overlay (e.g., using an `::after` pseudo-element with `content: "Stale - Please Recalculate"`) positioned absolutely over the result container to unambiguously communicate the state and required action to the user.
+
+## 2026-06-01 - Improve Primary Action Color Contrast
+**Learning:** Using overly bright accent colors (like `#0070f3`) for interactive elements (links, focus outlines, and buttons) often fails WCAG contrast requirements against standard light backgrounds (like white `#ffffff` or light gray `#f0f4f8`), making them difficult to read for visually impaired users and reducing overall legibility.
+**Action:** When defining a primary brand or interactive color scheme, always select a sufficiently dark shade (e.g., `#005bb5`) that maintains a contrast ratio of at least 4.5:1 against the application's light background colors, ensuring all links, buttons, and focus indicators are highly visible.
