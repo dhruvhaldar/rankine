@@ -82,3 +82,7 @@
 ## 2026-06-01 - Improve Primary Action Color Contrast
 **Learning:** Using overly bright accent colors (like `#0070f3`) for interactive elements (links, focus outlines, and buttons) often fails WCAG contrast requirements against standard light backgrounds (like white `#ffffff` or light gray `#f0f4f8`), making them difficult to read for visually impaired users and reducing overall legibility.
 **Action:** When defining a primary brand or interactive color scheme, always select a sufficiently dark shade (e.g., `#005bb5`) that maintains a contrast ratio of at least 4.5:1 against the application's light background colors, ensuring all links, buttons, and focus indicators are highly visible.
+
+## 2026-06-02 - WCAG 2.5.3 Label in Name for Voice Dictation
+**Learning:** When adding descriptive `aria-label`s to buttons that already have visible text (e.g., adding context to a "Download" button), replacing the entire label with a new phrase (e.g., "Download Nozzle Flow Plot" when the visible text is "Download Plot") violates the WCAG 2.5.3 Label in Name criterion. This breaks voice dictation software, as the user will say "Click Download Plot," but the software cannot find an element with that exact string in its accessible name.
+**Action:** Always ensure the exact visible text string of a control is included continuously within its `aria-label`. For context-specific buttons, append the context in parentheses after the visible text (e.g., `aria-label="Download Plot (Nozzle Flow)"`).
