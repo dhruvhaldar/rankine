@@ -11,7 +11,7 @@ class PrandtlMeyer:
         """
         # ⚡ Bolt Optimization: Fast-path for scalars using math instead of numpy.
         # Avoids numpy dispatch/array allocation overhead, providing ~25x speedup for scalars.
-        if isinstance(M, (int, float, np.number)) or (isinstance(M, np.ndarray) and M.ndim == 0):
+        try:
             m_val = float(M)
             if m_val < 1.0:
                 return 0.0
@@ -19,6 +19,8 @@ class PrandtlMeyer:
             c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
             c2_sqrt = math.sqrt((gamma - 1.0) / (gamma + 1.0))
             return c1 * math.atan(c2_sqrt * s) - math.atan(s)
+        except (ValueError, TypeError):
+            pass
 
         M_arr = np.asarray(M)
         nu = np.zeros_like(M_arr, dtype=float)

@@ -13,10 +13,11 @@ class IsentropicRelations:
         # ⚡ Bolt Optimization: Fast-path for scalars using try/except polymorphism
         # Expected speedup: ~10% faster for scalar evaluations by avoiding M**2 power overhead
         try:
-            if M == 0:
+            m_val = float(M)
+            if m_val == 0:
                 return float('inf')
-            m_sq = M * M
-            term1 = 1.0 / M
+            m_sq = m_val * m_val
+            term1 = 1.0 / m_val
             term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * m_sq)
             exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
             return term1 * (term2 ** exponent)

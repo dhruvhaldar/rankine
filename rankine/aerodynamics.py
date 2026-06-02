@@ -20,9 +20,10 @@ class Aerodynamics:
         # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
         try:
             val = float(M)
+            c_val = float(cp0)
             if val >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
-            return cp0 / math.sqrt(1.0 - val * val)
+            return c_val / math.sqrt(1.0 - val * val)
         except (ValueError, TypeError):
             pass
 
@@ -45,10 +46,11 @@ class Aerodynamics:
         # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
         try:
             val = float(M)
+            t_val = float(theta)
             if val <= 1.0:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
             beta = math.sqrt(val * val - 1.0)
-            return 2.0 * theta / beta
+            return 2.0 * t_val / beta
         except (ValueError, TypeError):
             pass
 
@@ -72,14 +74,16 @@ class Aerodynamics:
         # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
         # Expected speedup: ~2x faster for single evaluations by avoiding isinstance overhead and array allocation
         try:
-            if theta < 0:
+            m_val = float(M)
+            t_val = float(theta)
+            if t_val < 0:
                 return 0.0
-            M_sq = M * M
+            M_sq = m_val * m_val
             term1 = (((gamma + 1.0) * M_sq) / 2.0)**(gamma / (gamma - 1.0))
             term2 = ((gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0)))**(1.0 / (gamma - 1.0))
             P02_P_inf = term1 * term2
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
-            sin_t = math.sin(theta)
+            sin_t = math.sin(t_val)
             return Cp_max * sin_t * sin_t
         except (ValueError, TypeError):
             pass
