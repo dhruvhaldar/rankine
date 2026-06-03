@@ -27,3 +27,8 @@
 **Vulnerability:** General `except Exception as e:` blocks in Flask routes swallow `werkzeug.exceptions.HTTPException` errors, causing them to return generic 500 internal server errors instead of the correct HTTP status codes (e.g., 400, 404, 429).
 **Learning:** Catching a broad `Exception` in specific routes or middleware can unintentionally mask valid HTTP errors thrown by the framework or application logic, misleading clients and obscuring actual error conditions.
 **Prevention:** Explicitly catch and re-raise `werkzeug.exceptions.HTTPException` before the broad `Exception` handler so Flask can handle and return the correct HTTP status codes appropriately.
+
+## 2024-05-31 - Enforce Host Header Validation for CSRF Defense-in-Depth
+**Vulnerability:** The application's stateless CSRF protection relied entirely on matching the `Origin` or `Referer` against `request.host`. When deployed behind a reverse proxy using `ProxyFix` (which sets `request.host` via `X-Forwarded-Host`), an attacker could potentially spoof the `X-Forwarded-Host` header. This Host Header Injection would cause the app to validate the attacker's `Origin` against their own spoofed `expected_host`, completely bypassing the CSRF protection.
+**Learning:** Relying on dynamically resolved request headers (`request.host`) for security boundary definitions (like CSRF expected origins) is inherently brittle if the upstream load balancer does not strictly sanitize them.
+**Prevention:** Always implement an environment-configured explicit allowlist (e.g., `ALLOWED_HOSTS`) to validate `request.host` before trusting it in security logic, providing a crucial layer of defense-in-depth.
