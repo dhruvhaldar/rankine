@@ -80,6 +80,12 @@ def csrf_protect():
         from urllib.parse import urlparse
         expected_host = request.host
 
+        # Security: Prevent Host Header Injection / CSRF Bypass
+        allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost:5000,127.0.0.1:5000').split(',')]
+        if expected_host not in allowed_hosts and os.environ.get('FLASK_DEBUG') != '1':
+            logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+            return "Error: Invalid Host header.", 403
+
         if origin:
             if urlparse(origin).netloc != expected_host:
                 logger.warning(f"Security: CSRF validation failed - Invalid Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
