@@ -86,3 +86,7 @@
 ## 2026-06-02 - WCAG 2.5.3 Label in Name for Voice Dictation
 **Learning:** When adding descriptive `aria-label`s to buttons that already have visible text (e.g., adding context to a "Download" button), replacing the entire label with a new phrase (e.g., "Download Nozzle Flow Plot" when the visible text is "Download Plot") violates the WCAG 2.5.3 Label in Name criterion. This breaks voice dictation software, as the user will say "Click Download Plot," but the software cannot find an element with that exact string in its accessible name.
 **Action:** Always ensure the exact visible text string of a control is included continuously within its `aria-label`. For context-specific buttons, append the context in parentheses after the visible text (e.g., `aria-label="Download Plot (Nozzle Flow)"`).
+
+## 2026-06-06 - Dynamic aria-invalid for Form Fields
+**Learning:** Native HTML5 validation uses the `:invalid` pseudo-class for styling, but screen readers don't always announce the invalid state automatically unless `aria-invalid="true"` is explicitly set on the element.
+**Action:** Attach event listeners to form inputs to dynamically toggle `aria-invalid="true"` based on the element's validation state (`input.validity.valid`).
