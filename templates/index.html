@@ -315,6 +315,21 @@
     </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
+            // Dynamically set aria-invalid for accessibility based on HTML5 validation
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                const updateAriaInvalid = () => {
+                    if (!input.validity.valid) {
+                        input.setAttribute('aria-invalid', 'true');
+                    } else {
+                        input.removeAttribute('aria-invalid');
+                    }
+                };
+                input.addEventListener('input', updateAriaInvalid);
+                input.addEventListener('blur', updateAriaInvalid);
+                // Initialize state
+                updateAriaInvalid();
+            });
+
             // Restore form states from sessionStorage to prevent data loss on reload
             // Use a static namespace to prevent data loss when form actions change the path
             const storagePrefix = 'form_state_rankine_';
