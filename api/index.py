@@ -146,6 +146,7 @@ def too_many_requests(e):
 
 @app.errorhandler(500)
 def internal_server_error(e):
+    logger.error(f"Internal server error from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
     return "Error: An internal server error occurred.", 500
 
 @app.route('/')
@@ -214,7 +215,7 @@ def plot_nozzle():
     except HTTPException:
         raise
     except Exception as e:
-        logger.error('Operation failed', exc_info=True)
+        logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 @app.route('/plot/shock_polar', methods=['POST'])
@@ -265,7 +266,7 @@ def plot_shock_polar():
     except HTTPException:
         raise
     except Exception as e:
-        logger.error('Operation failed', exc_info=True)
+        logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 @app.route('/plot/shock_tube', methods=['POST'])
@@ -315,7 +316,7 @@ def plot_shock_tube():
     except HTTPException:
         raise
     except Exception as e:
-        logger.error('Operation failed', exc_info=True)
+        logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
         return "Error: An error occurred during calculation. Please check your inputs.", 500
 
 # For local testing
