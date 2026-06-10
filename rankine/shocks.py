@@ -17,9 +17,10 @@ class NormalShock:
         # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
         # Expected speedup: ~2.5x faster by replacing M1**2 with M1 * M1 and avoiding numpy arrays
         try:
-            if M1 < 1.0:
+            m_val = float(M1)
+            if m_val < 1.0:
                 pass
-            m_sq = M1 * M1
+            m_sq = m_val * m_val
             term_M1 = 1.0 + (gamma - 1.0) / 2.0 * m_sq
             numerator = term_M1
             denominator = gamma * m_sq - (gamma - 1.0) / 2.0
@@ -29,9 +30,9 @@ class NormalShock:
             self.T2_T1 = self.P2_P1 / self.rho2_rho1
             term1 = ((gamma + 1.0) / 2.0 * m_sq) / term_M1
             term2 = self.P2_P1
-            self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) * (term2 ** (-1.0 / (gamma - 1.0)))
+            self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
             return
-        except ValueError:
+        except (ValueError, TypeError):
             # Fallback to vector array logic
             pass
 
@@ -58,7 +59,7 @@ class NormalShock:
         term1 = ((gamma + 1.0) / 2.0 * M1_sq) / term_M1
         term2 = self.P2_P1
 
-        self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) * (term2 ** (-1.0 / (gamma - 1.0)))
+        self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
 
 class ObliqueShock:
     @staticmethod

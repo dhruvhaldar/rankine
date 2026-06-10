@@ -40,3 +40,7 @@
 ## 2026-06-07 - Targeted Exception Handling in EAFP Fast-Paths
 **Learning:** When implementing EAFP (Easier to Ask for Forgiveness than Permission) scalar fast-paths by eagerly casting inputs (e.g., `float(val)`), you should be extremely careful about what exceptions you catch if the fast-path itself performs explicit bounds checking that raises `ValueError`. If you blanket-catch `(ValueError, TypeError)`, a legitimate bounds error from a scalar input will be swallowed, erroneously triggering the slow array fallback logic which will just re-raise the error.
 **Action:** Only catch `TypeError` (which is raised by iterables like arrays when passed to `float()`) for the initial input conversion, allowing any explicit `ValueError` raised inside the valid scalar path to propagate normally without falling back.
+
+## 2026-06-10 - [Eager Type-Casting in EAFP for 0D Arrays]
+**Learning:** 0-dimensional numpy arrays (like `np.array(2.5)`) fail scalar fast paths if they reach native math functions (like `math.sqrt`) without explicit casting.
+**Action:** Eagerly type-cast variables to float (e.g., `m_val = float(M)`) at the top of the try block and catch `(ValueError, TypeError)` to resolve this and allow 0D arrays to benefit from the scalar fast path.
