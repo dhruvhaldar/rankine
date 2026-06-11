@@ -22,7 +22,7 @@ This project implements the maximal syllabus as defined by the KTH Department of
 ## 🚀 Installation
 
 ```bash
-git clone https://github.com/your-username/rankine.git
+git clone https://github.com/dhruvhaldar/rankine.git
 cd rankine
 pip install -r requirements.txt
 ```
