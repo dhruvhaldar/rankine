@@ -4,8 +4,6 @@ Rankine is a high-performance Python library for analytic and semi-analytic comp
 
 The library covers the full spectrum of inviscid gas dynamics, from isentropic nozzle flows to unsteady non-linear wave propagation.
 
-![CI](https://github.com/your-username/rankine/actions/workflows/ci.yml/badge.svg)
-
 ## 📚 Syllabus Coverage (SG2215)
 
 This project implements the maximal syllabus as defined by the KTH Department of Mechanics:
