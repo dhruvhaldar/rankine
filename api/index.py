@@ -87,13 +87,21 @@ def csrf_protect():
             return "Error: Invalid Host header.", 403
 
         if origin:
-            if urlparse(origin).netloc != expected_host:
-                logger.warning(f"Security: CSRF validation failed - Invalid Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Invalid Origin.", 403
+            try:
+                if urlparse(origin).netloc != expected_host:
+                    logger.warning(f"Security: CSRF validation failed - Invalid Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+                    return "Error: Invalid Origin.", 403
+            except ValueError:
+                logger.warning(f"Security: CSRF validation failed - Malformed Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+                return "Error: Malformed Origin header.", 400
         elif referer:
-            if urlparse(referer).netloc != expected_host:
-                logger.warning(f"Security: CSRF validation failed - Invalid Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Invalid Referer.", 403
+            try:
+                if urlparse(referer).netloc != expected_host:
+                    logger.warning(f"Security: CSRF validation failed - Invalid Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+                    return "Error: Invalid Referer.", 403
+            except ValueError:
+                logger.warning(f"Security: CSRF validation failed - Malformed Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+                return "Error: Malformed Referer header.", 400
         else:
             logger.warning(f"Security: CSRF validation failed - Missing Origin and Referer from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Missing Origin or Referer header.", 403
