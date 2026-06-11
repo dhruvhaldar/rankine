@@ -24,7 +24,7 @@ class Aerodynamics:
             if val >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
             return c_val / math.sqrt(1.0 - val * val)
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
@@ -51,7 +51,7 @@ class Aerodynamics:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
             beta = math.sqrt(val * val - 1.0)
             return 2.0 * t_val / beta
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
@@ -85,7 +85,7 @@ class Aerodynamics:
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
             sin_t = math.sin(t_val)
             return Cp_max * sin_t * sin_t
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         # ⚡ Bolt Optimization: Vectorized operation and inlined Rayleigh Pitot formula

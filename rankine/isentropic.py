@@ -21,7 +21,7 @@ class IsentropicRelations:
             term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * m_sq)
             exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
             return term1 * (term2 ** exponent)
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
