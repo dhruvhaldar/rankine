@@ -90,3 +90,7 @@
 ## 2026-06-06 - Dynamic aria-invalid for Form Fields
 **Learning:** Native HTML5 validation uses the `:invalid` pseudo-class for styling, but screen readers don't always announce the invalid state automatically unless `aria-invalid="true"` is explicitly set on the element.
 **Action:** Attach event listeners to form inputs to dynamically toggle `aria-invalid="true"` based on the element's validation state (`input.validity.valid`).
+
+## 2026-06-11 - Accessible Placeholder Text Contrast
+**Learning:** Default browser placeholder colors (often `#a9a9a9` or similar) frequently fail WCAG AA contrast requirements (4.5:1) against standard white backgrounds, rendering the hint text illegible for users with visual impairments. Furthermore, some browsers apply a default opacity (e.g., `0.54` in Chrome) which further reduces contrast.
+**Action:** Always explicitly style `::placeholder` with a sufficient contrast color (e.g., `#6b7280`) and set `opacity: 1` to override browser defaults and ensure placeholder text is accessible.
