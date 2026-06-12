@@ -203,6 +203,10 @@
         footer a:hover {
             text-decoration: underline;
         }
+        footer a:focus-visible {
+            outline: 2px solid #005bb5;
+            outline-offset: 2px;
+        }
         @media print {
             .quick-nav, button, a.download-btn, .empty-state, .form-help, kbd.submit-shortcut, #machs-counter-desc, footer {
                 display: none !important;
