@@ -82,7 +82,7 @@ def csrf_protect():
 
         # Security: Prevent Host Header Injection / CSRF Bypass
         allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost:5000,127.0.0.1:5000').split(',')]
-        is_allowed = expected_host in allowed_hosts or expected_host.endswith('.vercel.app') or expected_host == 'vercel.app'
+        is_allowed = expected_host in allowed_hosts or (os.environ.get('VERCEL_URL') and expected_host == os.environ.get('VERCEL_URL'))
         if not is_allowed and os.environ.get('FLASK_DEBUG') != '1':
             logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Invalid Host header.", 403
