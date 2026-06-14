@@ -433,6 +433,11 @@
                                 if (currentAria && !currentAria.includes('(Stale)')) {
                                     result.setAttribute('aria-label', currentAria + ' (Stale)');
                                 }
+                                result.querySelectorAll('a, button').forEach(el => {
+                                    el.setAttribute('tabindex', '-1');
+                                    el.setAttribute('aria-disabled', 'true');
+                                    el.style.pointerEvents = 'none';
+                                });
                             }
                         }
                     }

@@ -94,3 +94,7 @@
 ## 2026-06-11 - Accessible Placeholder Text Contrast
 **Learning:** Default browser placeholder colors (often `#a9a9a9` or similar) frequently fail WCAG AA contrast requirements (4.5:1) against standard white backgrounds, rendering the hint text illegible for users with visual impairments. Furthermore, some browsers apply a default opacity (e.g., `0.54` in Chrome) which further reduces contrast.
 **Action:** Always explicitly style `::placeholder` with a sufficient contrast color (e.g., `#6b7280`) and set `opacity: 1` to override browser defaults and ensure placeholder text is accessible.
+
+## 2024-06-25 - Interactive Elements in Stale States
+**Learning:** When applying a visual 'stale' state (e.g., dimming or grayscale) to a container after inputs change, visually dimming it is insufficient to prevent interaction.
+**Action:** Always explicitly disable interactive children within the stale container (e.g., by applying `pointer-events: none`, `tabindex="-1"`, and `aria-disabled="true"` to links or buttons) to prevent users from accidentally interacting with or exporting out-of-sync artifacts.
