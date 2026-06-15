@@ -18,13 +18,14 @@ class Aerodynamics:
         """
         # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
         # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
+        # Note: Only catch TypeError (raised by arrays in float()) to prevent swallowing explicit ValueErrors raised for invalid domain bounds.
         try:
             val = float(M)
             c_val = float(cp0)
             if val >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
             return c_val / math.sqrt(1.0 - val * val)
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
@@ -44,6 +45,7 @@ class Aerodynamics:
         """
         # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
         # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
+        # Note: Only catch TypeError (raised by arrays in float()) to prevent swallowing explicit ValueErrors raised for invalid domain bounds.
         try:
             val = float(M)
             t_val = float(theta)
@@ -51,7 +53,7 @@ class Aerodynamics:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
             beta = math.sqrt(val * val - 1.0)
             return 2.0 * t_val / beta
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
