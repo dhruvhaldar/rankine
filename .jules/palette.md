@@ -98,3 +98,7 @@
 ## 2024-06-25 - Interactive Elements in Stale States
 **Learning:** When applying a visual 'stale' state (e.g., dimming or grayscale) to a container after inputs change, visually dimming it is insufficient to prevent interaction.
 **Action:** Always explicitly disable interactive children within the stale container (e.g., by applying `pointer-events: none`, `tabindex="-1"`, and `aria-disabled="true"` to links or buttons) to prevent users from accidentally interacting with or exporting out-of-sync artifacts.
+
+## 2024-06-26 - Result-to-Form Navigation Loop
+**Learning:** In single-page calculators or tools that render results at the bottom of a long form, users frequently need to iterate and tweak parameters. Forcing them to manually scroll back up past large visualization artifacts introduces friction, especially on mobile.
+**Action:** Always provide a quick anchor link (e.g., "Edit Inputs") alongside the generated results that targets the form's section ID, creating a seamless, accessible navigation loop for iterative workflows.
