@@ -99,11 +99,14 @@ class Aerodynamics:
         M_arr = np.atleast_1d(M_arr)
         theta_arr = np.atleast_1d(theta_arr)
 
+        # ⚡ Bolt Optimization: Broadcast arrays to ensure boolean indexing matches shapes
+        M_arr, theta_arr = np.broadcast_arrays(M_arr, theta_arr)
+
         cp = np.zeros_like(theta_arr, dtype=float)
         mask = theta_arr >= 0
 
         if np.any(mask):
-            M_valid = M_arr if M_arr.size == 1 else M_arr[mask]
+            M_valid = M_arr[mask]
             t_valid = theta_arr[mask]
 
             # Inline Rayleigh Pitot tube formula for P02/P_inf instead of creating NormalShock object
