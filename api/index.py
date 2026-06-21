@@ -34,7 +34,8 @@ def sanitize_for_log(val):
     """Sanitize string for logging to prevent CRLF injection."""
     if not isinstance(val, str):
         val = str(val)
-    return val.replace('\n', '\\n').replace('\r', '\\r')
+    val = val.replace('\n', '\\n').replace('\r', '\\r')
+    return val[:250] + '...' if len(val) > 250 else val
 
 # Security: In-memory rate limiter to prevent Application-Layer DoS
 # Limits requests to prevent abuse of computationally expensive endpoints
