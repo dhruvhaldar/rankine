@@ -224,10 +224,29 @@
                 margin: 0;
             }
         }
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #005bb5;
+            color: white;
+            padding: 8px 16px;
+            z-index: 100;
+            transition: top 0.2s;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 0 0 4px 0;
+        }
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid #0051a2;
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
-    <main class="container">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <main id="main-content" class="container">
         <h1>Rankine Compressible Flow Calculator</h1>
         <p>A high-performance Python library for analytic and semi-analytic compressible flow calculations.</p>
         <p><strong>Capabilities showcased:</strong> isentropic nozzle flow analysis, oblique shock polar generation, and unsteady Sod shock tube simulation.</p>

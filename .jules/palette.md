@@ -102,3 +102,7 @@
 ## 2024-06-26 - Result-to-Form Navigation Loop
 **Learning:** In single-page calculators or tools that render results at the bottom of a long form, users frequently need to iterate and tweak parameters. Forcing them to manually scroll back up past large visualization artifacts introduces friction, especially on mobile.
 **Action:** Always provide a quick anchor link (e.g., "Edit Inputs") alongside the generated results that targets the form's section ID, creating a seamless, accessible navigation loop for iterative workflows.
+
+## 2024-06-27 - Skip to Content Links
+**Learning:** For users relying on keyboard navigation or screen readers, having to repeatedly tab through top-level navigation blocks (like the Quick Navigation links) on every page refresh or form submission adds severe friction to their workflow.
+**Action:** Always include a "Skip to main content" link as the very first interactive element in the `<body>`. Visually hide it by default (e.g., placing it off-screen) but make it visible upon receiving keyboard focus (`:focus`) to seamlessly support keyboard accessibility without cluttering the visual UI.
