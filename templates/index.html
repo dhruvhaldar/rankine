@@ -75,6 +75,16 @@
             outline-color: #d32f2f;
             border-color: #d32f2f;
         }
+        /* Remove default spin buttons from scientific numeric inputs */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none !important;
+            display: none !important;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
         ::placeholder {
             color: #6b7280;
             opacity: 1;
