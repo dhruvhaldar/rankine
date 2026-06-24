@@ -106,3 +106,7 @@
 ## 2024-06-27 - Skip to Content Links
 **Learning:** For users relying on keyboard navigation or screen readers, having to repeatedly tab through top-level navigation blocks (like the Quick Navigation links) on every page refresh or form submission adds severe friction to their workflow.
 **Action:** Always include a "Skip to main content" link as the very first interactive element in the `<body>`. Visually hide it by default (e.g., placing it off-screen) but make it visible upon receiving keyboard focus (`:focus`) to seamlessly support keyboard accessibility without cluttering the visual UI.
+
+## 2024-06-28 - Hide Spin Buttons on Scientific Numeric Inputs
+**Learning:** For scientific and engineering applications, native HTML numeric input spin buttons (up/down arrows) are a visual anti-pattern. They clutter the UI on hover/focus and are practically useless for precise decimal data (e.g., 0.05) or large magnitudes (e.g., 101325), as incrementing by a static step size is rarely the intended interaction.
+**Action:** Always use CSS (`-webkit-appearance: none;` and `-moz-appearance: textfield;`) to visually hide the spin buttons on `input[type="number"]` when designing technical calculation tools, providing a cleaner, text-like interface.
