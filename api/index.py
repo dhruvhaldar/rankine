@@ -138,14 +138,17 @@ def add_security_headers(response):
 
 @app.errorhandler(404)
 def page_not_found(e):
+    logger.warning(f"Security: 404 Not Found from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     return "Error: The requested URL was not found on the server.", 404
 
 @app.errorhandler(400)
 def bad_request(e):
+    logger.warning(f"Security: 400 Bad Request from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     return "Error: Bad request.", 400
 
 @app.errorhandler(405)
 def method_not_allowed(e):
+    logger.warning(f"Security: 405 Method Not Allowed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     return "Error: The method is not allowed for the requested URL.", 405
 
 @app.errorhandler(413)
