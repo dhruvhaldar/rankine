@@ -110,3 +110,7 @@
 ## 2024-06-28 - Hide Spin Buttons on Scientific Numeric Inputs
 **Learning:** For scientific and engineering applications, native HTML numeric input spin buttons (up/down arrows) are a visual anti-pattern. They clutter the UI on hover/focus and are practically useless for precise decimal data (e.g., 0.05) or large magnitudes (e.g., 101325), as incrementing by a static step size is rarely the intended interaction.
 **Action:** Always use CSS (`-webkit-appearance: none;` and `-moz-appearance: textfield;`) to visually hide the spin buttons on `input[type="number"]` when designing technical calculation tools, providing a cleaner, text-like interface.
+
+## 2026-06-27 - Focusable Skip Link Targets
+**Learning:** When a 'Skip to main content' link points to a container (like `<main>`), the target container must be programmatically focusable. If it lacks `tabindex="-1"`, the browser won't move the focus there, causing subsequent tab actions to restart from the top of the page, completely defeating the skip link's purpose.
+**Action:** Always add `tabindex="-1"` to the target element of a skip link to allow it to receive focus programmatically.
