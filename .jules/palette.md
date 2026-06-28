@@ -114,3 +114,7 @@
 ## 2026-06-27 - Focusable Skip Link Targets
 **Learning:** When a 'Skip to main content' link points to a container (like `<main>`), the target container must be programmatically focusable. If it lacks `tabindex="-1"`, the browser won't move the focus there, causing subsequent tab actions to restart from the top of the page, completely defeating the skip link's purpose.
 **Action:** Always add `tabindex="-1"` to the target element of a skip link to allow it to receive focus programmatically.
+
+## 2024-06-29 - Target Pulse Highlight for In-Page Navigation
+**Learning:** When using in-page anchor links (like a "Skip to Content" or "Quick Nav" sidebar), users can sometimes lose track of where they landed on the page, especially on long, text-heavy forms where the target section blends in. Just jumping to the section isn't always enough visual feedback.
+**Action:** Add a subtle, temporary CSS animation (e.g., `@keyframes` pulsing the `background-color`) to the `:target` pseudo-class to draw the user's eye directly to the newly focused section. Always respect `@media (prefers-reduced-motion: reduce)` by disabling this animation for users with vestibular disorders.
