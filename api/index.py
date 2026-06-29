@@ -28,6 +28,13 @@ app = Flask(__name__, template_folder='../templates')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB limit to prevent large payload DoS
 
+# Security: Enforce secure defaults for session cookies (Defense in Depth)
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+)
+
 logger = logging.getLogger(__name__)
 
 def sanitize_for_log(val):
