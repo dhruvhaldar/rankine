@@ -95,6 +95,13 @@ def csrf_protect():
             logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Invalid Host header.", 403
 
+        # Security: Defense-in-depth CSRF protection using Fetch Metadata Request Headers
+        # Note: "none" is allowed as it is used for direct navigation, although this is a POST endpoint check
+        sec_fetch_site = request.headers.get("Sec-Fetch-Site")
+        if sec_fetch_site and sec_fetch_site not in ["same-origin", "same-site", "none"]:
+            logger.warning(f"Security: CSRF validation failed - Invalid Sec-Fetch-Site: {sanitize_for_log(sec_fetch_site)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+            return "Error: Cross-site requests are not permitted.", 403
+
         if origin:
             try:
                 if urlparse(origin).netloc != expected_host:
