@@ -45,3 +45,8 @@
 **Vulnerability:** The application used `Cache-Control: no-store, no-cache, must-revalidate, max-age=0` to prevent caching of sensitive generated content. While `no-store` is strict, older or non-compliant shared caches might ignore it or process it incorrectly, potentially caching sensitive generated plots.
 **Learning:** Adding the `private` directive provides defense-in-depth against shared caches (like proxies and CDNs), explicitly instructing them not to store the response, even if they fail to properly handle `no-store`.
 **Prevention:** Always use comprehensive modern `Cache-Control` directives (including `private` alongside `no-store` and `no-cache`) for sensitive dynamic content to ensure maximum compatibility and strict enforcement across all types of caches.
+
+## 2026-07-01 - Prevent Matplotlib version leakage in PNG metadata
+**Vulnerability:** The application was leaking the Matplotlib version in the metadata of the generated PNG files. This information leakage could be used by attackers to fingerprint the backend stack and exploit known CVEs in that specific version.
+**Learning:** By default, Matplotlib embeds its version in the `Software` metadata field of PNG files. This is unnecessary for functionality and increases the attack surface.
+**Prevention:** Always explicitly override or remove unnecessary metadata (e.g., passing `metadata={'Software': None}`) when generating files with external libraries to prevent version leakage.
