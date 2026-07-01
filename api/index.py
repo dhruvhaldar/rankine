@@ -233,7 +233,7 @@ def plot_nozzle():
         try:
             # Save to buffer
             buf = io.BytesIO()
-            fig.savefig(buf, format='png')
+            fig.savefig(buf, format='png', metadata={'Software': None})
             buf.seek(0)
             plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
         finally:
@@ -284,7 +284,7 @@ def plot_shock_polar():
 
         try:
             buf = io.BytesIO()
-            fig.savefig(buf, format='png')
+            fig.savefig(buf, format='png', metadata={'Software': None})
             buf.seek(0)
             plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
         finally:
@@ -334,7 +334,7 @@ def plot_shock_tube():
 
         try:
             buf = io.BytesIO()
-            fig.savefig(buf, format='png')
+            fig.savefig(buf, format='png', metadata={'Software': None})
             buf.seek(0)
             plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
         finally:
