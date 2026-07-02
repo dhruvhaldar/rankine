@@ -35,6 +35,12 @@ app.config.update(
     SESSION_COOKIE_SAMESITE='Lax',
 )
 
+# Security: Configure SECRET_KEY from environment, avoiding ephemeral random keys as a fallback.
+# If absent, leave the key unset so Flask explicitly fails if sessions are attempted.
+secret_key = os.environ.get('SECRET_KEY')
+if secret_key:
+    app.config['SECRET_KEY'] = secret_key
+
 logger = logging.getLogger(__name__)
 
 def sanitize_for_log(val):
