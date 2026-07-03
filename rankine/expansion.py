@@ -23,18 +23,20 @@ class PrandtlMeyer:
             pass
 
         M_arr = np.asarray(M)
-        nu = np.zeros_like(M_arr, dtype=float)
+        is_scalar = M_arr.ndim == 0 and np.asarray(gamma).ndim == 0
         valid = M_arr >= 1.0
+        M_safe = np.where(valid, M_arr, 1.0)
 
-        if np.any(valid):
-            M_val = M_arr[valid]
-            # ⚡ Bolt Optimization: Extract constants and reduce np calls for array evaluations (~1.5x speedup)
-            c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
-            c2_sqrt = np.sqrt((gamma - 1.0) / (gamma + 1.0))
-            s = np.sqrt(M_val * M_val - 1.0)
-            nu[valid] = c1 * np.arctan(c2_sqrt * s) - np.arctan(s)
+        # ⚡ Bolt Optimization: Extract constants and reduce np calls for array evaluations (~1.5x speedup)
+        c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
+        c2_sqrt = np.sqrt((gamma - 1.0) / (gamma + 1.0))
+        s = np.sqrt(M_safe * M_safe - 1.0)
+        res = c1 * np.arctan(c2_sqrt * s) - np.arctan(s)
 
-        return nu
+        nu = np.where(valid, res, 0.0)
+
+        # Ensure we return a Python scalar for 0-D input without crashing on 1-D safe-cast output
+        return float(np.asarray(nu).flatten()[0]) if is_scalar else nu
 
     @staticmethod
     def inverse_prandtl_meyer(nu, gamma=1.4):

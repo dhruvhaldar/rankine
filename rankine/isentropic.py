@@ -25,18 +25,19 @@ class IsentropicRelations:
             pass
 
         M_arr = np.asarray(M)
-        is_scalar = M_arr.ndim == 0
+        is_scalar = M_arr.ndim == 0 and np.asarray(gamma).ndim == 0
 
         M_arr = np.atleast_1d(M_arr)
-        ar = np.full_like(M_arr, np.inf, dtype=float)
 
         valid = M_arr != 0
-        if np.any(valid):
-            M_val = M_arr[valid]
-            term1 = 1.0 / M_val
-            term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * (M_val * M_val))
-            exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
-            ar[valid] = term1 * (term2 ** exponent)
+        M_safe = np.where(valid, M_arr, 1.0)
+
+        term1 = 1.0 / M_safe
+        term2 = (2.0 / (gamma + 1.0)) * (1.0 + (gamma - 1.0) / 2.0 * (M_safe * M_safe))
+        exponent = (gamma + 1.0) / (2.0 * (gamma - 1.0))
+        res = term1 * (term2 ** exponent)
+
+        ar = np.where(valid, res, np.inf)
 
         return ar[0] if is_scalar else ar
 
