@@ -57,3 +57,11 @@
 ## 2026-06-27 - Implicit Broadcasting vs np.broadcast_arrays
 **Learning:** Using `np.broadcast_arrays()` to align a scalar and a large array forces the scalar to be allocated in memory as a full-sized array *before* applying expensive mathematical operations (like `np.sin()` and division). This is highly inefficient. Relying on NumPy's native implicit broadcasting during mathematical operations avoids this unnecessary allocation and computation.
 **Action:** Remove explicit calls to `np.broadcast_arrays` when working with mixed scalar/array inputs unless explicitly required for boolean masking across differently shaped non-broadcastable arrays. Use `np.where()` to apply masks after implicit broadcasting is complete.
+
+## 2024-06-28 - Implicit Broadcasting with np.where and Array Assignment
+**Learning:** Using boolean masking with implicit broadcasting, e.g. `ar[valid] = result` causes `ValueError` or `IndexError` when `ar` and `result` are inherently different shapes (e.g. `ar` is size 1 from a scalar, and `result` is size N because of a broadcasted second array parameter like `gamma`).
+**Action:** Replace `array[valid] = result` assignment blocks with `np.where(valid, result, default_value)`. This avoids indexing errors completely when relying on implicit array broadcasting.
+
+## 2024-06-28 - Casting 1-D Safe Arrays to Scalar
+**Learning:** In NumPy, if a function attempts to handle scalars by temporarily forcing them into 1-D arrays using `np.atleast_1d` or implicit array evaluation, casting the output back to a python scalar using `float(array)` directly will fail in modern numpy versions with `TypeError: only 0-dimensional arrays can be converted to Python scalars`.
+**Action:** When a method needs to return a native Python float for scalar inputs after array processing, always explicitly extract the value first using `array[0]` or `float(np.asarray(array).flatten()[0])`.
