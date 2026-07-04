@@ -79,7 +79,7 @@ def rate_limiter():
 
         if len(rate_limit_data[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
             logger.warning(f"Security: Rate limit exceeded for IP {sanitize_for_log(client_ip)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Too many requests. Please try again later.", 429
+            return "Error: Too many requests. Please try again later.", 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
 
         rate_limit_data[client_ip].append(current_time)
 
@@ -181,7 +181,7 @@ def request_entity_too_large(e):
 
 @app.errorhandler(429)
 def too_many_requests(e):
-    return "Error: Too many requests. Please try again later.", 429
+    return "Error: Too many requests. Please try again later.", 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
 
 @app.errorhandler(500)
 def internal_server_error(e):
