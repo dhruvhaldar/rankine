@@ -54,19 +54,14 @@ class PrandtlMeyer:
             c3 = 0.5 * (gamma - 1.0)
             c2_sqrt = math.sqrt(c2)
 
-            def residual_scalar(M_guess, gamma, target_nu):
-                s = math.sqrt(M_guess * M_guess - 1.0)
-                return c1 * math.atan(c2_sqrt * s) - math.atan(s) - target_nu
-
-            def fprime_scalar(M_guess, gamma, target_nu):
-                M_sq = M_guess * M_guess
-                return math.sqrt(M_sq - 1.0) / (1.0 + c3 * M_sq) / M_guess
-
             nu_max = PrandtlMeyer.prandtl_meyer_function(50.0, gamma)
             clamped_nu = min(nu_val, nu_max - 1e-6)
-            guess = 1.1 if clamped_nu < 0.1 else 2.0 + clamped_nu * 2.0
 
-            M = newton(residual_scalar, guess, fprime=fprime_scalar, args=(gamma, clamped_nu))
+            def residual_scalar(M_guess):
+                s = math.sqrt(M_guess * M_guess - 1.0)
+                return c1 * math.atan(c2_sqrt * s) - math.atan(s) - clamped_nu
+
+            M = brentq(residual_scalar, 1.0, 50.0)
             return max(M, 1.0)
         except (ValueError, TypeError):
             pass
