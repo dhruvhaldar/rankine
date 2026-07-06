@@ -65,3 +65,7 @@
 ## 2024-06-28 - Casting 1-D Safe Arrays to Scalar
 **Learning:** In NumPy, if a function attempts to handle scalars by temporarily forcing them into 1-D arrays using `np.atleast_1d` or implicit array evaluation, casting the output back to a python scalar using `float(array)` directly will fail in modern numpy versions with `TypeError: only 0-dimensional arrays can be converted to Python scalars`.
 **Action:** When a method needs to return a native Python float for scalar inputs after array processing, always explicitly extract the value first using `array[0]` or `float(np.asarray(array).flatten()[0])`.
+
+## 2026-06-29 - Brentq vs Newton for Bounded Scalar Inversions
+**Learning:** When implementing scalar fast-paths for physical inversions where strict domain bounds can be defined (like Mach number from Prandtl-Meyer angle), `scipy.optimize.brentq` is significantly faster (~5-6x) than `scipy.optimize.newton`. This is because `brentq` is implemented in C and avoids the Python-level function call overhead of explicitly providing and evaluating the derivative `fprime`.
+**Action:** Prefer `scipy.optimize.brentq` over `newton` for bounded scalar inversions where the domain bounds are known.
