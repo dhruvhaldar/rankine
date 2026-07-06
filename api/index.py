@@ -157,6 +157,7 @@ def add_security_headers(response):
     response.headers['X-Permitted-Cross-Domain-Policies'] = 'none'
     response.headers['X-Download-Options'] = 'noopen'
     response.headers['X-XSS-Protection'] = '0'
+    response.headers['X-DNS-Prefetch-Control'] = 'off'
     return response
 
 @app.errorhandler(404)
