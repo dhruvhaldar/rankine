@@ -263,6 +263,19 @@
             outline: 2px solid #0051a2;
             outline-offset: 2px;
         }
+        .inline-error-message {
+            color: #d32f2f;
+            font-size: 0.85em;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            display: none;
+            font-weight: bold;
+        }
+        input[aria-invalid="true"] + .inline-error-message,
+        textarea[aria-invalid="true"] + .inline-error-message,
+        select[aria-invalid="true"] + .inline-error-message {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -368,11 +381,24 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Dynamically set aria-invalid for accessibility based on HTML5 validation
             document.querySelectorAll('input, select, textarea').forEach(input => {
+                // Create inline error message element
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'inline-error-message';
+                errorMsg.setAttribute('aria-live', 'polite');
+                errorMsg.id = input.id + '-error';
+                input.parentNode.insertBefore(errorMsg, input.nextSibling);
+
+                // Add aria-describedby for accessibility
+                const currentDescribedBy = input.getAttribute('aria-describedby') || '';
+                input.setAttribute('aria-describedby', (currentDescribedBy + ' ' + errorMsg.id).trim());
+
                 const updateAriaInvalid = () => {
                     if (!input.validity.valid) {
                         input.setAttribute('aria-invalid', 'true');
+                        errorMsg.textContent = input.validationMessage;
                     } else {
                         input.removeAttribute('aria-invalid');
+                        errorMsg.textContent = '';
                     }
                 };
                 input.addEventListener('input', updateAriaInvalid);

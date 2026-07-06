@@ -118,3 +118,7 @@
 ## 2024-06-29 - Target Pulse Highlight for In-Page Navigation
 **Learning:** When using in-page anchor links (like a "Skip to Content" or "Quick Nav" sidebar), users can sometimes lose track of where they landed on the page, especially on long, text-heavy forms where the target section blends in. Just jumping to the section isn't always enough visual feedback.
 **Action:** Add a subtle, temporary CSS animation (e.g., `@keyframes` pulsing the `background-color`) to the `:target` pseudo-class to draw the user's eye directly to the newly focused section. Always respect `@media (prefers-reduced-motion: reduce)` by disabling this animation for users with vestibular disorders.
+
+## 2026-07-06 - Inline Form Validation
+**Learning:** Relying solely on color changes (like a red border or background) to indicate form validation errors violates WCAG 1.4.1 (Use of Color). Screen readers and colorblind users may miss the error state entirely if there is no text indicating what went wrong.
+**Action:** Always provide an explicit, non-color-dependent visual indicator, such as an inline text error message displaying the native HTML5 `validationMessage`, linked to the input via `aria-describedby` and dynamically updated on `input`/`blur` events.
