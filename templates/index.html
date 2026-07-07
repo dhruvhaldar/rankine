@@ -395,7 +395,11 @@
                 const updateAriaInvalid = () => {
                     if (!input.validity.valid) {
                         input.setAttribute('aria-invalid', 'true');
-                        errorMsg.textContent = input.validationMessage;
+                        if (input.validity.patternMismatch && input.title) {
+                            errorMsg.textContent = input.title;
+                        } else {
+                            errorMsg.textContent = input.validationMessage;
+                        }
                     } else {
                         input.removeAttribute('aria-invalid');
                         errorMsg.textContent = '';
