@@ -122,3 +122,7 @@
 ## 2026-07-06 - Inline Form Validation
 **Learning:** Relying solely on color changes (like a red border or background) to indicate form validation errors violates WCAG 1.4.1 (Use of Color). Screen readers and colorblind users may miss the error state entirely if there is no text indicating what went wrong.
 **Action:** Always provide an explicit, non-color-dependent visual indicator, such as an inline text error message displaying the native HTML5 `validationMessage`, linked to the input via `aria-describedby` and dynamically updated on `input`/`blur` events.
+
+## 2026-07-07 - Actionable Pattern Validation Errors
+**Learning:** When using HTML5 `pattern` attributes for input validation, the default browser `validationMessage` on a `patternMismatch` is often a generic 'Please match the requested format.', which is unhelpful.
+**Action:** Always check for `input.validity.patternMismatch` and dynamically replace the generic message with the explicit format instructions provided in the input's `title` attribute to provide actionable feedback to users.
