@@ -143,7 +143,8 @@ def add_security_headers(response):
     response.headers['X-Frame-Options'] = 'DENY'
     # Use nonce for inline scripts to prevent XSS while allowing valid functionality
     csp_nonce = getattr(g, 'csp_nonce', '')
-    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self' 'nonce-{csp_nonce}'; script-src 'self' 'nonce-{csp_nonce}'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
+    nonce_directive = f" 'nonce-{csp_nonce}'" if csp_nonce else ""
+    response.headers['Content-Security-Policy'] = f"default-src 'self'; style-src 'self'{nonce_directive}; script-src 'self'{nonce_directive}; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;"
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), fullscreen=()'
