@@ -56,3 +56,8 @@
 **Vulnerability:** The application applied a CSP nonce generated in a `before_request` hook within an `after_request` hook. If a request was aborted early (e.g., due to a 403 or 400 error), the `before_request` hook might not run or global state might not be populated, causing `g.csp_nonce` to be an empty string. The CSP header would then be set with `nonce-`, which is an invalid directive and could potentially be bypassed or cause browser warnings.
 **Learning:** Security header generation in `after_request` must be defensive against the possibility that `before_request` hooks were bypassed due to early aborts. Generating an invalid CSP directive weakens the policy.
 **Prevention:** Conditionally construct the nonce directive (e.g., `nonce_directive = f" 'nonce-{csp_nonce}'" if csp_nonce else ""`) to gracefully degrade to standard non-nonce CSP rules (like `self`) if the nonce is missing.
+
+## 2026-07-09 - Prevent Silent Failure on Payload Limit Rejections
+**Vulnerability:** The application silently rejected excessively long inputs intended to prevent Application-Layer DoS. This silent failure pattern allowed attackers to probe endpoints indefinitely to find payload limits without triggering any security alerts or logs.
+**Learning:** Security protections like payload limits, rate limiting, and CSRF validations must not only block malicious requests but also provide visibility into the attack. A silent rejection is only a partial defense.
+**Prevention:** Always explicitly log (e.g., `logger.warning`) the rejection of requests by security controls, capturing relevant context such as the client IP and the endpoint being probed.
