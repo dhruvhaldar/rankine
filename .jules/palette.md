@@ -126,3 +126,7 @@
 ## 2026-07-07 - Actionable Pattern Validation Errors
 **Learning:** When using HTML5 `pattern` attributes for input validation, the default browser `validationMessage` on a `patternMismatch` is often a generic 'Please match the requested format.', which is unhelpful.
 **Action:** Always check for `input.validity.patternMismatch` and dynamically replace the generic message with the explicit format instructions provided in the input's `title` attribute to provide actionable feedback to users.
+
+## 2026-07-08 - Synchronous Event Processing for Custom Validity
+**Learning:** When using HTML5 `setCustomValidity` in an `input` event listener, if a generic UI listener (like one that toggles `aria-invalid` or displays `validationMessage`) is attached *before* the custom validation listener, the UI will read the input's previous validity state. This causes error messages to visually lag one keystroke behind the actual data.
+**Action:** Always register custom validation constraints *before* generic validation UI handlers in the DOM execution order. Additionally, when one field's state dynamically restricts another (e.g., `min`/`max`), explicitly dispatch a synthetic `input` event on the dependent field to immediately trigger re-evaluation of its validity state.
