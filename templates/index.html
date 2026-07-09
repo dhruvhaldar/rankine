@@ -379,6 +379,40 @@
     </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
+            // Add inline validation for strictly positive inputs to prevent 400 errors on 0
+            ['P0', 'back_pressure', 'time'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const val = parseFloat(this.value);
+                        if (!isNaN(val) && val <= 0) {
+                            this.setCustomValidity('Value must be strictly positive (greater than 0).');
+                        } else {
+                            this.setCustomValidity('');
+                        }
+                    });
+                    // Initialize constraint on load for default/autofilled values
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+            });
+
+            const aThroatInput = document.getElementById('A_throat');
+            if (aThroatInput) {
+                aThroatInput.addEventListener('input', function() {
+                    const throatVal = parseFloat(this.value);
+                    const exitInput = document.getElementById('A_exit');
+                    exitInput.min = this.value;
+                    if (!isNaN(throatVal)) {
+                        exitInput.max = Math.min(100, throatVal * 100);
+                    } else {
+                        exitInput.max = 100;
+                    }
+                    exitInput.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+                // Initialize dependent constraints on load for default/autofilled values
+                aThroatInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
             // Dynamically set aria-invalid for accessibility based on HTML5 validation
             document.querySelectorAll('input, select, textarea').forEach(input => {
                 // Create inline error message element
@@ -428,39 +462,6 @@
                     });
                 }
             });
-
-            // Add inline validation for strictly positive inputs to prevent 400 errors on 0
-            ['P0', 'back_pressure', 'time'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        const val = parseFloat(this.value);
-                        if (!isNaN(val) && val <= 0) {
-                            this.setCustomValidity('Value must be strictly positive (greater than 0).');
-                        } else {
-                            this.setCustomValidity('');
-                        }
-                    });
-                    // Initialize constraint on load for default/autofilled values
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            });
-
-            const aThroatInput = document.getElementById('A_throat');
-            if (aThroatInput) {
-                aThroatInput.addEventListener('input', function() {
-                    const throatVal = parseFloat(this.value);
-                    const exitInput = document.getElementById('A_exit');
-                    exitInput.min = this.value;
-                    if (!isNaN(throatVal)) {
-                        exitInput.max = Math.min(100, throatVal * 100);
-                    } else {
-                        exitInput.max = 100;
-                    }
-                });
-                // Initialize dependent constraints on load for default/autofilled values
-                aThroatInput.dispatchEvent(new Event('input', { bubbles: true }));
-            }
 
             const machsInput = document.getElementById('machs');
             if (machsInput) {
