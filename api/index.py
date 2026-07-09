@@ -205,6 +205,7 @@ def plot_nozzle():
 
             # Security: Prevent DoS from parsing massive strings
             if max(len(P0_str), len(back_pressure_str), len(A_throat_str), len(A_exit_str)) > 100:
+                logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
                 return "Error: Input too long.", 400
 
             P0 = float(P0_str)
@@ -266,6 +267,7 @@ def plot_shock_polar():
 
         # Security: Enforce limits on input to prevent logical DoS
         if len(machs_str) > 100:
+            logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Input too long.", 400
 
         try:
@@ -318,6 +320,7 @@ def plot_shock_tube():
 
             # Security: Prevent DoS from parsing massive strings
             if len(time_str) > 100:
+                logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
                 return "Error: Input too long.", 400
 
             time = float(time_str)
