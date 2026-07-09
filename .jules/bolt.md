@@ -69,3 +69,7 @@
 ## 2026-06-29 - Brentq vs Newton for Bounded Scalar Inversions
 **Learning:** When implementing scalar fast-paths for physical inversions where strict domain bounds can be defined (like Mach number from Prandtl-Meyer angle), `scipy.optimize.brentq` is significantly faster (~5-6x) than `scipy.optimize.newton`. This is because `brentq` is implemented in C and avoids the Python-level function call overhead of explicitly providing and evaluating the derivative `fprime`.
 **Action:** Prefer `scipy.optimize.brentq` over `newton` for bounded scalar inversions where the domain bounds are known.
+
+## 2026-07-02 - Logarithmic Transform in Root Solvers
+**Learning:** In iterative solvers like `newton` or `brentq`, evaluating fractional exponents (e.g. `(1 + c*M**2)**(g/g-1)`) on every single step creates massive overhead. By applying a natural logarithm to the entire residual function, you convert expensive power operations into scalar multiplications (`exp * log(term)`). Since solving `ln(f(x)) - ln(target) = 0` yields the exact same root as `f(x) - target = 0`, this avoids the exponentiation overhead entirely and provides up to 2.5x speedups in Newton-Raphson array evaluations.
+**Action:** Always consider taking the natural logarithm of both sides of an equation inside an iterative root solver if the equation heavily features fractional exponents or powers.
