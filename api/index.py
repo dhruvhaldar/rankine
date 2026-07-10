@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request, send_file, g
+from flask import Flask, render_template, request, send_file, g, has_request_context
 import io
 import base64
 import secrets
@@ -42,6 +42,26 @@ if secret_key:
     app.config['SECRET_KEY'] = secret_key
 
 logger = logging.getLogger(__name__)
+
+class SecurityContextFilter(logging.Filter):
+    def filter(self, record):
+        if 'Security:' in record.getMessage() and has_request_context():
+            if 'Headers:' not in record.getMessage():
+                # Security: Redact sensitive headers before logging
+                headers_dict = dict(request.headers)
+                sensitive_headers = ['Cookie', 'Authorization', 'X-Api-Key']
+                for h in sensitive_headers:
+                    if h in headers_dict:
+                        headers_dict[h] = '[REDACTED]'
+
+                headers_str = sanitize_for_log(str(headers_dict))
+                if record.args:
+                    record.msg = record.msg % record.args
+                    record.args = ()
+                record.msg = f"{record.msg} | Headers: {headers_str}"
+        return True
+
+logger.addFilter(SecurityContextFilter())
 
 def sanitize_for_log(val):
     """Sanitize string for logging to prevent CRLF injection."""
@@ -229,6 +249,7 @@ def plot_nozzle():
 
         # Security: Prevent logical DoS and OverflowError in solvers
         if P0 > 1e7 or back_pressure > 1e7 or A_throat > 100 or A_exit > 100:
+            logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Invalid physical parameters. Values exceed maximum bounds.", 400
 
         if A_exit / A_throat > 100:
@@ -280,6 +301,7 @@ def plot_shock_polar():
             return "Error: Mach numbers must be numeric and finite.", 400
 
         if len(machs) > 10:
+            logger.warning(f"Security: Array length payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Too many Mach numbers requested (max 10).", 400
 
         # Security: Ensure Mach numbers are physically valid for shock polar
@@ -288,6 +310,7 @@ def plot_shock_polar():
 
         # Security: Prevent mathematical overflow and DoS in numerical solvers
         if any(m > 100.0 for m in machs):
+            logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Mach numbers must be <= 100.0.", 400
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
@@ -333,6 +356,7 @@ def plot_shock_tube():
 
         # Security: Validate simulation time bounds
         if time <= 0 or time > 100:
+            logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             return "Error: Time must be strictly positive and less than or equal to 100 seconds.", 400
 
         driver = {'p': 1.0, 'rho': 1.0, 'u': 0.0}
