@@ -49,10 +49,10 @@ class SecurityContextFilter(logging.Filter):
             if 'Headers:' not in record.getMessage():
                 # Security: Redact sensitive headers before logging
                 headers_dict = dict(request.headers)
-                sensitive_headers = ['Cookie', 'Authorization', 'X-Api-Key']
-                for h in sensitive_headers:
-                    if h in headers_dict:
-                        headers_dict[h] = '[REDACTED]'
+                sensitive_headers = {'cookie', 'authorization', 'x-api-key'}
+                for k in list(headers_dict.keys()):
+                    if k.lower() in sensitive_headers:
+                        headers_dict[k] = '[REDACTED]'
 
                 headers_str = sanitize_for_log(str(headers_dict))
                 if record.args:
