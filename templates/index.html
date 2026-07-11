@@ -456,6 +456,7 @@
                     const storedValue = sessionStorage.getItem(storageKey);
                     if (storedValue !== null) {
                         element.value = storedValue;
+                        element.dispatchEvent(new Event('input', { bubbles: true }));
                     }
                     element.addEventListener('input', () => {
                         sessionStorage.setItem(storageKey, element.value);
