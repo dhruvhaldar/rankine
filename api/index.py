@@ -270,11 +270,6 @@ def plot_nozzle():
             plt.close(fig)
 
         return render_template('index.html', nozzle_plot=plot_url)
-    except BadRequest:
-        return "Error: Bad request.", 400
-    except RequestEntityTooLarge:
-        logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-        return "Error: Request payload is too large.", 413
     except HTTPException:
         raise
     except Exception as e:
@@ -324,11 +319,6 @@ def plot_shock_polar():
             plt.close(fig)
 
         return render_template('index.html', polar_plot=plot_url)
-    except BadRequest:
-        return "Error: Bad request.", 400
-    except RequestEntityTooLarge:
-        logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-        return "Error: Request payload is too large.", 413
     except HTTPException:
         raise
     except Exception as e:
@@ -376,11 +366,6 @@ def plot_shock_tube():
             plt.close(fig)
 
         return render_template('index.html', tube_plot=plot_url)
-    except BadRequest:
-        return "Error: Bad request.", 400
-    except RequestEntityTooLarge:
-        logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-        return "Error: Request payload is too large.", 413
     except HTTPException:
         raise
     except Exception as e:
