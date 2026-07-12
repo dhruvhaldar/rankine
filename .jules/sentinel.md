@@ -70,3 +70,8 @@
 **Vulnerability:** The logging filter intended to redact sensitive headers like `Cookie` and `Authorization` compared header names against a list of exact Title-Case strings (e.g., `'Cookie'`). Because HTTP headers are case-insensitive, an attacker (or standard browser) sending lowercase headers like `cookie:` bypassed the redaction logic. This allowed sensitive session credentials to be leaked in plaintext into the application logs (CWE-532).
 **Learning:** In Flask/Werkzeug, converting `request.headers` to a standard Python dictionary via `dict(request.headers)` retains the original casing provided by the client. Security checks against these dictionary keys must not rely on exact case matching.
 **Prevention:** Always perform case-insensitive comparisons (e.g., using `key.lower()`) when evaluating HTTP header names against security blocklists or redaction filters in Python dictionaries.
+
+## 2026-07-12 - Allow HTTPException to fall through to global handlers
+**Vulnerability:** The application was catching `BadRequest` and `RequestEntityTooLarge` exceptions directly in the route handlers and returning responses without proper logging. This caused a silent failure where payload limits or bad requests were rejected without being recorded in the security logs, blinding developers to probing attacks.
+**Learning:** Catching specific `HTTPException`s within individual routes bypasses global error handlers (e.g., `@app.errorhandler(400)`) which are often responsible for centralized security logging and consistent response formatting.
+**Prevention:** Always allow `HTTPException`s (or specific subclasses) to bubble up to global `@app.errorhandler` definitions to ensure security events are uniformly logged and handled across all endpoints.
