@@ -189,9 +189,16 @@
         }
         .stale-result {
             position: relative;
+        }
+        .stale-result img,
+        .stale-result .result-actions {
             opacity: 0.6;
             filter: grayscale(50%);
             transition: all 0.3s ease;
+        }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .stale-result::after {
             content: "Stale - Please Recalculate";
@@ -205,6 +212,7 @@
             border-radius: 4px;
             font-weight: bold;
             pointer-events: none;
+            animation: fadeInOverlay 0.3s ease forwards;
         }
         footer {
             margin-top: 30px;
