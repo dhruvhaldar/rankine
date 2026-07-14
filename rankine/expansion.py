@@ -80,12 +80,15 @@ class PrandtlMeyer:
 
         def residual_arr(M_guess, gamma, target_nu):
             # Inlined PM function for performance inside Newton iterations
-            s = np.sqrt(M_guess * M_guess - 1.0)
+            # ⚡ Bolt Optimization: Eagerly clamp to prevent domain errors and avoid slow array-to-scalar loop fallback
+            M_safe = np.maximum(M_guess, 1.0 + 1e-9)
+            s = np.sqrt(M_safe * M_safe - 1.0)
             return c1 * np.arctan(c2_sqrt * s) - np.arctan(s) - target_nu
 
         def residual_arr_fprime(M_guess, gamma, target_nu):
-            M_sq = M_guess * M_guess
-            return np.sqrt(M_sq - 1.0) / (1.0 + c3 * M_sq) / M_guess
+            M_safe = np.maximum(M_guess, 1.0 + 1e-9)
+            M_sq = M_safe * M_safe
+            return np.sqrt(M_sq - 1.0) / (1.0 + c3 * M_sq) / M_safe
 
         # Check max nu (limit to M=50 approximation)
         nu_max = PrandtlMeyer.prandtl_meyer_function(50.0, gamma)
