@@ -203,6 +203,7 @@ def request_entity_too_large(e):
 
 @app.errorhandler(429)
 def too_many_requests(e):
+    logger.warning(f"Security: 429 Too Many Requests from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     return "Error: Too many requests. Please try again later.", 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
 
 @app.errorhandler(500)
