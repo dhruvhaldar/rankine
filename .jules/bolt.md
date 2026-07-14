@@ -12,3 +12,7 @@
 ## 2024-05-18 - Integer Exponentiation Bypass
 **Learning:** When evaluating mathematical expressions containing fractional exponents that simplify exactly to small integers for common constants (e.g., standard air where gamma=1.4 simplifies the isentropic area exponent to 3.0), using the arbitrary floating-point power operator (`** exponent`) is surprisingly slow compared to raw multiplication.
 **Action:** Explicitly check for common constants (e.g., `if abs(gamma - 1.4) < 1e-9:`) and replace the exponentiation with direct chained multiplication (e.g., `term * term * term`) to avoid the overhead of complex math libraries, which significantly speeds up both scalar and NumPy array evaluations.
+
+## 2024-05-18 - Domain Bounding in Newton Expansion Solver
+**Learning:** In unconstrained array solvers like `scipy.optimize.newton`, initial guesses can temporarily overshoot the valid physical domain during iterations. In `rankine/expansion.py`, unclamped `M_guess` < 1.0 caused `RuntimeWarning` from `np.sqrt` inside the residual functions, triggering a slow array-to-scalar fallback path that negated all vectorization speedups.
+**Action:** Always clamp evaluation variables inside numerical objective and derivative functions (e.g., `M_safe = np.maximum(M_guess, 1.0 + 1e-9)`) to ensure the fast vectorized Newton solver remains within the mathematical domain and never falls back to scalar iterations.
