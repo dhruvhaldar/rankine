@@ -449,6 +449,7 @@
                 };
                 input.addEventListener('input', updateAriaInvalid);
                 input.addEventListener('blur', updateAriaInvalid);
+                input.addEventListener('invalid', updateAriaInvalid);
                 // Initialize state
                 updateAriaInvalid();
             });

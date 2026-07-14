@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .inline-error-message { color: red; display: none; }
+  input[aria-invalid="true"] + .inline-error-message { display: block; }
+</style>
+</head>
+<body>
+  <input type="text" id="test1" aria-invalid="true">
+
+  <script>
+    const input = document.getElementById('test1');
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'inline-error-message';
+    errorMsg.textContent = 'This is an error';
+    input.parentNode.insertBefore(errorMsg, input.nextSibling);
+  </script>
+</body>
+</html>

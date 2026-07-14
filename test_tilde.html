@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  .inline-error-message { color: red; display: none; }
+  input[aria-invalid="true"] ~ .inline-error-message { display: block; }
+</style>
+</head>
+<body>
+  <form>
+    <input type="text" id="test1" aria-invalid="true">
+    <div class="inline-error-message">Error 1</div>
+    <br>
+    <input type="text" id="test2">
+    <div class="inline-error-message">Error 2</div>
+  </form>
+</body>
+</html>
