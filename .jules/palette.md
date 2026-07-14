@@ -137,3 +137,7 @@
 ## 2024-05-18 - Stale State Overlay Contrast
 **Learning:** When creating a 'stale' or 'processing' overlay using an `::after` pseudo-element on a container, applying `opacity` or `filter: grayscale()` directly to the parent container creates a stacking context where the overlay text inherits the reduced opacity. This washes out the text and often causes severe WCAG color contrast violations against the content behind it.
 **Action:** Always apply visual dimming effects (like `opacity` or `grayscale`) to the specific child elements inside the container (e.g., the target image or data wrapper) rather than the parent container, ensuring the overlay text remains fully opaque and highly readable.
+
+## 2026-07-14 - Native Invalid Event Binding for Form Submissions
+**Learning:** When building custom inline form validation that binds to `input` and `blur` events, form submissions containing invalid (or empty required) fields that have not been interacted with bypass these events. The browser fires a native `invalid` event instead, leaving the custom inline UI completely out of sync with the actual validation state.
+**Action:** Always explicitly bind custom validation UI update functions to the native `invalid` event (`input.addEventListener('invalid', ...)`) in addition to `input` and `blur` to guarantee the inline error messages consistently appear when users submit incomplete or invalid forms.
