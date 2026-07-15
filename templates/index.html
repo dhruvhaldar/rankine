@@ -80,7 +80,6 @@
             background-color: #fff4f4;
         }
         input[type="text"]:focus-visible:invalid, input[type="number"]:focus-visible:invalid {
-            outline-color: #d32f2f;
             border-color: #d32f2f;
         }
         /* Remove default spin buttons from scientific numeric inputs */
@@ -115,12 +114,13 @@
         button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
-            color: #666;
+            color: #4b5563;
         }
         button[aria-disabled="true"] {
             background-color: #ccc;
             cursor: wait;
-            color: #666;
+            color: #4b5563;
+            transform: none;
         }
         img { max-width: 100%; height: auto; margin-top: 20px; }
         /* Remove default focus ring on programmatic focus for result containers */
