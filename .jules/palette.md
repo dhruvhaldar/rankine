@@ -149,3 +149,7 @@
 ## 2026-07-15 - Distinguishable Invalid Focus States
 **Learning:** When styling invalid form fields, forcing the `outline-color` to red to match the error border causes the focus ring to blend into the error state. This violates WCAG Focus Appearance guidelines because the focus indicator loses contrast against the component's own border, making it harder for users (especially those with color blindness) to identify which element has keyboard focus.
 **Action:** Always maintain the standard, highly visible focus ring color (e.g., brand blue) on invalid inputs. Allow the background and border to communicate the error, while the distinct outline color clearly communicates focus.
+
+## 2026-07-16 - Prevent Active Animations on aria-disabled Elements
+**Learning:** While native `disabled` attributes automatically suppress CSS `:active` states, elements that rely on `aria-disabled="true"` for logical disablement will still trigger `:active` pseudo-classes (e.g., scaling or pressing animations) when interacted with, providing false visual feedback.
+**Action:** Always explicitly nullify interactive animations (e.g., `transform: none !important;`) on `[aria-disabled="true"]` selectors to ensure the visual feedback correctly reflects the disabled state.

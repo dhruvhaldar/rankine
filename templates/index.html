@@ -120,7 +120,7 @@
             background-color: #ccc;
             cursor: wait;
             color: #4b5563;
-            transform: none;
+            transform: none !important;
         }
         img { max-width: 100%; height: auto; margin-top: 20px; }
         /* Remove default focus ring on programmatic focus for result containers */
@@ -166,6 +166,9 @@
         }
         a.download-btn:active {
             transform: scale(0.98);
+        }
+        a.download-btn[aria-disabled="true"] {
+            transform: none !important;
         }
         a.download-btn:focus-visible {
             outline: 2px solid #005bb5;
