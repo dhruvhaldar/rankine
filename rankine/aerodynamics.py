@@ -81,8 +81,14 @@ class Aerodynamics:
             if t_val < 0:
                 return 0.0
             M_sq = m_val * m_val
-            term1 = (((gamma + 1.0) * M_sq) / 2.0)**(gamma / (gamma - 1.0))
-            term2 = ((gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0)))**(1.0 / (gamma - 1.0))
+            t1 = ((gamma + 1.0) * M_sq) / 2.0
+            t2 = (gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0))
+            if abs(gamma - 1.4) < 1e-9:
+                term1 = t1 * t1 * t1 * (t1 ** 0.5)
+                term2 = t2 * t2 * (t2 ** 0.5)
+            else:
+                term1 = t1**(gamma / (gamma - 1.0))
+                term2 = t2**(1.0 / (gamma - 1.0))
             P02_P_inf = term1 * term2
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
             sin_t = math.sin(t_val)
@@ -99,8 +105,14 @@ class Aerodynamics:
         # ⚡ Bolt Optimization: Rely on implicit broadcasting instead of np.broadcast_arrays
         # Expected speedup: ~4x faster for mixed scalar/array evaluations
         M_arr_sq = M_arr * M_arr
-        term1 = (((gamma + 1.0) * M_arr_sq) / 2.0)**(gamma / (gamma - 1.0))
-        term2 = ((gamma + 1.0) / (2.0 * gamma * M_arr_sq - (gamma - 1.0)))**(1.0 / (gamma - 1.0))
+        t1 = ((gamma + 1.0) * M_arr_sq) / 2.0
+        t2 = (gamma + 1.0) / (2.0 * gamma * M_arr_sq - (gamma - 1.0))
+        if abs(gamma - 1.4) < 1e-9:
+            term1 = t1 * t1 * t1 * (t1 ** 0.5)
+            term2 = t2 * t2 * (t2 ** 0.5)
+        else:
+            term1 = t1**(gamma / (gamma - 1.0))
+            term2 = t2**(1.0 / (gamma - 1.0))
         P02_P_inf = term1 * term2
 
         Cp_max = (2.0 / (gamma * M_arr_sq)) * (P02_P_inf - 1.0)
