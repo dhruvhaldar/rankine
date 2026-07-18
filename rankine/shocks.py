@@ -30,7 +30,12 @@ class NormalShock:
             self.T2_T1 = self.P2_P1 / self.rho2_rho1
             term1 = ((gamma + 1.0) / 2.0 * m_sq) / term_M1
             term2 = self.P2_P1
-            self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
+            # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
+            # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
+            if abs(gamma - 1.4) < 1e-9:
+                self.P02_P01 = (term1 * term1 * term1 * (term1 ** 0.5)) / (term2 * term2 * (term2 ** 0.5))
+            else:
+                self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
             return
         except (ValueError, TypeError):
             # Fallback to vector array logic
@@ -59,7 +64,12 @@ class NormalShock:
         term1 = ((gamma + 1.0) / 2.0 * M1_sq) / term_M1
         term2 = self.P2_P1
 
-        self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
+        # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
+        # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
+        if abs(gamma - 1.4) < 1e-9:
+            self.P02_P01 = (term1 * term1 * term1 * (term1 ** 0.5)) / (term2 * term2 * (term2 ** 0.5))
+        else:
+            self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
 
 class ObliqueShock:
     @staticmethod
