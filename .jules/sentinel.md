@@ -84,3 +84,7 @@
 **Vulnerability:** 429 error handler was silently returning a response without logging the request details.
 **Learning:** Failing to log rate limit rejections creates a silent failure pattern that allows attackers to probe endpoints without triggering alerts.
 **Prevention:** Always add explicit logging capturing context like IP and path for all security-related error handlers.
+## 2026-07-20 - Prevent Header Logging Bypass via Payload Injection
+**Vulnerability:** The logging filter in `api/index.py` used a simple string match (`if "Headers:" not in record.getMessage()`) to prevent appending headers multiple times. An attacker could bypass this by injecting the string `Headers:` into the request payload (e.g., in the requested URL path like `/Headers:`), which gets formatted into the log message. This tricks the filter into skipping header logging, blinding the audit logs.
+**Learning:** Relying on simple string inclusion checks on user-controllable log messages to track internal state creates injection vulnerabilities that can bypass security mechanisms.
+**Prevention:** Use a dedicated boolean flag on the log record object (e.g., `getattr(record, "_headers_appended", False)`) to securely track state instead of relying on the mutable and user-controllable log message text.
