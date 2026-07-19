@@ -278,15 +278,26 @@
         .inline-error-message {
             color: #d32f2f;
             font-size: 0.85em;
-            margin-top: -8px;
-            margin-bottom: 10px;
-            display: none;
+            margin-top: 0;
+            margin-bottom: 0;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
             font-weight: bold;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
         }
         input[aria-invalid="true"] + .inline-error-message,
         textarea[aria-invalid="true"] + .inline-error-message,
         select[aria-invalid="true"] + .inline-error-message {
-            display: block;
+            max-height: 4em;
+            margin-top: -8px;
+            margin-bottom: 10px;
+            opacity: 1;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .inline-error-message {
+                transition: none;
+            }
         }
     </style>
 </head>
