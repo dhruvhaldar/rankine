@@ -153,3 +153,6 @@
 ## 2026-07-16 - Prevent Active Animations on aria-disabled Elements
 **Learning:** While native `disabled` attributes automatically suppress CSS `:active` states, elements that rely on `aria-disabled="true"` for logical disablement will still trigger `:active` pseudo-classes (e.g., scaling or pressing animations) when interacted with, providing false visual feedback.
 **Action:** Always explicitly nullify interactive animations (e.g., `transform: none !important;`) on `[aria-disabled="true"]` selectors to ensure the visual feedback correctly reflects the disabled state.
+## 2026-07-20 - Smooth Validation Layout Shifts
+**Learning:** Toggling `display: none` to `display: block` for inline error messages causes abrupt, jarring layout shifts that push content down violently. Furthermore, some older screen readers fail to consistently announce `aria-live` updates on elements that are abruptly injected into the render tree via `display` toggling.
+**Action:** Always use CSS transitions (`max-height`, `opacity`, `margin`, `overflow: hidden`) instead of `display` toggling for dynamic inline elements to create smooth, delightful micro-interactions that preserve accessibility, ensuring to include a `prefers-reduced-motion: reduce` fallback.
