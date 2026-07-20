@@ -88,3 +88,10 @@
 **Vulnerability:** The logging filter in `api/index.py` used a simple string match (`if "Headers:" not in record.getMessage()`) to prevent appending headers multiple times. An attacker could bypass this by injecting the string `Headers:` into the request payload (e.g., in the requested URL path like `/Headers:`), which gets formatted into the log message. This tricks the filter into skipping header logging, blinding the audit logs.
 **Learning:** Relying on simple string inclusion checks on user-controllable log messages to track internal state creates injection vulnerabilities that can bypass security mechanisms.
 **Prevention:** Use a dedicated boolean flag on the log record object (e.g., `getattr(record, "_headers_appended", False)`) to securely track state instead of relying on the mutable and user-controllable log message text.
+
+## 2026-07-20 - Fix Header Redaction Bypass for all Whitespaces
+**Vulnerability:** The previous header redaction mechanism only stripped spaces and colons (`.strip(' :')`). Attackers could bypass redaction by padding sensitive HTTP headers like `Cookie` or `Authorization` with other whitespace characters (e.g., `	`, `
+`), leading to credentials leaking in plaintext to the audit logs.
+**Learning:** HTTP headers can be parsed with varied whitespace characters. Relying on a subset of whitespace for stripping leaves a bypass vector open.
+**Prevention:** Use a comprehensive list of whitespace characters (e.g., `'
+:'`) when normalizing HTTP headers for security filtering.
