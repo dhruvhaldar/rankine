@@ -93,7 +93,7 @@ class Aerodynamics:
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
             sin_t = math.sin(t_val)
             return Cp_max * sin_t * sin_t
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         # ⚡ Bolt Optimization: Vectorized operation and inlined Rayleigh Pitot formula

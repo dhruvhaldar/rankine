@@ -37,7 +37,7 @@ class NormalShock:
             else:
                 self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
             return
-        except (ValueError, TypeError):
+        except TypeError:
             # Fallback to vector array logic
             pass
 
@@ -91,7 +91,7 @@ class ObliqueShock:
             m_sq = m_val * m_val
             tan_theta = 2.0 * (1.0 / math.tan(b_val)) * (m_sq * sin2_b - 1.0) / (m_sq * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
             return math.atan(tan_theta)
-        except (ValueError, TypeError, ZeroDivisionError):
+        except (TypeError, ZeroDivisionError):
             pass
 
         M_arr = np.asarray(M)

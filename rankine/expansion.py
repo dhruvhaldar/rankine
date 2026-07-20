@@ -19,7 +19,7 @@ class PrandtlMeyer:
             c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
             c2_sqrt = math.sqrt((gamma - 1.0) / (gamma + 1.0))
             return c1 * math.atan(c2_sqrt * s) - math.atan(s)
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         M_arr = np.asarray(M)
@@ -63,7 +63,7 @@ class PrandtlMeyer:
 
             M = brentq(residual_scalar, 1.0, 50.0)
             return max(M, 1.0)
-        except (ValueError, TypeError):
+        except TypeError:
             pass
 
         nu_arr = np.asarray(nu)
