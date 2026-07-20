@@ -16,24 +16,14 @@ class Aerodynamics:
         cp0: Incompressible pressure coefficient.
         M: Freestream Mach number (M < 1).
         """
-        # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
-        # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
-        # Note: Only catch TypeError (raised by arrays in float()) to prevent swallowing explicit ValueErrors raised for invalid domain bounds.
         try:
-            val = float(M)
-            c_val = float(cp0)
-            if val >= 1.0:
+            if M >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
-            return c_val / math.sqrt(1.0 - val * val)
-        except TypeError:
-            pass
+        except ValueError:
+            if np.nanmax(M) >= 1.0:
+                raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
 
-        M_arr = np.asarray(M)
-        # ⚡ Bolt Optimization: Replacing np.any(array >= val) with np.nanmax avoids large boolean array allocations.
-        # Expected speedup: ~7-8x for bounds checking over large arrays
-        if M_arr.size > 0 and np.nanmax(M_arr) >= 1.0:
-            raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
-        return cp0 / np.sqrt(1.0 - M_arr * M_arr)
+        return cp0 / ((1.0 - M * M) ** 0.5)
 
     @staticmethod
     def ackeret_cp(M, theta):
@@ -43,26 +33,14 @@ class Aerodynamics:
         M: Freestream Mach number (M > 1).
         theta: Surface inclination angle (radians). Positive for compression (facing flow), negative for expansion.
         """
-        # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
-        # Expected speedup: ~2x faster for scalar evaluations by avoiding isinstance overhead and array allocation
-        # Note: Only catch TypeError (raised by arrays in float()) to prevent swallowing explicit ValueErrors raised for invalid domain bounds.
         try:
-            val = float(M)
-            t_val = float(theta)
-            if val <= 1.0:
+            if M <= 1.0:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
-            beta = math.sqrt(val * val - 1.0)
-            return 2.0 * t_val / beta
-        except TypeError:
-            pass
+        except ValueError:
+            if np.nanmin(M) <= 1.0:
+                raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
 
-        M_arr = np.asarray(M)
-        # ⚡ Bolt Optimization: Replacing np.any(array <= val) with np.nanmin avoids large boolean array allocations.
-        # Expected speedup: ~7-8x for bounds checking over large arrays
-        if M_arr.size > 0 and np.nanmin(M_arr) <= 1.0:
-            raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
-
-        beta = np.sqrt(M_arr * M_arr - 1.0)
+        beta = (M * M - 1.0) ** 0.5
         return 2.0 * theta / beta
 
     @staticmethod

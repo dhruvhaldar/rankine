@@ -14,40 +14,13 @@ class NormalShock:
         M1 = self.M1
         gamma = self.gamma
 
-        # ⚡ Bolt Optimization: Fast-path for scalars using try/except ValueError polymorphism
-        # Expected speedup: ~2.5x faster by replacing M1**2 with M1 * M1 and avoiding numpy arrays
-        try:
-            m_val = float(M1)
-            if m_val < 1.0:
-                pass
-            m_sq = m_val * m_val
-            term_M1 = 1.0 + (gamma - 1.0) / 2.0 * m_sq
-            numerator = term_M1
-            denominator = gamma * m_sq - (gamma - 1.0) / 2.0
-            self.M2 = math.sqrt(numerator / denominator)
-            self.P2_P1 = 1.0 + 2.0 * gamma / (gamma + 1.0) * (m_sq - 1.0)
-            self.rho2_rho1 = ((gamma + 1.0) * m_sq) / (2.0 + (gamma - 1.0) * m_sq)
-            self.T2_T1 = self.P2_P1 / self.rho2_rho1
-            term1 = ((gamma + 1.0) / 2.0 * m_sq) / term_M1
-            term2 = self.P2_P1
-            # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
-            # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
-            if abs(gamma - 1.4) < 1e-9:
-                self.P02_P01 = (term1 * term1 * term1 * (term1 ** 0.5)) / (term2 * term2 * (term2 ** 0.5))
-            else:
-                self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
-            return
-        except (ValueError, TypeError):
-            # Fallback to vector array logic
-            pass
-
         M1_sq = M1 * M1
         term_M1 = 1.0 + (gamma - 1.0) / 2.0 * M1_sq
 
         # M2
         numerator = term_M1
         denominator = gamma * M1_sq - (gamma - 1.0) / 2.0
-        self.M2 = np.sqrt(numerator / denominator)
+        self.M2 = (numerator / denominator) ** 0.5
 
         # P2/P1
         self.P2_P1 = 1.0 + 2.0 * gamma / (gamma + 1.0) * (M1_sq - 1.0)

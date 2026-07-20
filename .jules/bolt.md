@@ -19,3 +19,6 @@
 ## 2026-07-23 - Fractional Exponentiation Bypass
 **Learning:** When calculating physical property ratios (pressure, density) using fractional exponents like 3.5 or 2.5 for standard air, the standard power operator `**` evaluates incredibly slowly. Splitting the fractional exponent into integer multiples and a square root (`x * x * x * sqrt(x)`) yields dramatic performance gains.
 **Action:** For frequently evaluated thermodynamic property ratio functions, check if gamma approaches a common constant that yields half-integer exponents. Evaluate using chained multiplication and `sqrt()` instead of the arbitrary power function to bypass overhead, especially for NumPy array broadcasting.
+## 2026-07-20 - Polymorphic Square Root Anti-Pattern
+**Learning:** Branching logic with try/except to switch between math.sqrt and np.sqrt introduces severe overhead for repeated evaluations on small arrays. Python's native exponentiation operator (** 0.5) gracefully handles both scalars and arrays optimally.
+**Action:** Always prefer ** 0.5 over math.sqrt/np.sqrt when writing mathematical functions intended to handle polymorphic inputs seamlessly.
