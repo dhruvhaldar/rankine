@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, send_file, g, has_request_con
 import io
 import base64
 import secrets
-from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, HTTPException
+from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, Forbidden, TooManyRequests, HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 import matplotlib
@@ -100,7 +100,7 @@ def rate_limiter():
 
         if len(rate_limit_data[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
             logger.warning(f"Security: Rate limit exceeded for IP {sanitize_for_log(client_ip)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Too many requests. Please try again later.", 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
+            raise TooManyRequests("Error: Too many requests. Please try again later.")
 
         rate_limit_data[client_ip].append(current_time)
 
@@ -120,34 +120,34 @@ def csrf_protect():
         is_allowed = expected_host in allowed_hosts or (os.environ.get('VERCEL_URL') and expected_host == os.environ.get('VERCEL_URL'))
         if not is_allowed and os.environ.get('FLASK_DEBUG') != '1':
             logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Invalid Host header.", 403
+            raise Forbidden("Error: Invalid Host header.")
 
         # Security: Defense-in-depth CSRF protection using Fetch Metadata Request Headers
         # Note: "none" is allowed as it is used for direct navigation, although this is a POST endpoint check
         sec_fetch_site = request.headers.get("Sec-Fetch-Site")
         if sec_fetch_site and sec_fetch_site not in ["same-origin", "same-site", "none"]:
             logger.warning(f"Security: CSRF validation failed - Invalid Sec-Fetch-Site: {sanitize_for_log(sec_fetch_site)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Cross-site requests are not permitted.", 403
+            raise Forbidden("Error: Cross-site requests are not permitted.")
 
         if origin:
             try:
                 if urlparse(origin).netloc != expected_host:
                     logger.warning(f"Security: CSRF validation failed - Invalid Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                    return "Error: Invalid Origin.", 403
+                    raise Forbidden("Error: Invalid Origin.")
             except ValueError:
                 logger.warning(f"Security: CSRF validation failed - Malformed Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Malformed Origin header.", 400
+                raise BadRequest("Error: Malformed Origin header.")
         elif referer:
             try:
                 if urlparse(referer).netloc != expected_host:
                     logger.warning(f"Security: CSRF validation failed - Invalid Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                    return "Error: Invalid Referer.", 403
+                    raise Forbidden("Error: Invalid Referer.")
             except ValueError:
                 logger.warning(f"Security: CSRF validation failed - Malformed Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Malformed Referer header.", 400
+                raise BadRequest("Error: Malformed Referer header.")
         else:
             logger.warning(f"Security: CSRF validation failed - Missing Origin and Referer from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Missing Origin or Referer header.", 403
+            raise Forbidden("Error: Missing Origin or Referer header.")
 
 @app.before_request
 def generate_csp_nonce():
@@ -182,35 +182,47 @@ def add_security_headers(response):
     response.headers['X-DNS-Prefetch-Control'] = 'off'
     return response
 
+@app.errorhandler(403)
+def forbidden(e):
+    logger.warning(f"Security: 403 Forbidden from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: Forbidden."
+    return msg, 403
+
 @app.errorhandler(404)
 def page_not_found(e):
     logger.warning(f"Security: 404 Not Found from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-    return "Error: The requested URL was not found on the server.", 404
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: The requested URL was not found on the server."
+    return msg, 404
 
 @app.errorhandler(400)
 def bad_request(e):
     logger.warning(f"Security: 400 Bad Request from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-    return "Error: Bad request.", 400
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: Bad request."
+    return msg, 400
 
 @app.errorhandler(405)
 def method_not_allowed(e):
     logger.warning(f"Security: 405 Method Not Allowed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-    return "Error: The method is not allowed for the requested URL.", 405
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: The method is not allowed for the requested URL."
+    return msg, 405
 
 @app.errorhandler(413)
 def request_entity_too_large(e):
     logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-    return "Error: Request payload is too large.", 413
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: Request payload is too large."
+    return msg, 413
 
 @app.errorhandler(429)
 def too_many_requests(e):
     logger.warning(f"Security: 429 Too Many Requests from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-    return "Error: Too many requests. Please try again later.", 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: Too many requests. Please try again later."
+    return msg, 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
 
 @app.errorhandler(500)
 def internal_server_error(e):
     logger.error(f"Internal server error from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
-    return "Error: An internal server error occurred.", 500
+    msg = e.description if hasattr(e, 'description') and e.description else "Error: An internal server error occurred."
+    return msg, 500
 
 @app.route('/')
 def home():
@@ -228,7 +240,7 @@ def plot_nozzle():
             # Security: Prevent DoS from parsing massive strings
             if max(len(P0_str), len(back_pressure_str), len(A_throat_str), len(A_exit_str)) > 100:
                 logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Input too long.", 400
+                raise BadRequest("Error: Input too long.")
 
             P0 = float(P0_str)
             back_pressure = float(back_pressure_str)
@@ -239,23 +251,23 @@ def plot_nozzle():
             if not (math.isfinite(P0) and math.isfinite(back_pressure) and math.isfinite(A_throat) and math.isfinite(A_exit)):
                 raise ValueError("Values must be finite.")
         except ValueError:
-            return "Error: Invalid physical parameters. Values must be numeric and finite.", 400
+            raise BadRequest("Error: Invalid physical parameters. Values must be numeric and finite.")
 
         # Security: Validate physical parameter bounds
         if P0 <= 0 or back_pressure <= 0 or A_throat <= 0 or A_exit <= 0:
-            return "Error: Invalid physical parameters. Values must be strictly positive.", 400
+            raise BadRequest("Error: Invalid physical parameters. Values must be strictly positive.")
 
         # Security: Ensure Converging-Diverging Nozzle geometry is physically valid
         if A_exit < A_throat:
-            return "Error: Invalid physical parameters. Exit Area must be >= Throat Area.", 400
+            raise BadRequest("Error: Invalid physical parameters. Exit Area must be >= Throat Area.")
 
         # Security: Prevent logical DoS and OverflowError in solvers
         if P0 > 1e7 or back_pressure > 1e7 or A_throat > 100 or A_exit > 100:
             logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Invalid physical parameters. Values exceed maximum bounds.", 400
+            raise BadRequest("Error: Invalid physical parameters. Values exceed maximum bounds.")
 
         if A_exit / A_throat > 100:
-            return "Error: Area ratio (Exit/Throat) must be <= 100.", 400
+            raise BadRequest("Error: Area ratio (Exit/Throat) must be <= 100.")
 
         nozzle = CDNozzle(gamma=1.4, A_throat=A_throat, A_exit=A_exit)
         res = nozzle.solve(P0=P0, T0=300, back_pressure=back_pressure)
@@ -286,7 +298,7 @@ def plot_shock_polar():
         # Security: Enforce limits on input to prevent logical DoS
         if len(machs_str) > 100:
             logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Input too long.", 400
+            raise BadRequest("Error: Input too long.")
 
         try:
             machs = [float(m.strip()) for m in machs_str.split(',')]
@@ -295,20 +307,20 @@ def plot_shock_polar():
             if not all(math.isfinite(m) for m in machs):
                 raise ValueError("Mach numbers must be finite.")
         except ValueError:
-            return "Error: Mach numbers must be numeric and finite.", 400
+            raise BadRequest("Error: Mach numbers must be numeric and finite.")
 
         if len(machs) > 10:
             logger.warning(f"Security: Array length payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Too many Mach numbers requested (max 10).", 400
+            raise BadRequest("Error: Too many Mach numbers requested (max 10).")
 
         # Security: Ensure Mach numbers are physically valid for shock polar
         if any(m < 1.0 for m in machs):
-            return "Error: Mach numbers must be >= 1.0.", 400
+            raise BadRequest("Error: Mach numbers must be >= 1.0.")
 
         # Security: Prevent mathematical overflow and DoS in numerical solvers
         if any(m > 100.0 for m in machs):
             logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Mach numbers must be <= 100.0.", 400
+            raise BadRequest("Error: Mach numbers must be <= 100.0.")
 
         fig = ObliqueShock.plot_polar(mach_numbers=machs, gamma=1.4)
 
@@ -336,7 +348,7 @@ def plot_shock_tube():
             # Security: Prevent DoS from parsing massive strings
             if len(time_str) > 100:
                 logger.warning(f"Security: Input payload length limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-                return "Error: Input too long.", 400
+                raise BadRequest("Error: Input too long.")
 
             time = float(time_str)
 
@@ -344,12 +356,12 @@ def plot_shock_tube():
             if not math.isfinite(time):
                 raise ValueError("Time must be finite.")
         except ValueError:
-            return "Error: Time must be numeric and finite.", 400
+            raise BadRequest("Error: Time must be numeric and finite.")
 
         # Security: Validate simulation time bounds
         if time <= 0 or time > 100:
             logger.warning(f"Security: Logical payload limit exceeded from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            return "Error: Time must be strictly positive and less than or equal to 100 seconds.", 400
+            raise BadRequest("Error: Time must be strictly positive and less than or equal to 100 seconds.")
 
         driver = {'p': 1.0, 'rho': 1.0, 'u': 0.0}
         driven = {'p': 0.1, 'rho': 0.125, 'u': 0.0}
