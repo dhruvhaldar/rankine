@@ -95,3 +95,7 @@
 **Learning:** HTTP headers can be parsed with varied whitespace characters. Relying on a subset of whitespace for stripping leaves a bypass vector open.
 **Prevention:** Use a comprehensive list of whitespace characters (e.g., `'
 :'`) when normalizing HTTP headers for security filtering.
+## 2024-03-22 - Fix Global Error Handler Bypass
+**Vulnerability:** Global error handlers (which include critical security logging) were being bypassed because endpoints returned error tuples (e.g. `return "Error...", 400`) instead of raising `HTTPException`s.
+**Learning:** In Flask/Werkzeug, returning a tuple directly from a view or `before_request` hook circumvents registered `@app.errorhandler` hooks for that HTTP status code. This breaks centralized security logging and defense-in-depth measures tied to those handlers.
+**Prevention:** Always raise explicit Werkzeug exceptions (e.g. `raise BadRequest(...)`) instead of returning error tuples so that global error handling logic is consistently applied to all failure cases.
