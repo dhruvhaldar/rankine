@@ -22,3 +22,6 @@
 ## 2026-07-20 - Polymorphic Square Root Anti-Pattern
 **Learning:** Branching logic with try/except to switch between math.sqrt and np.sqrt introduces severe overhead for repeated evaluations on small arrays. Python's native exponentiation operator (** 0.5) gracefully handles both scalars and arrays optimally.
 **Action:** Always prefer ** 0.5 over math.sqrt/np.sqrt when writing mathematical functions intended to handle polymorphic inputs seamlessly.
+## 2026-07-24 - Integer Exponentiation Bypass in Unsteady Flow
+**Learning:** When calculating properties across expansion fans in shock tube arrays using fractional exponents like `2.0 * gamma / (gamma - 1.0)` and `2.0 / (gamma - 1.0)`, the standard power operator `**` is surprisingly slow for standard air where `gamma=1.4` (exponents exactly 7.0 and 5.0). Arbitrary floating-point array exponentiation introduces significant overhead.
+**Action:** When `abs(gamma - 1.4) < 1e-9`, intercept these operations and apply optimal chained integer multiplications (e.g., `r2 = r*r; r4 = r2*r2; r5 = r4*r`) for a massive array performance boost.
