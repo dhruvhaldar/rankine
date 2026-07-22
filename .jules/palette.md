@@ -156,3 +156,7 @@
 ## 2026-07-20 - Smooth Validation Layout Shifts
 **Learning:** Toggling `display: none` to `display: block` for inline error messages causes abrupt, jarring layout shifts that push content down violently. Furthermore, some older screen readers fail to consistently announce `aria-live` updates on elements that are abruptly injected into the render tree via `display` toggling.
 **Action:** Always use CSS transitions (`max-height`, `opacity`, `margin`, `overflow: hidden`) instead of `display` toggling for dynamic inline elements to create smooth, delightful micro-interactions that preserve accessibility, ensuring to include a `prefers-reduced-motion: reduce` fallback.
+
+## 2024-07-23 - Native Validation Tooltip Clash
+**Learning:** When combining custom inline validation messages with HTML5 native constraints, the browser's native validation tooltips will still appear on submit, visually clashing and overlapping with the custom inline UI.
+**Action:** Always intercept the native `invalid` event using a capture phase listener on the form to call `e.preventDefault()`, which suppresses the native tooltip. Ensure to manually implement smooth scrolling and focus management for the first invalid field, as preventing the default action also disables the browser's native auto-focus behavior.

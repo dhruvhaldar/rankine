@@ -518,6 +518,19 @@
                 machsInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
 
+            // Prevent native validation tooltips from clashing with custom inline errors,
+            // and implement smooth scrolling focus for the first invalid field.
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('invalid', (e) => {
+                    e.preventDefault();
+                    const firstInvalid = form.querySelector(':invalid');
+                    if (firstInvalid === e.target) {
+                        firstInvalid.focus({ preventScroll: true });
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, true);
+            });
+
             // Indicate stale results when inputs change
             document.querySelectorAll('form').forEach(form => {
                 form.addEventListener('input', (e) => {
