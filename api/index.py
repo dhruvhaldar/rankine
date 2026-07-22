@@ -65,10 +65,10 @@ class SecurityContextFilter(logging.Filter):
 logger.addFilter(SecurityContextFilter())
 
 def sanitize_for_log(val):
-    """Sanitize string for logging to prevent CRLF injection."""
+    """Sanitize string for logging to prevent CRLF and null byte injection."""
     if not isinstance(val, str):
         val = str(val)
-    val = val.replace('\n', '\\n').replace('\r', '\\r')
+    val = val.replace('\n', '\\n').replace('\r', '\\r').replace('\x00', '\\x00')
     return val[:250] + '...' if len(val) > 250 else val
 
 # Security: In-memory rate limiter to prevent Application-Layer DoS

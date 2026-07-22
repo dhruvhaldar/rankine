@@ -99,3 +99,7 @@
 **Vulnerability:** Global error handlers (which include critical security logging) were being bypassed because endpoints returned error tuples (e.g. `return "Error...", 400`) instead of raising `HTTPException`s.
 **Learning:** In Flask/Werkzeug, returning a tuple directly from a view or `before_request` hook circumvents registered `@app.errorhandler` hooks for that HTTP status code. This breaks centralized security logging and defense-in-depth measures tied to those handlers.
 **Prevention:** Always raise explicit Werkzeug exceptions (e.g. `raise BadRequest(...)`) instead of returning error tuples so that global error handling logic is consistently applied to all failure cases.
+## 2026-07-22 - Prevent Null-Byte Log Injection
+**Vulnerability:** The `sanitize_for_log` function successfully sanitized CRLF characters but failed to account for null bytes (`\x00`).
+**Learning:** Injections using null bytes can cause premature log message truncation in underlying C-based logging systems (like syslog or fluentd), allowing attackers to hide payloads or bypass subsequent audit filters.
+**Prevention:** Always explicitly escape null bytes (e.g., `.replace('\x00', '\\x00')`) when creating custom log string sanitization utilities.
