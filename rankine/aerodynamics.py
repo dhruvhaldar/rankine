@@ -17,11 +17,15 @@ class Aerodynamics:
         M: Freestream Mach number (M < 1).
         """
         try:
-            if M >= 1.0:
+            m_val = float(M)
+            if m_val >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
-        except ValueError:
-            if np.nanmax(M) >= 1.0:
-                raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
+            return cp0 / ((1.0 - m_val * m_val) ** 0.5)
+        except TypeError:
+            pass
+
+        if np.nanmax(M) >= 1.0:
+            raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
 
         return cp0 / ((1.0 - M * M) ** 0.5)
 
@@ -34,11 +38,16 @@ class Aerodynamics:
         theta: Surface inclination angle (radians). Positive for compression (facing flow), negative for expansion.
         """
         try:
-            if M <= 1.0:
+            m_val = float(M)
+            if m_val <= 1.0:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
-        except ValueError:
-            if np.nanmin(M) <= 1.0:
-                raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
+            beta = (m_val * m_val - 1.0) ** 0.5
+            return 2.0 * theta / beta
+        except TypeError:
+            pass
+
+        if np.nanmin(M) <= 1.0:
+            raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
 
         beta = (M * M - 1.0) ** 0.5
         return 2.0 * theta / beta

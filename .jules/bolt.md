@@ -25,3 +25,6 @@
 ## 2026-07-24 - Integer Exponentiation Bypass in Unsteady Flow
 **Learning:** When calculating properties across expansion fans in shock tube arrays using fractional exponents like `2.0 * gamma / (gamma - 1.0)` and `2.0 / (gamma - 1.0)`, the standard power operator `**` is surprisingly slow for standard air where `gamma=1.4` (exponents exactly 7.0 and 5.0). Arbitrary floating-point array exponentiation introduces significant overhead.
 **Action:** When `abs(gamma - 1.4) < 1e-9`, intercept these operations and apply optimal chained integer multiplications (e.g., `r2 = r*r; r4 = r2*r2; r5 = r4*r`) for a massive array performance boost.
+## 2025-05-18 - Exception Overhead from Array Truth Value Testing
+**Learning:** Using `if array >= val:` inside a `try...except ValueError` block to intentionally catch truth-value evaluation failures creates severe exception overhead for standard NumPy array paths.
+**Action:** Always use explicit type checking or `try: float(val) except TypeError` to cleanly separate scalar fast-paths from array operations before attempting logical evaluations.
