@@ -459,7 +459,11 @@
                         }
                     } else {
                         input.removeAttribute('aria-invalid');
-                        errorMsg.textContent = '';
+                        setTimeout(() => {
+                            if (input.validity.valid) {
+                                errorMsg.textContent = '';
+                            }
+                        }, 300);
                     }
                 };
                 input.addEventListener('input', updateAriaInvalid);
