@@ -160,3 +160,7 @@
 ## 2024-07-23 - Native Validation Tooltip Clash
 **Learning:** When combining custom inline validation messages with HTML5 native constraints, the browser's native validation tooltips will still appear on submit, visually clashing and overlapping with the custom inline UI.
 **Action:** Always intercept the native `invalid` event using a capture phase listener on the form to call `e.preventDefault()`, which suppresses the native tooltip. Ensure to manually implement smooth scrolling and focus management for the first invalid field, as preventing the default action also disables the browser's native auto-focus behavior.
+
+## 2026-07-26 - Smooth Validation Layout Shifts Fix
+**Learning:** Clearing the text content of an inline error message synchronously when the input becomes valid immediately drops its intrinsic height to 0, completely bypassing CSS transitions (like max-height and margin) meant to smoothly collapse it. This causes an abrupt layout shift.
+**Action:** When an input becomes valid, wrap the removal of the error text content in a `setTimeout` matching the CSS transition duration (e.g., 300ms) so the element has time to animate closed before its text is removed.
