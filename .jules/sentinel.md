@@ -103,3 +103,8 @@
 **Vulnerability:** The `sanitize_for_log` function successfully sanitized CRLF characters but failed to account for null bytes (`\x00`).
 **Learning:** Injections using null bytes can cause premature log message truncation in underlying C-based logging systems (like syslog or fluentd), allowing attackers to hide payloads or bypass subsequent audit filters.
 **Prevention:** Always explicitly escape null bytes (e.g., `.replace('\x00', '\\x00')`) when creating custom log string sanitization utilities.
+
+## 2026-07-28 - Reflected XSS in Flask Error Handlers
+**Vulnerability:** Flask global error handlers were returning unescaped exception descriptions (`msg`) directly as a tuple (e.g., `return msg, 404`). Because Flask sets the Content-Type to `text/html` by default for such responses, any unsanitized user input in the exception description (like a malformed URL path in a 404 error) was executed as HTML/JavaScript in the browser, creating a Reflected Cross-Site Scripting (XSS) vulnerability.
+**Learning:** Returning strings directly from error handlers bypasses template auto-escaping. Any data derived from the request or exception must be considered untrusted and escaped before being returned as HTML.
+**Prevention:** Always wrap returned strings with `escape()` from `markupsafe` (e.g., `return escape(msg), 404`) in Flask error handlers to ensure special HTML characters are neutralized.
