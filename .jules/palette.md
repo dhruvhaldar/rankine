@@ -164,3 +164,6 @@
 ## 2026-07-26 - Smooth Validation Layout Shifts Fix
 **Learning:** Clearing the text content of an inline error message synchronously when the input becomes valid immediately drops its intrinsic height to 0, completely bypassing CSS transitions (like max-height and margin) meant to smoothly collapse it. This causes an abrupt layout shift.
 **Action:** When an input becomes valid, wrap the removal of the error text content in a `setTimeout` matching the CSS transition duration (e.g., 300ms) so the element has time to animate closed before its text is removed.
+## 2024-05-18 - JS Programmatic Scroll Overrides CSS Reduced Motion
+**Learning:** When triggering programmatic scrolls via JavaScript's `element.scrollIntoView({ behavior: 'smooth' })`, this explicitly overrides any CSS `scroll-behavior` rules, causing forced animations for users who have requested reduced motion at the OS level.
+**Action:** Always dynamically check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before executing programmatic scroll animations and fall back to `behavior: 'auto'` if true.
