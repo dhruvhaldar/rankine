@@ -10,6 +10,7 @@ import matplotlib
 import math
 import time
 from collections import defaultdict
+from markupsafe import escape
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
@@ -186,43 +187,43 @@ def add_security_headers(response):
 def forbidden(e):
     logger.warning(f"Security: 403 Forbidden from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: Forbidden."
-    return msg, 403
+    return escape(msg), 403
 
 @app.errorhandler(404)
 def page_not_found(e):
     logger.warning(f"Security: 404 Not Found from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: The requested URL was not found on the server."
-    return msg, 404
+    return escape(msg), 404
 
 @app.errorhandler(400)
 def bad_request(e):
     logger.warning(f"Security: 400 Bad Request from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: Bad request."
-    return msg, 400
+    return escape(msg), 400
 
 @app.errorhandler(405)
 def method_not_allowed(e):
     logger.warning(f"Security: 405 Method Not Allowed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: The method is not allowed for the requested URL."
-    return msg, 405
+    return escape(msg), 405
 
 @app.errorhandler(413)
 def request_entity_too_large(e):
     logger.warning(f"Security: Request payload too large (413) from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: Request payload is too large."
-    return msg, 413
+    return escape(msg), 413
 
 @app.errorhandler(429)
 def too_many_requests(e):
     logger.warning(f"Security: 429 Too Many Requests from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
     msg = e.description if hasattr(e, 'description') and e.description else "Error: Too many requests. Please try again later."
-    return msg, 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
+    return escape(msg), 429, {'Retry-After': str(RATE_LIMIT_WINDOW)}
 
 @app.errorhandler(500)
 def internal_server_error(e):
     logger.error(f"Internal server error from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
     msg = e.description if hasattr(e, 'description') and e.description else "Error: An internal server error occurred."
-    return msg, 500
+    return escape(msg), 500
 
 @app.route('/')
 def home():
