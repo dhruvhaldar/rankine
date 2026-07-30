@@ -151,8 +151,15 @@ class ShockTube:
                 # a = u - x/t ? No, x/t = u - a. So a = u - x/t. Correct.
 
                 # Isentropic relations for P and rho
-                P = self.L['p'] * (a / aL) ** (2.0 * gamma / (gamma - 1.0))
-                rho = self.L['rho'] * (a / aL) ** (2.0 / (gamma - 1.0))
+                ratio = a / aL
+                if abs(gamma - 1.4) < 1e-9:
+                    r2 = ratio * ratio
+                    r4 = r2 * r2
+                    P = self.L['p'] * (r4 * r2 * ratio)
+                    rho = self.L['rho'] * (r4 * ratio)
+                else:
+                    P = self.L['p'] * (ratio) ** (2.0 * gamma / (gamma - 1.0))
+                    rho = self.L['rho'] * (ratio) ** (2.0 / (gamma - 1.0))
                 return rho, P, u, a
             elif x_rel / t < u_star:
                 # Region 3 (Star Left)
@@ -191,8 +198,15 @@ class ShockTube:
                 a = 2.0 / (gamma + 1.0) * (aR - (gamma - 1.0) / 2.0 * (self.R['u'] - x_rel / t)) # check sign
                 # a = x/t - u. Correct.
 
-                P = self.R['p'] * (a / aR) ** (2.0 * gamma / (gamma - 1.0))
-                rho = self.R['rho'] * (a / aR) ** (2.0 / (gamma - 1.0))
+                ratio = a / aR
+                if abs(gamma - 1.4) < 1e-9:
+                    r2 = ratio * ratio
+                    r4 = r2 * r2
+                    P = self.R['p'] * (r4 * r2 * ratio)
+                    rho = self.R['rho'] * (r4 * ratio)
+                else:
+                    P = self.R['p'] * (ratio) ** (2.0 * gamma / (gamma - 1.0))
+                    rho = self.R['rho'] * (ratio) ** (2.0 / (gamma - 1.0))
                 return rho, P, u, a
             elif x_rel / t > u_star:
                  # Region Star Right

@@ -28,3 +28,6 @@
 ## 2025-05-18 - Exception Overhead from Array Truth Value Testing
 **Learning:** Using `if array >= val:` inside a `try...except ValueError` block to intentionally catch truth-value evaluation failures creates severe exception overhead for standard NumPy array paths.
 **Action:** Always use explicit type checking or `try: float(val) except TypeError` to cleanly separate scalar fast-paths from array operations before attempting logical evaluations.
+## 2026-07-24 - Integer Exponentiation Bypass in Unsteady Flow Scalar Path
+**Learning:** When calculating physical properties across expansion fans using fractional exponents like `2.0 * gamma / (gamma - 1.0)` (which simplifies to exactly 7.0 for standard air where `gamma=1.4`) and `2.0 / (gamma - 1.0)` (simplifies to 5.0), the standard floating-point power operator `**` is surprisingly slow even for scalars. Bypassing it with chained integer multiplications (`r2 = r*r; r4 = r2*r2`) significantly speeds up evaluations.
+**Action:** Extend the integer exponentiation bypass pattern (chained multiplications instead of power operations) to scalar fast-paths, not just array vectorizations, when exponents simplify to small integers for common constants.
