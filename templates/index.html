@@ -530,7 +530,8 @@
                     const firstInvalid = form.querySelector(':invalid');
                     if (firstInvalid === e.target) {
                         firstInvalid.focus({ preventScroll: true });
-                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+                        firstInvalid.scrollIntoView({ behavior: scrollBehavior, block: 'center' });
                     }
                 }, true);
             });
