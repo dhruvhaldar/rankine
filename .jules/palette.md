@@ -168,3 +168,6 @@
 ## 2026-08-01 - Programmatic Scroll Reduced Motion
 **Learning:** When triggering programmatic scrolls via JavaScript's `element.scrollIntoView({ behavior: 'smooth' })`, this explicitly overrides any CSS `scroll-behavior` rules, causing forced animations for users who have requested reduced motion at the OS level.
 **Action:** Always dynamically check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` before executing programmatic scroll animations and fall back to `behavior: 'auto'` if true.
+## 2026-08-04 - Robust Focus Ring Styling
+**Learning:** Setting `outline-color` in CSS (especially for `:focus-visible` pseudo-classes on invalid fields) is often insufficient because the browser's default `outline-style` or `outline-width` might be set to `none` or a very thin 1px line, causing the focus ring to fail to render properly or lack enough prominence.
+**Action:** Always use the explicit `outline` shorthand property (e.g., `outline: 2px solid [color];`) when styling custom focus states to guarantee the focus indicator overrides browser defaults, is sufficiently thick, and consistently satisfies WCAG Focus Appearance guidelines.
