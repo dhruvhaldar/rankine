@@ -171,3 +171,7 @@
 ## 2026-08-04 - Robust Focus Ring Styling
 **Learning:** Setting `outline-color` in CSS (especially for `:focus-visible` pseudo-classes on invalid fields) is often insufficient because the browser's default `outline-style` or `outline-width` might be set to `none` or a very thin 1px line, causing the focus ring to fail to render properly or lack enough prominence.
 **Action:** Always use the explicit `outline` shorthand property (e.g., `outline: 2px solid [color];`) when styling custom focus states to guarantee the focus indicator overrides browser defaults, is sufficiently thick, and consistently satisfies WCAG Focus Appearance guidelines.
+
+## 2026-08-05 - Focus Ring Offset for Invalid States
+**Learning:** When styling invalid form fields with a distinct focus ring color (e.g., blue) that differs from the error border color (e.g., red), omitting `outline-offset` causes the two colors to touch directly. This reduces the distinctiveness of the focus ring and can create muddy contrast where the colors meet.
+**Action:** Always include `outline-offset: 2px` (or similar) on `:focus-visible:invalid` states to ensure a clear visual separation between the error border and the focus indicator.
