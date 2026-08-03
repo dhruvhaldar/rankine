@@ -31,3 +31,7 @@
 ## 2026-07-24 - Integer Exponentiation Bypass in Unsteady Flow Scalar Path
 **Learning:** When calculating physical properties across expansion fans using fractional exponents like `2.0 * gamma / (gamma - 1.0)` (which simplifies to exactly 7.0 for standard air where `gamma=1.4`) and `2.0 / (gamma - 1.0)` (simplifies to 5.0), the standard floating-point power operator `**` is surprisingly slow even for scalars. Bypassing it with chained integer multiplications (`r2 = r*r; r4 = r2*r2`) significantly speeds up evaluations.
 **Action:** Extend the integer exponentiation bypass pattern (chained multiplications instead of power operations) to scalar fast-paths, not just array vectorizations, when exponents simplify to small integers for common constants.
+
+## 2026-08-03 - Polymorphic Square Root in Oblique Shocks
+**Learning:** Using `np.sqrt` introduces significant NumPy function dispatch and object allocation overhead compared to native Python exponentiation (`** 0.5`) for scalar evaluations.
+**Action:** Use native Python exponentiation (`** 0.5`) instead of `np.sqrt` to avoid unnecessary NumPy dispatch overhead when calculating roots.

@@ -128,9 +128,9 @@ class ObliqueShock:
         # Expected speedup: ~4x faster for oblique shock solving
         # Further optimization: algebra extraction and replacing **2 overhead with scalar multiplication
         term1 = c_gamma * M2 - 4.0
-        term2 = np.sqrt(c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0))
+        term2 = (c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0)) ** 0.5
         sin2_beta = (term1 + term2) / (4.0 * gamma * M2)
-        beta_at_max = np.arcsin(np.sqrt(sin2_beta))
+        beta_at_max = np.arcsin(sin2_beta ** 0.5)
 
         max_theta = ObliqueShock.theta_beta_m(beta_at_max, M, gamma)
 
