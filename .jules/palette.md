@@ -175,3 +175,7 @@
 ## 2026-08-05 - Focus Ring Offset for Invalid States
 **Learning:** When styling invalid form fields with a distinct focus ring color (e.g., blue) that differs from the error border color (e.g., red), omitting `outline-offset` causes the two colors to touch directly. This reduces the distinctiveness of the focus ring and can create muddy contrast where the colors meet.
 **Action:** Always include `outline-offset: 2px` (or similar) on `:focus-visible:invalid` states to ensure a clear visual separation between the error border and the focus indicator.
+
+## 2026-08-03 - Programmatic Focus on Page Load with Hash
+**Learning:** When traditional form submissions reload the page and use a URL hash (e.g., `#result`) to visually scroll to the result, the keyboard focus remains at the top of the document. This forces keyboard and screen reader users to tab through the entire page again to reach the new content.
+**Action:** Always check for `window.location.hash` on page load (e.g., inside `DOMContentLoaded`) and programmatically move focus to the target element using `target.focus({ preventScroll: true })`. Ensure the target container has `tabindex="-1"`.
