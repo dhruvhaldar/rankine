@@ -17,8 +17,8 @@ class ShockTube:
         self.diaphragm = diaphragm
 
         # Derived properties
-        self.L['a'] = np.sqrt(gamma * self.L['p'] / self.L['rho'])
-        self.R['a'] = np.sqrt(gamma * self.R['p'] / self.R['rho'])
+        self.L['a'] = (gamma * self.L['p'] / self.L['rho']) ** 0.5
+        self.R['a'] = (gamma * self.R['p'] / self.R['rho']) ** 0.5
 
     def _calc_f(self, P, state):
         gamma = self.gamma
@@ -30,7 +30,7 @@ class ShockTube:
             # Shock
             A_k = 2.0 / ((gamma + 1.0) * rho_k)
             B_k = (gamma - 1.0) / (gamma + 1.0) * p_k
-            return (P - p_k) * np.sqrt(A_k / (P + B_k))
+            return (P - p_k) * (A_k / (P + B_k)) ** 0.5
         else:
             # Expansion
             return 2.0 * a_k / (gamma - 1.0) * ((P / p_k) ** ((gamma - 1.0) / (2.0 * gamma)) - 1.0)
@@ -89,7 +89,7 @@ class ShockTube:
 
         # Calculate u_star
         if P_star > p_R:
-            fR = (P_star - p_R) * np.sqrt(A_R / (P_star + B_R))
+            fR = (P_star - p_R) * (A_R / (P_star + B_R)) ** 0.5
         else:
             fR = exp_const_R * ((P_star / p_R) ** pow_const - 1.0)
 
@@ -119,13 +119,13 @@ class ShockTube:
             # Usually Expansion fan on left.
             # Calculate shock speed.
             rho_star_L = self.L['rho'] * ((P_star/self.L['p'] + (gamma-1)/(gamma+1)) / ((gamma-1)/(gamma+1) * P_star/self.L['p'] + 1.0))
-            S_L = self.L['u'] - self.L['a'] * np.sqrt((gamma+1)/(2*gamma) * P_star/self.L['p'] + (gamma-1)/(2*gamma))
+            S_L = self.L['u'] - self.L['a'] * ((gamma+1)/(2*gamma) * P_star/self.L['p'] + (gamma-1)/(2*gamma)) ** 0.5
 
             if x_rel / t < S_L:
                 return self.L['rho'], self.L['p'], self.L['u'], self.L['a']
             elif x_rel / t < u_star:
                 # Star Region Left
-                 return rho_star_L, P_star, u_star, np.sqrt(gamma*P_star/rho_star_L)
+                 return rho_star_L, P_star, u_star, (gamma*P_star/rho_star_L) ** 0.5
         else:
             # Left Expansion Fan
             aL = self.L['a']
@@ -170,7 +170,7 @@ class ShockTube:
         if P_star > self.R['p']:
             # Right Shock
             # Shock speed
-            S_R = self.R['u'] + self.R['a'] * np.sqrt((gamma+1)/(2*gamma) * P_star/self.R['p'] + (gamma-1)/(2*gamma))
+            S_R = self.R['u'] + self.R['a'] * ((gamma+1)/(2*gamma) * P_star/self.R['p'] + (gamma-1)/(2*gamma)) ** 0.5
 
             if x_rel / t > S_R:
                 # Region 5 (Driven)
@@ -178,7 +178,7 @@ class ShockTube:
             elif x_rel / t > u_star:
                 # Region 4 (Star Right)
                 rho_star_R = self.R['rho'] * ((P_star/self.R['p'] + (gamma-1)/(gamma+1)) / ((gamma-1)/(gamma+1) * P_star/self.R['p'] + 1.0))
-                return rho_star_R, P_star, u_star, np.sqrt(gamma*P_star/rho_star_R)
+                return rho_star_R, P_star, u_star, (gamma*P_star/rho_star_R) ** 0.5
         else:
             # Right Expansion (if P* < PR)
             aR = self.R['a']
@@ -244,7 +244,7 @@ class ShockTube:
             # Left side
             if P_star > self.L['p']:
                 rho_star_L = self.L['rho'] * ((P_star/self.L['p'] + (gamma-1)/(gamma+1)) / ((gamma-1)/(gamma+1) * P_star/self.L['p'] + 1.0))
-                S_L = self.L['u'] - self.L['a'] * np.sqrt((gamma+1)/(2*gamma) * P_star/self.L['p'] + (gamma-1)/(2*gamma))
+                S_L = self.L['u'] - self.L['a'] * ((gamma+1)/(2*gamma) * P_star/self.L['p'] + (gamma-1)/(2*gamma)) ** 0.5
 
                 idx_SL = np.searchsorted(x_t, S_L)
                 idx_star = np.searchsorted(x_t, u_star)
@@ -295,7 +295,7 @@ class ShockTube:
 
             # Right side
             if P_star > self.R['p']:
-                S_R = self.R['u'] + self.R['a'] * np.sqrt((gamma+1)/(2*gamma) * P_star/self.R['p'] + (gamma-1)/(2*gamma))
+                S_R = self.R['u'] + self.R['a'] * ((gamma+1)/(2*gamma) * P_star/self.R['p'] + (gamma-1)/(2*gamma)) ** 0.5
                 idx_SR = np.searchsorted(x_t, S_R)
 
                 if idx_SR > idx_star:
