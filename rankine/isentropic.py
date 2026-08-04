@@ -353,7 +353,11 @@ class CDNozzle:
 
                     # ⚡ Bolt Optimization: Inline area ratio math and use math.sqrt instead of np.sqrt
                     term_base = ar_c1 * (1.0 + c2 * M_exit_sq)
-                    ar_exit_req = (1.0 / math.sqrt(M_exit_sq)) * (term_base ** ar_exp)
+                    if abs(gamma - 1.4) < 1e-9:
+                        # ⚡ Bolt Optimization: Replace floating-point exponentiation (ar_exp=3.0) with fast chained integer multiplication for standard air to accelerate brentq loop
+                        ar_exit_req = (1.0 / math.sqrt(M_exit_sq)) * (term_base * term_base * term_base)
+                    else:
+                        ar_exit_req = (1.0 / math.sqrt(M_exit_sq)) * (term_base ** ar_exp)
 
                     ar_exit_actual = self.A_exit / (self.A_throat / p0_ratio)
 
