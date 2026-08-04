@@ -300,6 +300,17 @@
                 transition: none;
             }
         }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
 </head>
 <body>
@@ -403,6 +414,13 @@
     </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
+            // Setup global announcer for stale results
+            const staleAnnouncer = document.createElement('div');
+            staleAnnouncer.className = 'sr-only';
+            staleAnnouncer.setAttribute('aria-live', 'polite');
+            staleAnnouncer.id = 'stale-announcer';
+            document.body.appendChild(staleAnnouncer);
+
             if (window.location.hash) {
                 try {
                     const target = document.getElementById(window.location.hash.substring(1));
@@ -559,6 +577,12 @@
                             if (result && !result.classList.contains('stale-result')) {
                                 result.classList.add('stale-result');
                                 result.setAttribute('title', 'Result is stale. Please recalculate.');
+
+                                const announcer = document.getElementById('stale-announcer');
+                                if (announcer) {
+                                    announcer.textContent = 'Result is now stale. Please recalculate.';
+                                }
+
                                 const currentAria = result.getAttribute('aria-label');
                                 if (currentAria && !currentAria.includes('(Stale)')) {
                                     result.setAttribute('aria-label', currentAria + ' (Stale)');
@@ -618,6 +642,10 @@
 
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
+                const announcer = document.getElementById('stale-announcer');
+                if (announcer) {
+                    announcer.textContent = '';
+                }
                 const btn = this.querySelector('button[type="submit"], button:not([type="button"])');
                 if(btn) {
                     if (btn.getAttribute('aria-disabled') === 'true') {

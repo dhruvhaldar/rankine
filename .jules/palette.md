@@ -179,3 +179,7 @@
 ## 2026-08-03 - Programmatic Focus on Page Load with Hash
 **Learning:** When traditional form submissions reload the page and use a URL hash (e.g., `#result`) to visually scroll to the result, the keyboard focus remains at the top of the document. This forces keyboard and screen reader users to tab through the entire page again to reach the new content.
 **Action:** Always check for `window.location.hash` on page load (e.g., inside `DOMContentLoaded`) and programmatically move focus to the target element using `target.focus({ preventScroll: true })`. Ensure the target container has `tabindex="-1"`.
+
+## 2026-08-05 - Stale State Accessibility Announcement
+**Learning:** When dynamically changing decoupled visual states (like making a result container 'stale' when inputs are edited), users relying on screen readers won't notice because the visual change happens outside their keyboard focus.
+**Action:** Always use an explicitly injected `aria-live="polite"` announcer region to proactively notify screen reader users when decoupled content states change significantly.
