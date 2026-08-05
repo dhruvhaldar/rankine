@@ -107,3 +107,8 @@
 **Vulnerability:** Flask defaults Content-Type to text/html for string response tuples from error handlers. Returning e.description unescaped allows Reflected XSS.
 **Learning:** Relying on default content types when returning exception messages directly can expose the application to XSS via unsanitized URLs in 404 handlers, etc.
 **Prevention:** Always wrap returned error messages in escape() from markupsafe when returning string response tuples from Flask error handlers.
+
+## 2026-08-05 - Prevent Terminal Log Injection
+**Vulnerability:** The `sanitize_for_log` function failed to sanitize ANSI escape characters (\x1b) and backspaces (\b).
+**Learning:** Unsanitized terminal escape sequences in logs can be parsed by terminal emulators, allowing attackers to visually erase, recolor, or spoof log entries to cover their tracks.
+**Prevention:** Explicitly escape all terminal control characters (e.g., \x1b, \b) alongside CRLF and null bytes in logging sanitization functions.
