@@ -183,3 +183,7 @@
 ## 2026-08-05 - Stale State Accessibility Announcement
 **Learning:** When dynamically changing decoupled visual states (like making a result container 'stale' when inputs are edited), users relying on screen readers won't notice because the visual change happens outside their keyboard focus.
 **Action:** Always use an explicitly injected `aria-live="polite"` announcer region to proactively notify screen reader users when decoupled content states change significantly.
+
+## 2026-08-06 - Direct Input Focus for Edit Actions
+**Learning:** When a user clicks an 'Edit Inputs' or 'Back to Form' jump link from a result container, linking to the top-level section container (e.g., `<section id="nozzle">`) requires them to manually press Tab or click again to focus the first input field to start editing. Additionally, if the page load hash handler aggressively applies `tabindex="-1"` to any targeted element to allow programmatic focus, it will inadvertently remove inherently focusable elements (like `<input>`) from the sequential keyboard tab order if they are the target.
+**Action:** Always point 'Edit' jump links directly to the `id` of the first interactive input field (e.g., `<a href="#P0">`) to immediately focus the field and eliminate unnecessary user friction. Concurrently, when applying programmatic focus on page load, explicitly check `!target.matches('a[href], button, input, textarea, select, details, [tabindex]')` before applying `tabindex="-1"` to preserve the native tab order.
