@@ -348,7 +348,7 @@
                 <img src="data:image/png;base64,{{ nozzle_plot }}" alt="Line graph showing pressure and Mach number distribution through the converging-diverging nozzle">
                 <div class="result-actions">
                     <a href="data:image/png;base64,{{ nozzle_plot }}" download="nozzle_plot.png" class="download-btn" aria-label="Download Plot (Nozzle Flow)"><span aria-hidden="true">📥</span> Download Plot</a>
-                    <a href="#nozzle" class="download-btn" aria-label="Edit Inputs (Nozzle Flow)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
+                    <a href="#P0" class="download-btn" aria-label="Edit Inputs (Nozzle Flow)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
                 </div>
             </div>
             {% else %}
@@ -374,7 +374,7 @@
                 <img src="data:image/png;base64,{{ polar_plot }}" alt="Shock polar graph showing the relationship between flow deflection angle and shock wave angle">
                 <div class="result-actions">
                     <a href="data:image/png;base64,{{ polar_plot }}" download="shock_polar.png" class="download-btn" aria-label="Download Plot (Shock Polar)"><span aria-hidden="true">📥</span> Download Plot</a>
-                    <a href="#shock-polar" class="download-btn" aria-label="Edit Inputs (Shock Polar)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
+                    <a href="#machs" class="download-btn" aria-label="Edit Inputs (Shock Polar)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
                 </div>
             </div>
             {% else %}
@@ -397,7 +397,7 @@
                 <img src="data:image/png;base64,{{ tube_plot }}" alt="Four subplots showing density, pressure, temperature, and velocity versus position for the shock tube Riemann problem">
                 <div class="result-actions">
                     <a href="data:image/png;base64,{{ tube_plot }}" download="shock_tube.png" class="download-btn" aria-label="Download Plot (Shock Tube)"><span aria-hidden="true">📥</span> Download Plot</a>
-                    <a href="#shock-tube" class="download-btn" aria-label="Edit Inputs (Shock Tube)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
+                    <a href="#time" class="download-btn" aria-label="Edit Inputs (Shock Tube)"><span aria-hidden="true">✏️</span> Edit Inputs</a>
                 </div>
             </div>
             {% else %}
@@ -425,7 +425,9 @@
                 try {
                     const target = document.getElementById(window.location.hash.substring(1));
                     if (target) {
-                        target.setAttribute('tabindex', '-1');
+                        if (!target.matches('a[href], button, input, textarea, select, details, [tabindex]')) {
+                            target.setAttribute('tabindex', '-1');
+                        }
                         target.focus({ preventScroll: true });
                     }
                 } catch (e) {
