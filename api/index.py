@@ -82,7 +82,7 @@ RATE_LIMIT_MAX_REQUESTS = 30
 def rate_limiter():
     # Only limit POST requests (computational endpoints)
     if request.method == 'POST':
-        current_time = time.time()
+        current_time = time.monotonic()
 
         # Security: Prevent memory exhaustion from too many unique IPs
         # Periodically evict stale IPs to prevent rate-limit bypass from blunt clear()

@@ -112,3 +112,7 @@
 **Vulnerability:** The `sanitize_for_log` function failed to sanitize ANSI escape characters (\x1b) and backspaces (\b).
 **Learning:** Unsanitized terminal escape sequences in logs can be parsed by terminal emulators, allowing attackers to visually erase, recolor, or spoof log entries to cover their tracks.
 **Prevention:** Explicitly escape all terminal control characters (e.g., \x1b, \b) alongside CRLF and null bytes in logging sanitization functions.
+## 2026-08-08 - Rate Limiter Clock Manipulation
+**Vulnerability:** The rate limiter relied on `time.time()`, which is vulnerable to system clock adjustments (e.g., NTP syncing). A clock jump forward could expire all current rate limits early (bypassing the protection), while a jump backward could lock out users for extended periods (Denial of Service).
+**Learning:** Relying on system clock adjustments in time-based security controls can lead to unpredictable lockouts or limit bypasses.
+**Prevention:** Always use `time.monotonic()` for measuring elapsed time in rate limiters and session timeouts, as it provides a strictly increasing time reference immune to system clock changes.
