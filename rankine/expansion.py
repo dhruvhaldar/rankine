@@ -28,8 +28,8 @@ class PrandtlMeyer:
         M_safe = np.where(valid, M_arr, 1.0)
 
         # ⚡ Bolt Optimization: Extract constants and reduce np calls for array evaluations (~1.5x speedup)
-        c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
-        c2_sqrt = np.sqrt((gamma - 1.0) / (gamma + 1.0))
+        c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
+        c2_sqrt = math.sqrt((gamma - 1.0) / (gamma + 1.0))
         s = np.sqrt(M_safe * M_safe - 1.0)
         res = c1 * np.arctan(c2_sqrt * s) - np.arctan(s)
 
@@ -73,10 +73,10 @@ class PrandtlMeyer:
 
         # ⚡ Bolt Optimization: Eagerly extract loop-invariant constants and inline Prandtl-Meyer
         # calculation to avoid `prandtl_meyer_function`'s array allocation overhead in the solver loop.
-        c1 = np.sqrt((gamma + 1.0) / (gamma - 1.0))
+        c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
         c2 = (gamma - 1.0) / (gamma + 1.0)
         c3 = 0.5 * (gamma - 1.0)
-        c2_sqrt = np.sqrt(c2)
+        c2_sqrt = math.sqrt(c2)
 
         def residual_arr(M_guess, gamma, target_nu):
             # Inlined PM function for performance inside Newton iterations
