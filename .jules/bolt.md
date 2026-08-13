@@ -35,3 +35,6 @@
 ## 2026-08-03 - Polymorphic Square Root in Oblique Shocks
 **Learning:** Using `np.sqrt` introduces significant NumPy function dispatch and object allocation overhead compared to native Python exponentiation (`** 0.5`) for scalar evaluations.
 **Action:** Use native Python exponentiation (`** 0.5`) instead of `np.sqrt` to avoid unnecessary NumPy dispatch overhead when calculating roots.
+## 2025-02-14 - Polymorphic Square Root Performance Overhead
+**Learning:** In purely scalar-focused operations or fast-paths (using `try: float(val) except TypeError:`), native python float exponentiation `** 0.5` causes unnecessary performance overhead due to dispatching. Although `np.sqrt` is slower on scalars than `** 0.5` due to ufunc and allocation overhead, `math.sqrt` is significantly faster than both.
+**Action:** When optimizing purely scalar computation paths (e.g. `try/except ValueError` for polymorphism), prefer `math.sqrt(val)` over `val ** 0.5` or `np.sqrt(val)`.

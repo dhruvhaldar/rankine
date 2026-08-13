@@ -20,7 +20,7 @@ class Aerodynamics:
             m_val = float(M)
             if m_val >= 1.0:
                 raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
-            return cp0 / ((1.0 - m_val * m_val) ** 0.5)
+            return cp0 / math.sqrt(1.0 - m_val * m_val)
         except TypeError:
             pass
 
@@ -41,7 +41,7 @@ class Aerodynamics:
             m_val = float(M)
             if m_val <= 1.0:
                 raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
-            beta = (m_val * m_val - 1.0) ** 0.5
+            beta = math.sqrt(m_val * m_val - 1.0)
             return 2.0 * theta / beta
         except TypeError:
             pass
@@ -71,8 +71,8 @@ class Aerodynamics:
             t1 = ((gamma + 1.0) * M_sq) / 2.0
             t2 = (gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0))
             if abs(gamma - 1.4) < 1e-9:
-                term1 = t1 * t1 * t1 * (t1 ** 0.5)
-                term2 = t2 * t2 * (t2 ** 0.5)
+                term1 = t1 * t1 * t1 * math.sqrt(t1)
+                term2 = t2 * t2 * math.sqrt(t2)
             else:
                 term1 = t1**(gamma / (gamma - 1.0))
                 term2 = t2**(1.0 / (gamma - 1.0))
