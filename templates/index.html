@@ -363,7 +363,7 @@
             <form action="/plot/shock_polar#shock-polar-result" method="post" aria-labelledby="shock-polar-heading" autocomplete="off">
                 <label for="machs">Mach Numbers (comma separated) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="machs-help" class="form-help">Max 10 numbers (between 1.0 and 100.0), max 100 characters</span>
-                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-help machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" title="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" spellcheck="false" autocorrect="off" autocapitalize="none" required>
+                <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-help machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" data-pattern-error="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" spellcheck="false" autocorrect="off" autocapitalize="none" required>
                 <div class="counter-container" aria-live="polite">
                     <small id="machs-counter-desc" class="counter-text"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
@@ -485,8 +485,8 @@
                 const updateAriaInvalid = () => {
                     if (!input.validity.valid) {
                         input.setAttribute('aria-invalid', 'true');
-                        if (input.validity.patternMismatch && input.title) {
-                            errorMsg.textContent = input.title;
+                        if (input.validity.patternMismatch && input.dataset.patternError) {
+                            errorMsg.textContent = input.dataset.patternError;
                         } else {
                             errorMsg.textContent = input.validationMessage;
                         }
