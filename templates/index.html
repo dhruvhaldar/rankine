@@ -23,6 +23,20 @@
             0% { background-color: rgba(0, 91, 181, 0.15); box-shadow: 0 0 8px rgba(0, 91, 181, 0.2); }
             100% { background-color: transparent; box-shadow: 0 0 0 transparent; }
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            vertical-align: text-bottom;
+            margin-right: 4px;
+        }
         :target {
             scroll-margin-top: 2rem;
             animation: targetPulse 1.5s ease-out;
@@ -657,7 +671,11 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                            btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        } else {
+                            btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Calculating...';
+                        }
                     }, 0);
                 }
             });
