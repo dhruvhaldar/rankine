@@ -176,6 +176,32 @@
             outline: 2px solid #005bb5;
             outline-offset: 2px;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .loading-spinner {
+                animation: none;
+                border: none;
+                width: auto;
+                height: auto;
+                margin-right: 0;
+            }
+            .loading-spinner::before {
+                content: "⏳";
+            }
+        }
         @keyframes slideUpFade {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -657,7 +683,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="loading-spinner" aria-hidden="true"></span> Calculating...';
                     }, 0);
                 }
             });
