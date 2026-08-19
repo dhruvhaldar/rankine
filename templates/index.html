@@ -98,6 +98,33 @@
             color: #6b7280;
             opacity: 1;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+            vertical-align: -0.15em;
+            margin-right: 6px;
+            box-sizing: border-box;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .spinner {
+                animation: none;
+                border: none;
+                width: auto;
+                height: auto;
+                margin-right: 4px;
+            }
+            .spinner::before {
+                content: '⏳';
+            }
+        }
         button {
             padding: 10px 20px;
             background-color: #005bb5;
@@ -657,7 +684,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Calculating...';
                     }, 0);
                 }
             });
