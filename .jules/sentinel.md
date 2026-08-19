@@ -116,3 +116,7 @@
 **Vulnerability:** The rate limiter relied on `time.time()`, which is vulnerable to system clock adjustments (e.g., NTP syncing). A clock jump forward could expire all current rate limits early (bypassing the protection), while a jump backward could lock out users for extended periods (Denial of Service).
 **Learning:** Relying on system clock adjustments in time-based security controls can lead to unpredictable lockouts or limit bypasses.
 **Prevention:** Always use `time.monotonic()` for measuring elapsed time in rate limiters and session timeouts, as it provides a strictly increasing time reference immune to system clock changes.
+## 2026-08-15 - Null-Byte Header Redaction Bypass
+**Vulnerability:** Attackers could bypass header redaction by padding sensitive HTTP headers (like `Cookie` or `Authorization`) with null bytes (e.g., `Cookie\x00`).
+**Learning:** HTTP header parsing in Flask/Werkzeug may retain null bytes, which bypasses naive redaction filters that only strip standard whitespace. Unsanitized null bytes can cause credentials to leak in plaintext to audit logs.
+**Prevention:** Always explicitly include null bytes (`\x00`) in the `strip()` method when normalizing HTTP headers for security filtering.
