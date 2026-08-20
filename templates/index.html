@@ -183,12 +183,22 @@
         div[id$="-result"] {
             animation: slideUpFade 0.4s ease-out forwards;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
             div[id$="-result"] {
                 animation: none;
             }
             :target {
+                animation: none;
+            }
+            .spinner {
                 animation: none;
             }
         }
@@ -657,7 +667,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="spinner" aria-hidden="true">⏳</span> Calculating...';
                     }, 0);
                 }
             });
