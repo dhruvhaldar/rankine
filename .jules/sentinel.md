@@ -116,3 +116,7 @@
 **Vulnerability:** The rate limiter relied on `time.time()`, which is vulnerable to system clock adjustments (e.g., NTP syncing). A clock jump forward could expire all current rate limits early (bypassing the protection), while a jump backward could lock out users for extended periods (Denial of Service).
 **Learning:** Relying on system clock adjustments in time-based security controls can lead to unpredictable lockouts or limit bypasses.
 **Prevention:** Always use `time.monotonic()` for measuring elapsed time in rate limiters and session timeouts, as it provides a strictly increasing time reference immune to system clock changes.
+## 2024-08-20 - Robust Header Redaction Bypass
+**Vulnerability:** The logging filter for redacting sensitive HTTP headers stripped whitespace and colons but missed null bytes (`\x00`).
+**Learning:** Attackers could bypass the redaction filter by appending a null byte to sensitive headers (e.g., `Cookie\x00`), exposing sensitive information (like session cookies or API keys) in the application logs because the check `in sensitive_headers` would fail.
+**Prevention:** Always perform case-insensitive comparisons and strip ALL whitespace padding, colons, AND null bytes (e.g., `.strip(' \t\n\r\x0b\x0c\x00:')`) from header keys before redacting.
