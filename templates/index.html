@@ -311,6 +311,30 @@
             white-space: nowrap;
             border-width: 0;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            vertical-align: text-bottom;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .spinner {
+                animation: none;
+                border: none;
+                width: auto;
+                height: auto;
+            }
+            .spinner::before {
+                content: "⏳";
+            }
+        }
     </style>
 </head>
 <body>
@@ -657,7 +681,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Calculating...';
                     }, 0);
                 }
             });
