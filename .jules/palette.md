@@ -191,3 +191,7 @@
 ## 2026-08-14 - Native Hover Tooltip on Pattern Validation
 **Learning:** Using the `title` attribute on input fields to supply custom error messages for `patternMismatch` (a common practice to override native tooltips) causes the browser to persistently display a native hover tooltip. This redundant tooltip obstructs the UI and provides a poor hover experience since the information is already conveyed via helper text and inline validation.
 **Action:** Instead of using the `title` attribute, store custom validation messages in a `data-*` attribute (e.g., `data-pattern-error`) and update the JS validation logic to read from it. This prevents the browser from showing the intrusive native hover tooltip while still providing the custom message to the inline error UI.
+
+## 2026-08-22 - White Spinner Loading State Contrast Issue
+**Learning:** Hardcoding a white colored CSS spinner (`border-top-color: #fff`) for loading states creates severe WCAG contrast violations if the underlying `aria-disabled` button has a light background (e.g., `#ccc`). The spinner becomes practically invisible.
+**Action:** When implementing custom CSS loading indicators on buttons, always use `currentColor` (or explicitly inherit the button's text color) to ensure the spinner maintains adequate contrast regardless of the button's background state.
