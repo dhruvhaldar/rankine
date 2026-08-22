@@ -52,7 +52,7 @@ class SecurityContextFilter(logging.Filter):
                 headers_dict = dict(request.headers)
                 sensitive_headers = {'cookie', 'authorization', 'x-api-key'}
                 for k in list(headers_dict.keys()):
-                    if k.lower().strip(' \t\n\r\x0b\x0c:') in sensitive_headers:
+                    if k.lower().strip(' \t\n\r\x0b\x0c\x00:') in sensitive_headers:
                         headers_dict[k] = '[REDACTED]'
 
                 headers_str = sanitize_for_log(str(headers_dict))

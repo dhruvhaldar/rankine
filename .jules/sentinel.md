@@ -116,3 +116,8 @@
 **Vulnerability:** The rate limiter relied on `time.time()`, which is vulnerable to system clock adjustments (e.g., NTP syncing). A clock jump forward could expire all current rate limits early (bypassing the protection), while a jump backward could lock out users for extended periods (Denial of Service).
 **Learning:** Relying on system clock adjustments in time-based security controls can lead to unpredictable lockouts or limit bypasses.
 **Prevention:** Always use `time.monotonic()` for measuring elapsed time in rate limiters and session timeouts, as it provides a strictly increasing time reference immune to system clock changes.
+
+## 2026-08-22 - Null Byte Injection in Header Redaction
+**Vulnerability:** A vulnerability existed where sensitive HTTP headers (like Cookie, Authorization) could bypass log redaction if an attacker appended a null byte to the header name (e.g., `Cookie\x00`).
+**Learning:** The `strip()` function used to normalize header keys before checking against the redaction list removed whitespace and colons, but failed to strip null bytes (`\x00`). Python dictionaries and Werkzeug/Flask preserve these null bytes in header keys.
+**Prevention:** When performing robust header redaction or implementing filters that rely on string sanitization, ensure all null bytes (`\x00`) are explicitly removed or accounted for along with standard whitespace characters.
