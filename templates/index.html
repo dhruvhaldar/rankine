@@ -124,6 +124,32 @@
             color: #4b5563;
             transform: none !important;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: -2px;
+            margin-right: 8px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .spinner {
+                animation: none;
+                border: none;
+                width: auto;
+                height: auto;
+                margin-right: 0;
+            }
+            .spinner::after {
+                content: "⏳ ";
+            }
+        }
         img { max-width: 100%; height: auto; margin-top: 20px; }
         /* Remove default focus ring on programmatic focus for result containers */
         [tabindex="-1"]:focus { outline: none; }
@@ -657,7 +683,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="spinner" aria-hidden="true"></span>Calculating...';
                     }, 0);
                 }
             });
