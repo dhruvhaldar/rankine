@@ -191,3 +191,6 @@
 ## 2026-08-14 - Native Hover Tooltip on Pattern Validation
 **Learning:** Using the `title` attribute on input fields to supply custom error messages for `patternMismatch` (a common practice to override native tooltips) causes the browser to persistently display a native hover tooltip. This redundant tooltip obstructs the UI and provides a poor hover experience since the information is already conveyed via helper text and inline validation.
 **Action:** Instead of using the `title` attribute, store custom validation messages in a `data-*` attribute (e.g., `data-pattern-error`) and update the JS validation logic to read from it. This prevents the browser from showing the intrusive native hover tooltip while still providing the custom message to the inline error UI.
+## 2024-08-24 - Accessible Loading Animations
+**Learning:** Adding CSS animated spinners provides better dynamic feedback during form submission than static text/emojis, but can trigger vestibular sensitivities.
+**Action:** Always include a `@media (prefers-reduced-motion: reduce)` fallback that replaces the spinning animation with a static visual (like a ⏳ emoji) when creating loading indicators in this design system.

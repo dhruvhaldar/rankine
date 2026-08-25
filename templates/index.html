@@ -124,6 +124,32 @@
             color: #4b5563;
             transform: none !important;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            border: 2px solid rgba(75, 85, 99, 0.3);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: text-bottom;
+            margin-right: 6px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .spinner {
+                animation: none;
+                border: none;
+                width: auto;
+                height: auto;
+                margin-right: 4px;
+            }
+            .spinner::before {
+                content: "⏳";
+            }
+        }
         img { max-width: 100%; height: auto; margin-top: 20px; }
         /* Remove default focus ring on programmatic focus for result containers */
         [tabindex="-1"]:focus { outline: none; }
@@ -657,7 +683,7 @@
                     setTimeout(() => {
                         btn.setAttribute('data-original-html', btn.innerHTML);
                         btn.setAttribute('aria-disabled', 'true');
-                        btn.innerHTML = '<span aria-hidden="true">⏳</span> Calculating...';
+                        btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Calculating...';
                     }, 0);
                 }
             });
