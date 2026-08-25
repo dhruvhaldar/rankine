@@ -194,3 +194,7 @@
 ## 2024-08-24 - Accessible Loading Animations
 **Learning:** Adding CSS animated spinners provides better dynamic feedback during form submission than static text/emojis, but can trigger vestibular sensitivities.
 **Action:** Always include a `@media (prefers-reduced-motion: reduce)` fallback that replaces the spinning animation with a static visual (like a ⏳ emoji) when creating loading indicators in this design system.
+
+## 2026-08-25 - Differentiating Links in Text Blocks
+**Learning:** Relying exclusively on color to distinguish links from surrounding text (e.g., in footers) creates a failure for WCAG accessibility guidelines, particularly for users with color vision deficiencies. When text-decoration: none is applied to inline links, they become nearly indistinguishable from regular text for some users.
+**Action:** Always provide a secondary visual indicator for inline links, such as text-decoration: underline, accompanied by an text-underline-offset to maintain readability. Use :hover states to amplify the indicator, like increasing text-decoration-thickness, rather than relying on hover to show the underline in the first place.
