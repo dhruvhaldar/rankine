@@ -120,3 +120,7 @@
 **Vulnerability:** Redaction logic for HTTP headers in Flask was stripping whitespace but omitted null bytes, allowing an attacker to pass malformed headers like `Cookie\x00` which evaded redaction and leaked sensitive tokens to the logs.
 **Learning:** Converting `request.headers` to a dictionary preserves trailing characters like null bytes that might bypass standard whitespace stripping.
 **Prevention:** Always include the null byte `\x00` when stripping characters for case-insensitive header redaction logic.
+## 2023-10-25 - Prevent Filter Injection Crash
+**Vulnerability:** Injecting dynamically formatted strings directly into `record.msg` within a `logging.Filter` can crash the Python logger if the injected content contains `%` characters and `record.args` is present. Furthermore, manual interpolation like `record.msg % record.args` can raise TypeErrors.
+**Learning:** The previous manual string interpolation approach for logging could be leveraged to crash the application via malformed logging formats if user input is somehow reflected in it, or generic TypeErrors.
+**Prevention:** Safely resolve log messages inside filters by wrapping `record.getMessage()` in a `try...except` block, falling back to `str(record.msg)` on failure, and explicitly clearing `record.args` to `()` before appending dynamic content to avoid DoS via malformed log messages.
