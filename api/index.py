@@ -56,10 +56,13 @@ class SecurityContextFilter(logging.Filter):
                         headers_dict[k] = '[REDACTED]'
 
                 headers_str = sanitize_for_log(str(headers_dict))
-                if record.args:
-                    record.msg = record.msg % record.args
-                    record.args = ()
-                record.msg = f"{record.msg} | Headers: {headers_str}"
+                try:
+                    msg = record.getMessage()
+                except Exception:
+                    msg = str(record.msg)
+
+                record.msg = f"{msg} | Headers: {headers_str}"
+                record.args = ()
                 record._headers_appended = True
         return True
 
