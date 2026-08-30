@@ -46,7 +46,12 @@ logger = logging.getLogger(__name__)
 
 class SecurityContextFilter(logging.Filter):
     def filter(self, record):
-        if 'Security:' in record.getMessage() and has_request_context():
+        try:
+            msg = record.getMessage()
+        except Exception:
+            msg = str(record.msg)
+
+        if 'Security:' in msg and has_request_context():
             if getattr(record, '_headers_appended', False) is False:
                 # Security: Redact sensitive headers before logging
                 headers_dict = dict(request.headers)
@@ -56,10 +61,8 @@ class SecurityContextFilter(logging.Filter):
                         headers_dict[k] = '[REDACTED]'
 
                 headers_str = sanitize_for_log(str(headers_dict))
-                if record.args:
-                    record.msg = record.msg % record.args
-                    record.args = ()
-                record.msg = f"{record.msg} | Headers: {headers_str}"
+                record.msg = f"{msg} | Headers: {headers_str}"
+                record.args = ()
                 record._headers_appended = True
         return True
 
