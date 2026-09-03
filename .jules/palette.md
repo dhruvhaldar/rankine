@@ -198,3 +198,7 @@
 ## 2026-08-25 - Differentiating Links in Text Blocks
 **Learning:** Relying exclusively on color to distinguish links from surrounding text (e.g., in footers) creates a failure for WCAG accessibility guidelines, particularly for users with color vision deficiencies. When text-decoration: none is applied to inline links, they become nearly indistinguishable from regular text for some users.
 **Action:** Always provide a secondary visual indicator for inline links, such as text-decoration: underline, accompanied by an text-underline-offset to maintain readability. Use :hover states to amplify the indicator, like increasing text-decoration-thickness, rather than relying on hover to show the underline in the first place.
+
+## 2026-09-03 - Interdependent Field Validation Feedback
+**Learning:** When fields have interdependent constraints (e.g., A_exit >= A_throat), relying on backend validation causes context-breaking errors because native HTML validation does not handle multi-field logic. Additionally, if the validation is only attached to one field, the error state can become stuck if the user edits the other field to resolve it.
+**Action:** Always implement interdependent frontend validation using `setCustomValidity` and bind it to the `input` event of ALL involved fields to ensure the inline error state updates dynamically and accurately regardless of which field the user interacts with.
