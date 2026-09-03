@@ -552,6 +552,38 @@
                 }
             });
 
+            const aThroatInput = document.getElementById('A_throat');
+            const aExitInput = document.getElementById('A_exit');
+            if (aThroatInput && aExitInput) {
+                const validateNozzleAreas = () => {
+                    const At = Number(aThroatInput.value);
+                    const Ae = Number(aExitInput.value);
+                    if (Ae < At) {
+                        aExitInput.setCustomValidity('Exit Area must be greater than or equal to Throat Area.');
+                    } else if (At > 0 && (Ae / At) > 100) {
+                        aExitInput.setCustomValidity('Exit to Throat area ratio must not exceed 100.');
+                    } else {
+                        aExitInput.setCustomValidity('');
+                    }
+                };
+                aThroatInput.addEventListener('input', validateNozzleAreas);
+                aExitInput.addEventListener('input', validateNozzleAreas);
+                // Initialize validation on load to ensure restored values are checked
+                validateNozzleAreas();
+            }
+
+            const timeInput = document.getElementById('time');
+            if (timeInput) {
+                timeInput.addEventListener('input', function() {
+                    if (Number(this.value) <= 0) {
+                        this.setCustomValidity('Value must be strictly positive (greater than 0).');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                });
+                timeInput.dispatchEvent(new Event('input'));
+            }
+
             const machsInput = document.getElementById('machs');
             if (machsInput) {
                 machsInput.addEventListener('input', function() {
