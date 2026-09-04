@@ -202,3 +202,7 @@
 ## 2026-09-03 - Interdependent Field Validation Feedback
 **Learning:** When fields have interdependent constraints (e.g., A_exit >= A_throat), relying on backend validation causes context-breaking errors because native HTML validation does not handle multi-field logic. Additionally, if the validation is only attached to one field, the error state can become stuck if the user edits the other field to resolve it.
 **Action:** Always implement interdependent frontend validation using `setCustomValidity` and bind it to the `input` event of ALL involved fields to ensure the inline error state updates dynamically and accurately regardless of which field the user interacts with.
+
+## 2026-09-10 - Persistent Error Background on Focus
+**Learning:** When an invalid form field receives focus, relying on the base `:invalid` styling for the background color can sometimes be overridden by browser defaults or implicit focus styles, causing the error background color to disappear when the user clicks into the field to fix it. This creates a confusing experience where the field looks less "wrong" while being actively edited.
+**Action:** Always explicitly declare the error background color (e.g., `background-color: #fff4f4;`) within the `:focus-visible:invalid` (or `:focus:invalid`) pseudo-class blocks to ensure the error state remains visually persistent while the user attempts to correct the input.
