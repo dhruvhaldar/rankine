@@ -41,3 +41,6 @@
 ## 2026-08-22 - Scalar math.sqrt Optimization
 **Learning:** Replaced `** 0.5` with `math.sqrt()` for computing scalar square roots within `rankine/unsteady.py`. Even though it is a small change, doing it in the inner tight numerical solver loops like `brentq` creates ~15% speedup inside the inner loop and improves the overall tube.solve() benchmark by approximately 2% overall due to reducing overhead of generic power.
 **Action:** When working on numerical solvers with large amounts of inner loops, use `math.sqrt()` when evaluating pure Python scalars instead of exponentiation. Ensure `math` module is imported.
+## 2026-08-25 - Scalar math.sqrt Optimization in Riemann Solvers
+**Learning:** In the `rankine/unsteady.py` module, calculating Riemann region properties heavily relies on purely scalar physical quantities. Using native python float exponentiation `** 0.5` for square roots on scalars creates unnecessary dispatch overhead inside these frequently called bounding functions, when compared to `math.sqrt`.
+**Action:** Replaced `** 0.5` with `math.sqrt` when calculating properties like sound speeds (`self.L['a']`) and region boundaries (`S_L`, `S_R`) in purely scalar contexts to improve performance.
