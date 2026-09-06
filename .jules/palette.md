@@ -206,3 +206,6 @@
 ## 2026-09-10 - Persistent Error Background on Focus
 **Learning:** When an invalid form field receives focus, relying on the base `:invalid` styling for the background color can sometimes be overridden by browser defaults or implicit focus styles, causing the error background color to disappear when the user clicks into the field to fix it. This creates a confusing experience where the field looks less "wrong" while being actively edited.
 **Action:** Always explicitly declare the error background color (e.g., `background-color: #fff4f4;`) within the `:focus-visible:invalid` (or `:focus:invalid`) pseudo-class blocks to ensure the error state remains visually persistent while the user attempts to correct the input.
+## 2026-09-06 - Persistent Error Background on Focus
+**Learning:** When an invalid form field receives focus via mouse click, relying on the base `:invalid` styling for the background color can cause the error background to disappear because mouse clicks trigger `:focus` but not `:focus-visible` on some elements.
+**Action:** Always explicitly declare the error background color within `:focus:invalid` (or `:focus-visible:invalid`) pseudo-class blocks to ensure the visual error state remains persistent while the user attempts to correct the input.
