@@ -209,3 +209,7 @@
 ## 2026-09-06 - Persistent Error Background on Focus
 **Learning:** When an invalid form field receives focus via mouse click, relying on the base `:invalid` styling for the background color can cause the error background to disappear because mouse clicks trigger `:focus` but not `:focus-visible` on some elements.
 **Action:** Always explicitly declare the error background color within `:focus:invalid` (or `:focus-visible:invalid`) pseudo-class blocks to ensure the visual error state remains persistent while the user attempts to correct the input.
+
+## 2024-05-18 - JavaScript Redeclaration Error Breaking Form Validation
+**Learning:** Redeclaring `const` variables in the same scope (e.g., inside DOMContentLoaded) throws a `SyntaxError`, which completely halts JavaScript execution on the page. This silent failure prevents critical UX features like interdependent form validation from initializing, leaving users without inline feedback.
+**Action:** When adding new event listeners or referencing DOM elements, ensure variable names are unique within the block scope or reuse the existing variables to prevent execution halts.
