@@ -293,7 +293,8 @@ class CDNozzle:
         elif back_pressure >= P_exit_sub_limit:
             # Regime 1: Subsonic throughout. Throat not choked (unless equal).
             # M_exit determined by back pressure
-            M_exit = np.sqrt(2.0/(gamma-1.0) * ((P0/back_pressure)**((gamma-1.0)/gamma) - 1.0))
+            # ⚡ Bolt Optimization: Replace np.sqrt with math.sqrt for scalar calculation
+            M_exit = math.sqrt(2.0/(gamma-1.0) * ((P0/back_pressure)**((gamma-1.0)/gamma) - 1.0))
             A_star_effective = self.A_exit / IsentropicRelations.calc_area_mach(M_exit, gamma)
 
             ar_eff = A / A_star_effective
@@ -383,7 +384,8 @@ class CDNozzle:
                 P0_new = P0 * (term1 ** (gamma/(gamma-1.0))) / (term2 ** (1.0/(gamma-1.0)))
 
                 # New A_star
-                M_s2 = np.sqrt((1.0 + (gamma-1.0)/2.0 * (M_shock * M_shock)) / (gamma * (M_shock * M_shock) - (gamma-1.0)/2.0))
+                # ⚡ Bolt Optimization: Replace np.sqrt with math.sqrt for scalar calculation
+                M_s2 = math.sqrt((1.0 + (gamma-1.0)/2.0 * (M_shock * M_shock)) / (gamma * (M_shock * M_shock) - (gamma-1.0)/2.0))
                 A_shock_actual = A[idx_shock]
                 A_star_new = A_shock_actual / IsentropicRelations.calc_area_mach(M_s2, gamma)
 
