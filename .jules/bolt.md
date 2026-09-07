@@ -44,3 +44,6 @@
 ## 2026-08-25 - Scalar math.sqrt Optimization in Riemann Solvers
 **Learning:** In the `rankine/unsteady.py` module, calculating Riemann region properties heavily relies on purely scalar physical quantities. Using native python float exponentiation `** 0.5` for square roots on scalars creates unnecessary dispatch overhead inside these frequently called bounding functions, when compared to `math.sqrt`.
 **Action:** Replaced `** 0.5` with `math.sqrt` when calculating properties like sound speeds (`self.L['a']`) and region boundaries (`S_L`, `S_R`) in purely scalar contexts to improve performance.
+## 2024-05-24 - NumPy Scalar Overhead in Isentropic Solver
+**Learning:** Applying NumPy functions like `np.sqrt` to built-in scalar floats in mathematical code introduces significant overhead due to ufunc dispatch and object allocation.
+**Action:** Replace them with `math.sqrt()` which is significantly faster and more idiomatic for purely scalar calculations. Use `** 0.5` only when the input is polymorphic.
