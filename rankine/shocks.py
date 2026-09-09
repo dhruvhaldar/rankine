@@ -20,7 +20,7 @@ class NormalShock:
         # M2
         numerator = term_M1
         denominator = gamma * M1_sq - (gamma - 1.0) / 2.0
-        self.M2 = (numerator / denominator) ** 0.5
+        self.M2 = np.sqrt(numerator / denominator)
 
         # P2/P1
         self.P2_P1 = 1.0 + 2.0 * gamma / (gamma + 1.0) * (M1_sq - 1.0)
@@ -40,7 +40,7 @@ class NormalShock:
         # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
         # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
         if abs(gamma - 1.4) < 1e-9:
-            self.P02_P01 = (term1 * term1 * term1 * (term1 ** 0.5)) / (term2 * term2 * (term2 ** 0.5))
+            self.P02_P01 = (term1 * term1 * term1 * np.sqrt(term1)) / (term2 * term2 * np.sqrt(term2))
         else:
             self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
 
@@ -128,9 +128,9 @@ class ObliqueShock:
         # Expected speedup: ~4x faster for oblique shock solving
         # Further optimization: algebra extraction and replacing **2 overhead with scalar multiplication
         term1 = c_gamma * M2 - 4.0
-        term2 = (c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0)) ** 0.5
+        term2 = np.sqrt(c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0))
         sin2_beta = (term1 + term2) / (4.0 * gamma * M2)
-        beta_at_max = np.arcsin(sin2_beta ** 0.5)
+        beta_at_max = np.arcsin(np.sqrt(sin2_beta))
 
         max_theta = ObliqueShock.theta_beta_m(beta_at_max, M, gamma)
 
