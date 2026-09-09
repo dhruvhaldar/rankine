@@ -27,7 +27,7 @@ class Aerodynamics:
         if np.nanmax(M) >= 1.0:
             raise ValueError("Prandtl-Glauert is valid only for subsonic flow (M < 1).")
 
-        return cp0 / ((1.0 - M * M) ** 0.5)
+        return cp0 / np.sqrt(1.0 - M * M)
 
     @staticmethod
     def ackeret_cp(M, theta):
@@ -49,7 +49,7 @@ class Aerodynamics:
         if np.nanmin(M) <= 1.0:
             raise ValueError("Ackeret's theory is valid only for supersonic flow (M > 1).")
 
-        beta = (M * M - 1.0) ** 0.5
+        beta = np.sqrt(M * M - 1.0)
         return 2.0 * theta / beta
 
     @staticmethod
@@ -95,8 +95,8 @@ class Aerodynamics:
         t1 = ((gamma + 1.0) * M_arr_sq) / 2.0
         t2 = (gamma + 1.0) / (2.0 * gamma * M_arr_sq - (gamma - 1.0))
         if abs(gamma - 1.4) < 1e-9:
-            term1 = t1 * t1 * t1 * (t1 ** 0.5)
-            term2 = t2 * t2 * (t2 ** 0.5)
+            term1 = t1 * t1 * t1 * np.sqrt(t1)
+            term2 = t2 * t2 * np.sqrt(t2)
         else:
             term1 = t1**(gamma / (gamma - 1.0))
             term2 = t2**(1.0 / (gamma - 1.0))
