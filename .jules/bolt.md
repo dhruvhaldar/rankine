@@ -50,3 +50,7 @@
 ## 2025-02-23 - NumPy Array Exponentiation Overhead
 **Learning:** Replacing native exponentiation (`** 0.5`) with `np.sqrt()` for pure NumPy array operations leads to a significant performance improvement (roughly 2x faster). This occurs because `** 0.5` delegates to `np.power` which has generic overhead, while `np.sqrt()` utilizes optimized C routines specifically designed for computing square roots.
 **Action:** Always prefer specialized NumPy functions like `np.sqrt()` over generic arithmetic operators when dealing exclusively with NumPy arrays to ensure optimal performance.
+
+## 2026-08-30 - Reciprocal Constant Square Root Redundancy
+**Learning:** In thermodynamic and aerodynamic formulas (like Prandtl-Meyer), constants often appear as reciprocal pairs under square roots, such as `sqrt((gamma + 1)/(gamma - 1))` and `sqrt((gamma - 1)/(gamma + 1))`. Evaluating `math.sqrt` or `np.sqrt` twice for both terms is redundant and introduces unnecessary overhead, especially inside high-frequency evaluation paths.
+**Action:** When calculating reciprocal constant pairs that involve square roots, calculate the square root for the first term and derive the second using a simple reciprocal `1.0 / first_term` to save computation time.
