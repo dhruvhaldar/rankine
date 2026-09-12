@@ -17,7 +17,7 @@ class PrandtlMeyer:
                 return 0.0
             s = math.sqrt(m_val * m_val - 1.0)
             c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
-            c2_sqrt = math.sqrt((gamma - 1.0) / (gamma + 1.0))
+            c2_sqrt = 1.0 / c1
             return c1 * math.atan(c2_sqrt * s) - math.atan(s)
         except (ValueError, TypeError):
             pass
@@ -29,7 +29,7 @@ class PrandtlMeyer:
 
         # ⚡ Bolt Optimization: Extract constants and reduce np calls for array evaluations (~1.5x speedup)
         c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
-        c2_sqrt = math.sqrt((gamma - 1.0) / (gamma + 1.0))
+        c2_sqrt = 1.0 / c1
         s = np.sqrt(M_safe * M_safe - 1.0)
         res = c1 * np.arctan(c2_sqrt * s) - np.arctan(s)
 
@@ -52,7 +52,7 @@ class PrandtlMeyer:
             c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
             c2 = (gamma - 1.0) / (gamma + 1.0)
             c3 = 0.5 * (gamma - 1.0)
-            c2_sqrt = math.sqrt(c2)
+            c2_sqrt = 1.0 / c1
 
             nu_max = PrandtlMeyer.prandtl_meyer_function(50.0, gamma)
             clamped_nu = min(nu_val, nu_max - 1e-6)
@@ -76,7 +76,7 @@ class PrandtlMeyer:
         c1 = math.sqrt((gamma + 1.0) / (gamma - 1.0))
         c2 = (gamma - 1.0) / (gamma + 1.0)
         c3 = 0.5 * (gamma - 1.0)
-        c2_sqrt = math.sqrt(c2)
+        c2_sqrt = 1.0 / c1
 
         def residual_arr(M_guess, gamma, target_nu):
             # Inlined PM function for performance inside Newton iterations
