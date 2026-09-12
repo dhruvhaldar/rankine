@@ -557,15 +557,23 @@
             const nozzleThroatInput = document.getElementById('A_throat');
             const nozzleExitInput = document.getElementById('A_exit');
             if (nozzleThroatInput && nozzleExitInput) {
-                const validateNozzleAreas = () => {
+                const validateNozzleAreas = (e) => {
                     const At = Number(nozzleThroatInput.value);
                     const Ae = Number(nozzleExitInput.value);
+                    let msg = '';
                     if (Ae < At) {
-                        nozzleExitInput.setCustomValidity('Exit Area must be greater than or equal to Throat Area.');
+                        msg = 'Exit Area must be greater than or equal to Throat Area.';
                     } else if (At > 0 && (Ae / At) > 100) {
-                        nozzleExitInput.setCustomValidity('Exit to Throat area ratio must not exceed 100.');
-                    } else {
-                        nozzleExitInput.setCustomValidity('');
+                        msg = 'Exit to Throat area ratio must not exceed 100.';
+                    }
+                    nozzleExitInput.setCustomValidity(msg);
+                    nozzleThroatInput.setCustomValidity(msg);
+
+                    if (e && e.isTrusted) {
+                        const other = e.target === nozzleThroatInput ? nozzleExitInput : nozzleThroatInput;
+                        const event = new Event('input');
+                        // Prevent infinite loop since the native event loop might continue triggering it
+                        other.dispatchEvent(event);
                     }
                 };
                 nozzleThroatInput.addEventListener('input', validateNozzleAreas);
