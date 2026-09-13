@@ -124,3 +124,7 @@
 **Vulnerability:** Injecting dynamically formatted strings directly into `record.msg` within a `logging.Filter` crashed the Python logger because it attempted unsafe manual interpolation (`record.msg % record.args`) and unprotected `record.getMessage()` calls.
 **Learning:** The built-in `logging` module is vulnerable to crash and DoS when resolving log messages if an attacker injects format specifiers (like `%d`) and `record.args` is present.
 **Prevention:** Safely resolve log messages inside filters by wrapping `record.getMessage()` in a `try...except`, falling back to `str(record.msg)`, and explicitly setting `record.args = ()` before appending dynamic content.
+## 2026-09-15 - Fix Global Error Handler Bypass for 500 Errors
+**Vulnerability:** Global error handlers for 500 Internal Server Errors were bypassed because endpoints returned error tuples (e.g. `return "Error...", 500`) instead of raising `InternalServerError` from `werkzeug.exceptions`.
+**Learning:** Returning a tuple directly from a view circumvents registered `@app.errorhandler` hooks for that HTTP status code, breaking centralized security logging and defense-in-depth measures tied to those handlers.
+**Prevention:** Always raise explicit Werkzeug exceptions (e.g. `raise InternalServerError(...)`) instead of returning error tuples so that global error handling logic is consistently applied to all failure cases.
