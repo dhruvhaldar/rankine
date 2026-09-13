@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, send_file, g, has_request_con
 import io
 import base64
 import secrets
-from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, Forbidden, TooManyRequests, HTTPException
+from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, Forbidden, TooManyRequests, HTTPException, InternalServerError
 from werkzeug.middleware.proxy_fix import ProxyFix
 import logging
 import matplotlib
@@ -292,7 +292,7 @@ def plot_nozzle():
         raise
     except Exception as e:
         logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs.", 500
+        raise InternalServerError("Error: An error occurred during calculation. Please check your inputs.")
 
 @app.route('/plot/shock_polar', methods=['POST'])
 def plot_shock_polar():
@@ -341,7 +341,7 @@ def plot_shock_polar():
         raise
     except Exception as e:
         logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs.", 500
+        raise InternalServerError("Error: An error occurred during calculation. Please check your inputs.")
 
 @app.route('/plot/shock_tube', methods=['POST'])
 def plot_shock_tube():
@@ -388,7 +388,7 @@ def plot_shock_tube():
         raise
     except Exception as e:
         logger.error(f"Operation failed from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}", exc_info=True)
-        return "Error: An error occurred during calculation. Please check your inputs.", 500
+        raise InternalServerError("Error: An error occurred during calculation. Please check your inputs.")
 
 # For local testing
 if __name__ == '__main__':
