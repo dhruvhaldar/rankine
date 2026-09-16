@@ -40,7 +40,7 @@ class NormalShock:
         # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
         # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
         if abs(gamma - 1.4) < 1e-9:
-            self.P02_P01 = (term1 * term1 * term1 * np.sqrt(term1)) / (term2 * term2 * np.sqrt(term2))
+            self.P02_P01 = ((term1 * term1 * term1) / (term2 * term2)) * np.sqrt(term1 / term2)
         else:
             self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
 

@@ -71,12 +71,9 @@ class Aerodynamics:
             t1 = ((gamma + 1.0) * M_sq) / 2.0
             t2 = (gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0))
             if abs(gamma - 1.4) < 1e-9:
-                term1 = t1 * t1 * t1 * math.sqrt(t1)
-                term2 = t2 * t2 * math.sqrt(t2)
+                P02_P_inf = (t1 * t1 * t1 * t2 * t2) * math.sqrt(t1 * t2)
             else:
-                term1 = t1**(gamma / (gamma - 1.0))
-                term2 = t2**(1.0 / (gamma - 1.0))
-            P02_P_inf = term1 * term2
+                P02_P_inf = (t1**(gamma / (gamma - 1.0))) * (t2**(1.0 / (gamma - 1.0)))
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
             sin_t = math.sin(t_val)
             return Cp_max * sin_t * sin_t
@@ -95,12 +92,9 @@ class Aerodynamics:
         t1 = ((gamma + 1.0) * M_arr_sq) / 2.0
         t2 = (gamma + 1.0) / (2.0 * gamma * M_arr_sq - (gamma - 1.0))
         if abs(gamma - 1.4) < 1e-9:
-            term1 = t1 * t1 * t1 * np.sqrt(t1)
-            term2 = t2 * t2 * np.sqrt(t2)
+            P02_P_inf = (t1 * t1 * t1 * t2 * t2) * np.sqrt(t1 * t2)
         else:
-            term1 = t1**(gamma / (gamma - 1.0))
-            term2 = t2**(1.0 / (gamma - 1.0))
-        P02_P_inf = term1 * term2
+            P02_P_inf = (t1**(gamma / (gamma - 1.0))) * (t2**(1.0 / (gamma - 1.0)))
 
         Cp_max = (2.0 / (gamma * M_arr_sq)) * (P02_P_inf - 1.0)
         sin_t = np.sin(theta_arr)
