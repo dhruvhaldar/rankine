@@ -71,7 +71,8 @@ class Aerodynamics:
             t1 = ((gamma + 1.0) * M_sq) / 2.0
             t2 = (gamma + 1.0) / (2.0 * gamma * M_sq - (gamma - 1.0))
             if abs(gamma - 1.4) < 1e-9:
-                P02_P_inf = (t1 * t1 * t1 * t2 * t2) * math.sqrt(t1 * t2)
+                X = t1 * t2
+                P02_P_inf = t1 * X * X * math.sqrt(X)
             else:
                 P02_P_inf = (t1**(gamma / (gamma - 1.0))) * (t2**(1.0 / (gamma - 1.0)))
             Cp_max = (2.0 / (gamma * M_sq)) * (P02_P_inf - 1.0)
@@ -92,7 +93,8 @@ class Aerodynamics:
         t1 = ((gamma + 1.0) * M_arr_sq) / 2.0
         t2 = (gamma + 1.0) / (2.0 * gamma * M_arr_sq - (gamma - 1.0))
         if abs(gamma - 1.4) < 1e-9:
-            P02_P_inf = (t1 * t1 * t1 * t2 * t2) * np.sqrt(t1 * t2)
+            X = t1 * t2
+            P02_P_inf = t1 * X * X * np.sqrt(X)
         else:
             P02_P_inf = (t1**(gamma / (gamma - 1.0))) * (t2**(1.0 / (gamma - 1.0)))
 
