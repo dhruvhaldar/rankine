@@ -213,3 +213,6 @@
 ## 2024-05-18 - JavaScript Redeclaration Error Breaking Form Validation
 **Learning:** Redeclaring `const` variables in the same scope (e.g., inside DOMContentLoaded) throws a `SyntaxError`, which completely halts JavaScript execution on the page. This silent failure prevents critical UX features like interdependent form validation from initializing, leaving users without inline feedback.
 **Action:** When adding new event listeners or referencing DOM elements, ensure variable names are unique within the block scope or reuse the existing variables to prevent execution halts.
+## 2026-09-20 - Stale State Overlay Reduced Motion
+**Learning:** The `.stale-result::after` pseudo-element uses an animation `fadeInOverlay`. This animation isn't disabled when `prefers-reduced-motion: reduce` is active, causing unexpected animations for users who have requested reduced motion at the OS level.
+**Action:** Always ensure all newly added animations, including those on pseudo-elements like `::after`, are included in the `prefers-reduced-motion` media query by setting `animation: none;`.
