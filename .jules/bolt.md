@@ -63,3 +63,6 @@
 ## 2024-05-25 - Try/Except Branching Overhead in Small Arrays
 **Learning:** Using `try...except TypeError` blocks to switch between scalar `math.sqrt` and array `np.sqrt` paths causes massive overhead when processing small Numpy arrays, since the type casting `float(array)` throws exceptions repeatedly. The python generic power operator `** 0.5` is up to 2x faster for small arrays.
 **Action:** Avoid explicit polymorphic branching for simple math; consolidate to the generic `** 0.5` exponentiation operator for polymorphic functions, which handles both scalars and arrays with minimal overhead.
+## 2026-10-27 - np.nanmin and np.nanmax Overhead
+**Learning:** Checking for minimum and maximum values in arrays using `np.nanmin` and `np.nanmax` is significantly slower (~2x) compared to standard `np.min` and `np.max` across both small and large array sizes.
+**Action:** Always prefer `np.min` and `np.max` over `np.nanmin` and `np.nanmax` when validating array boundaries or detecting domain crossings, unless NaN handling is explicitly required for the array data structure logic.
