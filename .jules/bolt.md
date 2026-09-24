@@ -66,3 +66,6 @@
 ## 2026-10-27 - np.nanmin and np.nanmax Overhead
 **Learning:** Checking for minimum and maximum values in arrays using `np.nanmin` and `np.nanmax` is significantly slower (~2x) compared to standard `np.min` and `np.max` across both small and large array sizes.
 **Action:** Always prefer `np.min` and `np.max` over `np.nanmin` and `np.nanmax` when validating array boundaries or detecting domain crossings, unless NaN handling is explicitly required for the array data structure logic.
+## 2026-11-20 - Polymorphic Square Root in Normal Shock
+**Learning:** Using `np.sqrt` on purely polymorphic classes like `NormalShock` (which accepts both scalars and arrays without explicit branching) introduces severe NumPy dispatch overhead for scalar inputs and even arrays.
+**Action:** Replace `np.sqrt` with the native Python exponentiation operator `** 0.5` inside polymorphic functions that lack explicit type branching. This provides optimal performance across both input types without the overhead of `try...except` exception handling.

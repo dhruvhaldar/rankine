@@ -20,7 +20,7 @@ class NormalShock:
         # M2
         numerator = term_M1
         denominator = gamma * M1_sq - (gamma - 1.0) / 2.0
-        self.M2 = np.sqrt(numerator / denominator)
+        self.M2 = (numerator / denominator) ** 0.5
 
         # P2/P1
         self.P2_P1 = 1.0 + 2.0 * gamma / (gamma + 1.0) * (M1_sq - 1.0)
@@ -41,7 +41,7 @@ class NormalShock:
         # Expected speedup: ~50% faster for arrays by avoiding **3.5 and **2.5
         if abs(gamma - 1.4) < 1e-9:
             X = term1 / term2
-            self.P02_P01 = term1 * X * X * np.sqrt(X)
+            self.P02_P01 = term1 * X * X * (X ** 0.5)
         else:
             self.P02_P01 = (term1 ** (gamma / (gamma - 1.0))) / (term2 ** (1.0 / (gamma - 1.0)))
 
