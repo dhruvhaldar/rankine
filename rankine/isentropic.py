@@ -170,7 +170,7 @@ class IsentropicRelations:
         # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
         # Expected speedup: ~50% faster for arrays by avoiding **3.5
         if abs(gamma - 1.4) < 1e-9:
-            return 1.0 / (term * term * term * np.sqrt(term))
+            return 1.0 / (term * term * term * (term ** 0.5))
         return 1.0 / (term ** (gamma / (gamma - 1.0)))
 
     @staticmethod
@@ -189,7 +189,7 @@ class IsentropicRelations:
         # ⚡ Bolt Optimization: Replace exponentiation with chained multiplication and sqrt for air
         # Expected speedup: ~50% faster for arrays by avoiding **2.5
         if abs(gamma - 1.4) < 1e-9:
-            return 1.0 / (term * term * np.sqrt(term))
+            return 1.0 / (term * term * (term ** 0.5))
         return 1.0 / (term ** (1.0 / (gamma - 1.0)))
 
 
