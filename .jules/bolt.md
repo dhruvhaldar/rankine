@@ -69,3 +69,6 @@
 ## 2026-11-20 - Polymorphic Square Root in Normal Shock
 **Learning:** Using `np.sqrt` on purely polymorphic classes like `NormalShock` (which accepts both scalars and arrays without explicit branching) introduces severe NumPy dispatch overhead for scalar inputs and even arrays.
 **Action:** Replace `np.sqrt` with the native Python exponentiation operator `** 0.5` inside polymorphic functions that lack explicit type branching. This provides optimal performance across both input types without the overhead of `try...except` exception handling.
+## 2026-11-21 - Polymorphic Square Root in IsentropicRelations
+**Learning:** Using `np.sqrt` on purely polymorphic functions like `IsentropicRelations.calc_pressure_ratio` (which accepts both scalars and arrays without explicit branching) introduces severe NumPy dispatch overhead for scalar inputs while having no benefit for array inputs.
+**Action:** Replace `np.sqrt` with the native Python exponentiation operator `** 0.5` inside polymorphic functions that lack explicit type branching. This provides optimal performance across both input types without the overhead of `try...except` exception handling.
