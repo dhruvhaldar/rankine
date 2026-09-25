@@ -128,3 +128,7 @@
 **Vulnerability:** Global error handlers for 500 Internal Server Errors were bypassed because endpoints returned error tuples (e.g. `return "Error...", 500`) instead of raising `InternalServerError` from `werkzeug.exceptions`.
 **Learning:** Returning a tuple directly from a view circumvents registered `@app.errorhandler` hooks for that HTTP status code, breaking centralized security logging and defense-in-depth measures tied to those handlers.
 **Prevention:** Always raise explicit Werkzeug exceptions (e.g. `raise InternalServerError(...)`) instead of returning error tuples so that global error handling logic is consistently applied to all failure cases.
+## 2026-11-20 - Enforce Rate Limiting Across All HTTP Methods
+**Vulnerability:** The in-memory rate limiter in `api/index.py` was conditionally applied only to `POST` requests. This left all `GET` endpoints, as well as error handlers like 404, vulnerable to Application-Layer DoS and path scanning attacks without triggering rate limit blocks.
+**Learning:** Limiting rate enforcement to state-changing operations leaves read-only endpoints and global handlers exposed to resource exhaustion.
+**Prevention:** Apply rate limiters universally to all HTTP methods to protect the entire application surface area from scanning and DoS attempts.
