@@ -80,13 +80,13 @@ class ObliqueShock:
         """
         Solves for wave angle beta given M and deflection angle theta.
         """
+        import math
         if theta == 0:
-            return np.arcsin(1.0/M) # Mach wave
+            return math.asin(1.0/M) # Mach wave
 
         # ⚡ Bolt Optimization: Trigonometric math substitution and inlining
         # Expected speedup: ~2x faster brentq evaluations by using scalar math
         # instead of numpy, and reusing sin^2 instead of evaluating cos.
-        import math
         M2 = M * M
         c_gamma = gamma + 1.0
 
@@ -115,7 +115,7 @@ class ObliqueShock:
         # Or just use optimization to find max theta.
 
         # Let's search for roots.
-        mu = np.arcsin(1.0/M)
+        mu = math.asin(1.0/M)
 
         # Approximate beta_max location? Roughly around 65-70 degrees for high M, lower for low M.
         # Let's just scan or use a known solver.
@@ -129,9 +129,9 @@ class ObliqueShock:
         # Expected speedup: ~4x faster for oblique shock solving
         # Further optimization: algebra extraction and replacing **2 overhead with scalar multiplication
         term1 = c_gamma * M2 - 4.0
-        term2 = np.sqrt(c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0))
+        term2 = math.sqrt(c_gamma * (c_gamma * (M2 * M2) + 8.0 * (gamma - 1.0) * M2 + 16.0))
         sin2_beta = (term1 + term2) / (4.0 * gamma * M2)
-        beta_at_max = np.arcsin(np.sqrt(sin2_beta))
+        beta_at_max = math.asin(math.sqrt(sin2_beta))
 
         max_theta = ObliqueShock.theta_beta_m(beta_at_max, M, gamma)
 

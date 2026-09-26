@@ -72,3 +72,6 @@
 ## 2026-11-21 - Polymorphic Square Root in IsentropicRelations
 **Learning:** Using `np.sqrt` on purely polymorphic functions like `IsentropicRelations.calc_pressure_ratio` (which accepts both scalars and arrays without explicit branching) introduces severe NumPy dispatch overhead for scalar inputs while having no benefit for array inputs.
 **Action:** Replace `np.sqrt` with the native Python exponentiation operator `** 0.5` inside polymorphic functions that lack explicit type branching. This provides optimal performance across both input types without the overhead of `try...except` exception handling.
+## 2024-05-24 - NumPy Scalar Overhead in Analytical Exact Solutions
+**Learning:** Using `np.sqrt` and `np.arcsin` on built-in scalar floats in functions that operate exclusively on scalars (like analytical exact solutions) introduces severe ufunc dispatch and object allocation overhead.
+**Action:** When writing mathematical code operating exclusively on scalars, replace NumPy functions with `math.sqrt()` and `math.asin()` which are significantly faster and more idiomatic.
