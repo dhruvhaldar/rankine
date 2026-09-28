@@ -216,3 +216,6 @@
 ## 2026-09-20 - Stale State Overlay Reduced Motion
 **Learning:** The `.stale-result::after` pseudo-element uses an animation `fadeInOverlay`. This animation isn't disabled when `prefers-reduced-motion: reduce` is active, causing unexpected animations for users who have requested reduced motion at the OS level.
 **Action:** Always ensure all newly added animations, including those on pseudo-elements like `::after`, are included in the `prefers-reduced-motion` media query by setting `animation: none;`.
+## 2024-08-25 - Synchronous Event Processing for Custom Validity
+**Learning:** When using HTML5 `setCustomValidity` in an `input` event listener, if a generic UI listener (like one that toggles `aria-invalid` or displays `validationMessage`) is attached *before* the custom validation listener, the UI will read the input's previous validity state. This causes error messages to visually lag one keystroke behind the actual data.
+**Action:** Always register custom validation constraints *before* generic validation UI handlers in the DOM execution order. Additionally, when one field's state dynamically restricts another (e.g., `min`/`max`), explicitly dispatch a synthetic `input` event on the dependent field to immediately trigger re-evaluation of its validity state.
