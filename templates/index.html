@@ -501,62 +501,6 @@
                 aThroatInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
 
-            // Dynamically set aria-invalid for accessibility based on HTML5 validation
-            document.querySelectorAll('input, select, textarea').forEach(input => {
-                // Create inline error message element
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'inline-error-message';
-                errorMsg.setAttribute('aria-live', 'polite');
-                errorMsg.id = input.id + '-error';
-                input.parentNode.insertBefore(errorMsg, input.nextSibling);
-
-                // Add aria-describedby for accessibility
-                const currentDescribedBy = input.getAttribute('aria-describedby') || '';
-                input.setAttribute('aria-describedby', (currentDescribedBy + ' ' + errorMsg.id).trim());
-
-                const updateAriaInvalid = () => {
-                    if (!input.validity.valid) {
-                        input.setAttribute('aria-invalid', 'true');
-                        if (input.validity.patternMismatch && input.dataset.patternError) {
-                            errorMsg.textContent = input.dataset.patternError;
-                        } else {
-                            errorMsg.textContent = input.validationMessage;
-                        }
-                    } else {
-                        input.removeAttribute('aria-invalid');
-                        setTimeout(() => {
-                            if (input.validity.valid) {
-                                errorMsg.textContent = '';
-                            }
-                        }, 300);
-                    }
-                };
-                input.addEventListener('input', updateAriaInvalid);
-                input.addEventListener('blur', updateAriaInvalid);
-                input.addEventListener('invalid', updateAriaInvalid);
-                // Initialize state
-                updateAriaInvalid();
-            });
-
-            // Restore form states from sessionStorage to prevent data loss on reload
-            // Use a static namespace to prevent data loss when form actions change the path
-            const storagePrefix = 'form_state_rankine_';
-            const excludedTypes = ['hidden', 'submit', 'button', 'checkbox', 'radio', 'password', 'file'];
-
-            document.querySelectorAll('input, textarea, select').forEach(element => {
-                if (element.id && (element.tagName !== 'INPUT' || !excludedTypes.includes(element.type))) {
-                    const storageKey = storagePrefix + element.id;
-                    const storedValue = sessionStorage.getItem(storageKey);
-                    if (storedValue !== null) {
-                        element.value = storedValue;
-                        element.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                    element.addEventListener('input', () => {
-                        sessionStorage.setItem(storageKey, element.value);
-                    });
-                }
-            });
-
             const nozzleThroatInput = document.getElementById('A_throat');
             const nozzleExitInput = document.getElementById('A_exit');
             if (nozzleThroatInput && nozzleExitInput) {
@@ -626,6 +570,62 @@
                 // Initialize counter on load to account for cached or autofilled values
                 machsInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
+
+            // Dynamically set aria-invalid for accessibility based on HTML5 validation
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                // Create inline error message element
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'inline-error-message';
+                errorMsg.setAttribute('aria-live', 'polite');
+                errorMsg.id = input.id + '-error';
+                input.parentNode.insertBefore(errorMsg, input.nextSibling);
+
+                // Add aria-describedby for accessibility
+                const currentDescribedBy = input.getAttribute('aria-describedby') || '';
+                input.setAttribute('aria-describedby', (currentDescribedBy + ' ' + errorMsg.id).trim());
+
+                const updateAriaInvalid = () => {
+                    if (!input.validity.valid) {
+                        input.setAttribute('aria-invalid', 'true');
+                        if (input.validity.patternMismatch && input.dataset.patternError) {
+                            errorMsg.textContent = input.dataset.patternError;
+                        } else {
+                            errorMsg.textContent = input.validationMessage;
+                        }
+                    } else {
+                        input.removeAttribute('aria-invalid');
+                        setTimeout(() => {
+                            if (input.validity.valid) {
+                                errorMsg.textContent = '';
+                            }
+                        }, 300);
+                    }
+                };
+                input.addEventListener('input', updateAriaInvalid);
+                input.addEventListener('blur', updateAriaInvalid);
+                input.addEventListener('invalid', updateAriaInvalid);
+                // Initialize state
+                updateAriaInvalid();
+            });
+
+            // Restore form states from sessionStorage to prevent data loss on reload
+            // Use a static namespace to prevent data loss when form actions change the path
+            const storagePrefix = 'form_state_rankine_';
+            const excludedTypes = ['hidden', 'submit', 'button', 'checkbox', 'radio', 'password', 'file'];
+
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                if (element.id && (element.tagName !== 'INPUT' || !excludedTypes.includes(element.type))) {
+                    const storageKey = storagePrefix + element.id;
+                    const storedValue = sessionStorage.getItem(storageKey);
+                    if (storedValue !== null) {
+                        element.value = storedValue;
+                        element.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    element.addEventListener('input', () => {
+                        sessionStorage.setItem(storageKey, element.value);
+                    });
+                }
+            });
 
             // Prevent native validation tooltips from clashing with custom inline errors,
             // and implement smooth scrolling focus for the first invalid field.
