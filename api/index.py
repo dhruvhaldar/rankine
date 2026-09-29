@@ -9,6 +9,7 @@ import logging
 import matplotlib
 import math
 import time
+from threading import Lock
 from collections import defaultdict
 from markupsafe import escape
 matplotlib.use('Agg')
@@ -78,33 +79,40 @@ def sanitize_for_log(val):
 # Security: In-memory rate limiter to prevent Application-Layer DoS
 # Limits requests to prevent abuse of computationally expensive endpoints
 rate_limit_data = defaultdict(list)
+rate_limit_lock = Lock()
 RATE_LIMIT_WINDOW = 60  # seconds
 RATE_LIMIT_MAX_REQUESTS = 30
 
 @app.before_request
 def rate_limiter():
     current_time = time.monotonic()
-
-    # Security: Prevent memory exhaustion from too many unique IPs
-    # Periodically evict stale IPs to prevent rate-limit bypass from blunt clear()
-    if len(rate_limit_data) > 10000:
-        for ip in list(rate_limit_data.keys()):
-            rate_limit_data[ip] = [t for t in rate_limit_data[ip] if current_time - t < RATE_LIMIT_WINDOW]
-            if not rate_limit_data[ip]:
-                del rate_limit_data[ip]
-        while len(rate_limit_data) > 10000:
-            rate_limit_data.pop(next(iter(rate_limit_data)))
-
     client_ip = request.remote_addr
 
-    # Clean up old requests outside the window
-    rate_limit_data[client_ip] = [t for t in rate_limit_data[client_ip] if current_time - t < RATE_LIMIT_WINDOW]
+    with rate_limit_lock:
+        # Security: Prevent memory exhaustion from too many unique IPs
+        # Periodically evict stale IPs to prevent rate-limit bypass from blunt clear()
+        if len(rate_limit_data) > 10000:
+            for ip in list(rate_limit_data.keys()):
+                rate_limit_data[ip] = [t for t in rate_limit_data[ip] if current_time - t < RATE_LIMIT_WINDOW]
+                if not rate_limit_data[ip]:
+                    rate_limit_data.pop(ip, None)
+            while len(rate_limit_data) > 10000:
+                try:
+                    rate_limit_data.pop(next(iter(rate_limit_data)))
+                except StopIteration:
+                    break
 
-    if len(rate_limit_data[client_ip]) >= RATE_LIMIT_MAX_REQUESTS:
+        # Clean up old requests outside the window
+        rate_limit_data[client_ip] = [t for t in rate_limit_data[client_ip] if current_time - t < RATE_LIMIT_WINDOW]
+
+        is_rate_limited = len(rate_limit_data[client_ip]) >= RATE_LIMIT_MAX_REQUESTS
+
+        if not is_rate_limited:
+            rate_limit_data[client_ip].append(current_time)
+
+    if is_rate_limited:
         logger.warning(f"Security: Rate limit exceeded for IP {sanitize_for_log(client_ip)} on endpoint {sanitize_for_log(request.path)}")
         raise TooManyRequests("Error: Too many requests. Please try again later.")
-
-    rate_limit_data[client_ip].append(current_time)
 
 @app.before_request
 def csrf_protect():
