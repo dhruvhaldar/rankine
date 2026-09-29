@@ -132,3 +132,7 @@
 **Vulnerability:** The in-memory rate limiter in `api/index.py` was conditionally applied only to `POST` requests. This left all `GET` endpoints, as well as error handlers like 404, vulnerable to Application-Layer DoS and path scanning attacks without triggering rate limit blocks.
 **Learning:** Limiting rate enforcement to state-changing operations leaves read-only endpoints and global handlers exposed to resource exhaustion.
 **Prevention:** Apply rate limiters universally to all HTTP methods to protect the entire application surface area from scanning and DoS attempts.
+## 2026-09-29 - Rate Limiter Race Condition
+**Vulnerability:** The in-memory rate limiter was modifying a shared dictionary state without thread locks. Under high concurrent load, this led to `KeyError` and `RuntimeError: dictionary changed size during iteration`. This crashes the thread, causing Denial of Service while simultaneously bypassing intended limits for the crashing requests.
+**Learning:** In multithreaded WSGI environments, modifying shared dictionary states without thread locks is vulnerable to race conditions during concurrent iteration or deletion.
+**Prevention:** Always encapsulate modifications and reads of shared state objects within a `threading.Lock` context manager to ensure atomic operations.
