@@ -682,7 +682,7 @@
             // Prevent accidental mouse wheel scrolling from changing number inputs
             document.addEventListener('wheel', function(e) {
                 const activeEl = document.activeElement;
-                if (activeEl && activeEl.tagName === 'INPUT' && activeEl.type === 'number') {
+                if (activeEl && e.target === activeEl && activeEl.tagName === 'INPUT' && activeEl.type === 'number') {
                     activeEl.blur();
                 }
             }, { passive: true });

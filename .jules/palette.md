@@ -219,3 +219,7 @@
 ## 2024-08-25 - Synchronous Event Processing for Custom Validity
 **Learning:** When using HTML5 `setCustomValidity` in an `input` event listener, if a generic UI listener (like one that toggles `aria-invalid` or displays `validationMessage`) is attached *before* the custom validation listener, the UI will read the input's previous validity state. This causes error messages to visually lag one keystroke behind the actual data.
 **Action:** Always register custom validation constraints *before* generic validation UI handlers in the DOM execution order. Additionally, when one field's state dynamically restricts another (e.g., `min`/`max`), explicitly dispatch a synthetic `input` event on the dependent field to immediately trigger re-evaluation of its validity state.
+
+## 2026-10-01 - Global Scroll Event Focus Loss
+**Learning:** Attaching a global `wheel` event listener to `document` that blindly blurs any active `input[type="number"]` to prevent accidental value changes creates a severe UX anti-pattern. If a user is actively typing and scrolls the page (e.g., using a touchpad or mouse wheel outside the input), their focus is abruptly stolen, interrupting their workflow.
+**Action:** When implementing global scroll listeners to protect number inputs, always explicitly verify that the scroll event actually originated from the input itself (e.g., `e.target === activeEl`) before calling `blur()`.
