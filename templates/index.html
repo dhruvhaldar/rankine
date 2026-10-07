@@ -672,13 +672,6 @@
                 });
             });
 
-            // Auto-select text on focus for quicker data entry
-            document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
-                input.addEventListener('focus', function() {
-                    setTimeout(() => this.select(), 0);
-                });
-            });
-
             // Prevent accidental mouse wheel scrolling from changing number inputs
             document.addEventListener('wheel', function(e) {
                 const activeEl = document.activeElement;
