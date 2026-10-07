@@ -223,3 +223,7 @@
 ## 2026-10-01 - Global Scroll Event Focus Loss
 **Learning:** Attaching a global `wheel` event listener to `document` that blindly blurs any active `input[type="number"]` to prevent accidental value changes creates a severe UX anti-pattern. If a user is actively typing and scrolls the page (e.g., using a touchpad or mouse wheel outside the input), their focus is abruptly stolen, interrupting their workflow.
 **Action:** When implementing global scroll listeners to protect number inputs, always explicitly verify that the scroll event actually originated from the input itself (e.g., `e.target === activeEl`) before calling `blur()`.
+
+## 2026-10-15 - Destructive Auto-Select on Click
+**Learning:** Using `setTimeout(() => input.select(), 0)` on the `focus` event to provide "quicker data entry" creates a hostile UX for mouse users. When a user clicks into a populated field to fix a typo, the timeout executes immediately after the browser sets the cursor position, overwriting their specific caret placement by selecting the entire string. This causes their next keystroke to accidentally delete the entire field's contents.
+**Action:** Remove custom JS `select()` bindings on `focus`. Rely on the browser's native behavior, which automatically selects text when a user navigates to an input via keyboard (Tab), but preserves precise caret placement when they focus via a mouse click.
