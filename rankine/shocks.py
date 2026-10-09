@@ -62,8 +62,9 @@ class ObliqueShock:
 
             sin_b = math.sin(b_val)
             sin2_b = sin_b * sin_b
+            cos_b = math.sqrt(1.0 - sin2_b)
             m_sq = m_val * m_val
-            tan_theta = 2.0 * (1.0 / math.tan(b_val)) * (m_sq * sin2_b - 1.0) / (m_sq * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
+            tan_theta = 2.0 * (cos_b / sin_b) * (m_sq * sin2_b - 1.0) / (m_sq * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
             return math.atan(tan_theta)
         except (ValueError, TypeError, ZeroDivisionError):
             pass
@@ -72,7 +73,8 @@ class ObliqueShock:
         M2 = M_arr * M_arr
         sin_b = np.sin(beta)
         sin2_b = sin_b * sin_b
-        tan_theta = 2.0 * (1.0 / np.tan(beta)) * (M2 * sin2_b - 1.0) / (M2 * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
+        cos_b = np.sqrt(1.0 - sin2_b)
+        tan_theta = 2.0 * (cos_b / sin_b) * (M2 * sin2_b - 1.0) / (M2 * (gamma + 1.0 - 2.0 * sin2_b) + 2.0)
         return np.arctan(tan_theta)
 
     @staticmethod
@@ -98,9 +100,10 @@ class ObliqueShock:
         def residual(beta):
             sin_b = math.sin(beta)
             sin2_b = sin_b * sin_b
+            cos_b = math.sqrt(1.0 - sin2_b)
             # Using trig identity: cos(2*beta) = 1 - 2*sin^2(beta)
             # gamma + cos(2*beta) = gamma + 1 - 2*sin^2(beta) = c_gamma - 2*sin2_b
-            tan_theta = 2.0 * (1.0 / math.tan(beta)) * (M2 * sin2_b - 1.0) / (M2 * (c_gamma - 2.0 * sin2_b) + 2.0)
+            tan_theta = 2.0 * (cos_b / sin_b) * (M2 * sin2_b - 1.0) / (M2 * (c_gamma - 2.0 * sin2_b) + 2.0)
             return tan_theta - target_tan
 
         # Max deflection angle check
