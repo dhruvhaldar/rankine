@@ -227,3 +227,6 @@
 ## 2026-10-15 - Destructive Auto-Select on Click
 **Learning:** Using `setTimeout(() => input.select(), 0)` on the `focus` event to provide "quicker data entry" creates a hostile UX for mouse users. When a user clicks into a populated field to fix a typo, the timeout executes immediately after the browser sets the cursor position, overwriting their specific caret placement by selecting the entire string. This causes their next keystroke to accidentally delete the entire field's contents.
 **Action:** Remove custom JS `select()` bindings on `focus`. Rely on the browser's native behavior, which automatically selects text when a user navigates to an input via keyboard (Tab), but preserves precise caret placement when they focus via a mouse click.
+## 2026-10-13 - Prevent Native Invalid State on Load
+**Learning:** Relying exclusively on the CSS `:invalid` pseudo-class for error styling causes required fields to incorrectly display as invalid immediately on page load before user interaction.
+**Action:** Always drive visual error styling using a dynamically updated `[aria-invalid="true"]` attribute selector, ensuring error states only appear after the field is touched or explicitly validated.
