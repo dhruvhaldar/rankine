@@ -75,12 +75,12 @@
             outline-offset: 2px;
             border-color: #005bb5;
         }
-        input[type="text"]:invalid, input[type="number"]:invalid {
+        input[type="text"][aria-invalid="true"], input[type="number"][aria-invalid="true"] {
             border-color: #d32f2f;
             background-color: #fff4f4;
         }
-        input[type="text"]:focus:invalid, input[type="number"]:focus:invalid,
-        input[type="text"]:focus-visible:invalid, input[type="number"]:focus-visible:invalid {
+        input[type="text"]:focus[aria-invalid="true"], input[type="number"]:focus[aria-invalid="true"],
+        input[type="text"]:focus-visible[aria-invalid="true"], input[type="number"]:focus-visible[aria-invalid="true"] {
             border-color: #d32f2f;
             outline: 2px solid #005bb5;
             outline-offset: 2px;
