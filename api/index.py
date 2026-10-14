@@ -123,11 +123,13 @@ def csrf_protect():
         referer = request.headers.get("Referer")
 
         from urllib.parse import urlparse
-        expected_host = request.host
-
         # Security: Prevent Host Header Injection / CSRF Bypass
         allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost:5000,127.0.0.1:5000').split(',')]
-        is_allowed = expected_host in allowed_hosts or (os.environ.get('VERCEL_URL') and expected_host == os.environ.get('VERCEL_URL'))
+        if os.environ.get('VERCEL_URL'):
+            allowed_hosts.append(os.environ.get('VERCEL_URL'))
+
+        expected_host = request.host
+        is_allowed = expected_host in allowed_hosts
         if not is_allowed and os.environ.get('FLASK_DEBUG') != '1':
             logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
             raise Forbidden("Error: Invalid Host header.")
@@ -141,7 +143,8 @@ def csrf_protect():
 
         if origin:
             try:
-                if urlparse(origin).netloc != expected_host:
+                origin_netloc = urlparse(origin).netloc
+                if origin_netloc not in allowed_hosts and os.environ.get('FLASK_DEBUG') != '1':
                     logger.warning(f"Security: CSRF validation failed - Invalid Origin: {sanitize_for_log(origin)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
                     raise Forbidden("Error: Invalid Origin.")
             except ValueError:
@@ -149,7 +152,8 @@ def csrf_protect():
                 raise BadRequest("Error: Malformed Origin header.")
         elif referer:
             try:
-                if urlparse(referer).netloc != expected_host:
+                referer_netloc = urlparse(referer).netloc
+                if referer_netloc not in allowed_hosts and os.environ.get('FLASK_DEBUG') != '1':
                     logger.warning(f"Security: CSRF validation failed - Invalid Referer: {sanitize_for_log(referer)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
                     raise Forbidden("Error: Invalid Referer.")
             except ValueError:
