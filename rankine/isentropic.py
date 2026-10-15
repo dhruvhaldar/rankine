@@ -343,7 +343,12 @@ class CDNozzle:
                     M_s1_sq = M_s1 * M_s1
                     term1 = (c1 * M_s1_sq) / (1.0 + c2 * M_s1_sq)
                     term2 = c3 * (M_s1_sq - 1.0) + 1.0
-                    p0_ratio = (term1 ** c4) * (term2 ** c5)
+                    # ⚡ Bolt Optimization: Replace floating point exponentiation with fast chained integer multiplication for standard air
+                    if abs(gamma - 1.4) < 1e-9:
+                        X = term1 / term2
+                        p0_ratio = term1 * X * X * math.sqrt(X)
+                    else:
+                        p0_ratio = (term1 ** c4) * (term2 ** c5)
 
                     P0_new = P0 * p0_ratio
 
