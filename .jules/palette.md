@@ -230,3 +230,7 @@
 ## 2026-10-13 - Prevent Native Invalid State on Load
 **Learning:** Relying exclusively on the CSS `:invalid` pseudo-class for error styling causes required fields to incorrectly display as invalid immediately on page load before user interaction.
 **Action:** Always drive visual error styling using a dynamically updated `[aria-invalid="true"]` attribute selector, ensuring error states only appear after the field is touched or explicitly validated.
+
+## 2026-10-16 - Prevent Active Animations on aria-disabled Elements
+**Learning:** Elements relying on `aria-disabled="true"` for logical disablement will still trigger CSS `:active` pseudo-classes (e.g., scaling or pressing animations) when clicked, providing false interactivity feedback.
+**Action:** Always explicitly nullify interactive animations (e.g., `transform: none !important;`) on `[aria-disabled="true"]:active` selectors.
