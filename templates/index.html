@@ -587,8 +587,11 @@
                 const currentDescribedBy = input.getAttribute('aria-describedby') || '';
                 input.setAttribute('aria-describedby', (currentDescribedBy + ' ' + errorMsg.id).trim());
 
-                const updateAriaInvalid = () => {
-                    if (!input.validity.valid) {
+                const updateAriaInvalid = (e) => {
+                    if (e) {
+                        input.dataset.touched = 'true';
+                    }
+                    if (!input.validity.valid && input.dataset.touched === 'true') {
                         input.setAttribute('aria-invalid', 'true');
                         if (input.validity.patternMismatch && input.dataset.patternError) {
                             errorMsg.textContent = input.dataset.patternError;
@@ -606,7 +609,10 @@
                 };
                 input.addEventListener('input', updateAriaInvalid);
                 input.addEventListener('blur', updateAriaInvalid);
-                input.addEventListener('invalid', updateAriaInvalid);
+                input.addEventListener('invalid', (e) => {
+                    input.dataset.touched = 'true';
+                    updateAriaInvalid(e);
+                });
                 // Initialize state
                 updateAriaInvalid();
             });
