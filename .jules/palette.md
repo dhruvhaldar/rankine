@@ -234,3 +234,7 @@
 ## 2026-10-16 - Prevent Active Animations on aria-disabled Elements
 **Learning:** Elements relying on `aria-disabled="true"` for logical disablement will still trigger CSS `:active` pseudo-classes (e.g., scaling or pressing animations) when clicked, providing false interactivity feedback.
 **Action:** Always explicitly nullify interactive animations (e.g., `transform: none !important;`) on `[aria-disabled="true"]:active` selectors.
+
+## 2026-10-18 - Guarding aria-invalid Initialization
+**Learning:** Even when using `[aria-invalid="true"]` instead of `:invalid` for visual error styling, evaluating the constraint API blindly on page load will incorrectly mark untouched empty required fields as invalid immediately.
+**Action:** Always guard the application of `aria-invalid="true"` by tracking a `data-touched` attribute to prevent premature error states on page load.
