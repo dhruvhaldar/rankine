@@ -238,3 +238,6 @@
 ## 2026-10-18 - Guarding aria-invalid Initialization
 **Learning:** Even when using `[aria-invalid="true"]` instead of `:invalid` for visual error styling, evaluating the constraint API blindly on page load will incorrectly mark untouched empty required fields as invalid immediately.
 **Action:** Always guard the application of `aria-invalid="true"` by tracking a `data-touched` attribute to prevent premature error states on page load.
+## 2026-10-25 - Character Counter Verbosity Anti-Pattern
+**Learning:** Attaching aria-live="polite" directly to a character counter container causes the screen reader to announce the updated count on every single keystroke. This verbosity overwhelms the user and interferes with their ability to hear the characters they are actually typing, creating a severely degraded text entry experience.
+**Action:** Remove aria-live from the visual counter and instead use a hidden, visually-impaired specific aria-live region that only announces the remaining character count when the user approaches the maximum limit (e.g., less than 10 characters remaining) or exceeds it.
