@@ -241,3 +241,7 @@
 ## 2026-10-25 - Character Counter Verbosity Anti-Pattern
 **Learning:** Attaching aria-live="polite" directly to a character counter container causes the screen reader to announce the updated count on every single keystroke. This verbosity overwhelms the user and interferes with their ability to hear the characters they are actually typing, creating a severely degraded text entry experience.
 **Action:** Remove aria-live from the visual counter and instead use a hidden, visually-impaired specific aria-live region that only announces the remaining character count when the user approaches the maximum limit (e.g., less than 10 characters remaining) or exceeds it.
+
+## 2026-10-30 - Consistent Error Focus Ring
+**Learning:** When an invalid form field receives focus, retaining the standard theme-colored focus ring (e.g., blue) alongside the error-colored border (e.g., red) creates conflicting visual semantics. For keyboard-only users navigating through a form, the prominent focus ring color heavily influences their perception of the field's state, and a standard blue ring can dilute or obscure the fact that the field is still in an invalid state.
+**Action:** Always explicitly override the `outline` color for `:focus[aria-invalid="true"]` and `:focus-visible[aria-invalid="true"]` to match the error color (e.g., `#d32f2f`) to provide cohesive, reinforced visual feedback that the field requires correction.
