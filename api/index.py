@@ -116,6 +116,17 @@ def rate_limiter():
 
 @app.before_request
 def csrf_protect():
+    # Security: Prevent Host Header Injection globally
+    allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost:5000,127.0.0.1:5000').split(',')]
+    if os.environ.get('VERCEL_URL'):
+        allowed_hosts.append(os.environ.get('VERCEL_URL'))
+
+    expected_host = request.host
+    is_allowed = expected_host in allowed_hosts
+    if not is_allowed and os.environ.get('FLASK_DEBUG') != '1':
+        logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
+        raise Forbidden("Error: Invalid Host header.")
+
     # Security: CSRF protection for state-changing POST requests
     # Validates Origin or Referer header against expected host to prevent cross-site request forgery
     if request.method == "POST":
@@ -123,16 +134,6 @@ def csrf_protect():
         referer = request.headers.get("Referer")
 
         from urllib.parse import urlparse
-        # Security: Prevent Host Header Injection / CSRF Bypass
-        allowed_hosts = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost:5000,127.0.0.1:5000').split(',')]
-        if os.environ.get('VERCEL_URL'):
-            allowed_hosts.append(os.environ.get('VERCEL_URL'))
-
-        expected_host = request.host
-        is_allowed = expected_host in allowed_hosts
-        if not is_allowed and os.environ.get('FLASK_DEBUG') != '1':
-            logger.warning(f"Security: Host header injection attempt - Invalid Host: {sanitize_for_log(expected_host)} from IP {sanitize_for_log(request.remote_addr)} on endpoint {sanitize_for_log(request.path)}")
-            raise Forbidden("Error: Invalid Host header.")
 
         # Security: Defense-in-depth CSRF protection using Fetch Metadata Request Headers
         # Note: "none" is allowed as it is used for direct navigation, although this is a POST endpoint check

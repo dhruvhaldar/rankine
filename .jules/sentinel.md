@@ -140,3 +140,7 @@
 **Vulnerability:** The application used `ProxyFix` which trusts headers like `X-Forwarded-Host` to populate `request.host`. The CSRF protection logic compared the `Origin` and `Referer` headers to `request.host`. An attacker could bypass CSRF protection by spoofing the `X-Forwarded-Host` header to match their malicious `Origin`/`Referer`, effectively circumventing the defense.
 **Learning:** When using `ProxyFix` behind a proxy, `request.host` cannot be trusted as a security boundary for CSRF validation because it originates from the unauthenticated `X-Forwarded-Host` header.
 **Prevention:** Always validate `Origin` and `Referer` headers directly against a strict, predefined server configuration list (e.g., `ALLOWED_HOSTS`) rather than dynamic request properties like `request.host`.
+## 2024-10-27 - Enforce Global Host Header Validation
+**Vulnerability:** The Host header validation against `ALLOWED_HOSTS` was nested inside the `if request.method == "POST":` block within `api/index.py`. This left all `GET` and other non-POST endpoints exposed to Host Header Injection.
+**Learning:** Security validations designed to protect the global state of an application (like Host Header validation) should not be conditionally bound to specific HTTP methods or state-changing request blocks.
+**Prevention:** Always extract global validations out of method-specific blocks and place them at the highest applicable level (e.g., at the start of a `before_request` hook) to ensure universal enforcement.
