@@ -245,3 +245,7 @@
 ## 2026-10-30 - Consistent Error Focus Ring
 **Learning:** When an invalid form field receives focus, retaining the standard theme-colored focus ring (e.g., blue) alongside the error-colored border (e.g., red) creates conflicting visual semantics. For keyboard-only users navigating through a form, the prominent focus ring color heavily influences their perception of the field's state, and a standard blue ring can dilute or obscure the fact that the field is still in an invalid state.
 **Action:** Always explicitly override the `outline` color for `:focus[aria-invalid="true"]` and `:focus-visible[aria-invalid="true"]` to match the error color (e.g., `#d32f2f`) to provide cohesive, reinforced visual feedback that the field requires correction.
+
+## 2026-11-01 - Hash Change Focus Management
+**Learning:** Only focusing elements on page load based on the URL hash misses critical accessibility interactions when users click in-page anchor links or use browser back/forward buttons, leaving screen reader focus stuck on the navigation link instead of the target content.
+**Action:** Always extract the target focusing logic into a reusable function and attach it to both the `DOMContentLoaded` and `window.hashchange` events to ensure consistent programmatic focus management across all navigation methods.
