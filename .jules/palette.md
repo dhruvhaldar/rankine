@@ -249,3 +249,6 @@
 ## 2026-11-01 - Hash Change Focus Management
 **Learning:** Only focusing elements on page load based on the URL hash misses critical accessibility interactions when users click in-page anchor links or use browser back/forward buttons, leaving screen reader focus stuck on the navigation link instead of the target content.
 **Action:** Always extract the target focusing logic into a reusable function and attach it to both the `DOMContentLoaded` and `window.hashchange` events to ensure consistent programmatic focus management across all navigation methods.
+## 2024-10-24 - Guarding aria-invalid against Synthetic Events
+**Learning:** Even when guarding the application of `aria-invalid="true"` by tracking a `data-touched` attribute, evaluating synthetic `input` events (dispatched programmatically on page load to restore states or initialize interdependent constraints) will incorrectly mark untouched empty required fields as invalid immediately.
+**Action:** Always ensure that `data-touched` is only set when the event is trusted (`e.isTrusted`) to prevent programmatic initializations from prematurely triggering visual error states.
