@@ -600,7 +600,7 @@
                 input.setAttribute('aria-describedby', (currentDescribedBy + ' ' + errorMsg.id).trim());
 
                 const updateAriaInvalid = (e) => {
-                    if (e) {
+                    if (e && e.isTrusted) {
                         input.dataset.touched = 'true';
                     }
                     if (!input.validity.valid && input.dataset.touched === 'true') {
