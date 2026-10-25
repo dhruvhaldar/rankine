@@ -622,7 +622,9 @@
                 input.addEventListener('input', updateAriaInvalid);
                 input.addEventListener('blur', updateAriaInvalid);
                 input.addEventListener('invalid', (e) => {
-                    input.dataset.touched = 'true';
+                    if (e && e.isTrusted) {
+                        input.dataset.touched = 'true';
+                    }
                     updateAriaInvalid(e);
                 });
                 // Initialize state

@@ -252,3 +252,7 @@
 ## 2024-10-24 - Guarding aria-invalid against Synthetic Events
 **Learning:** Even when guarding the application of `aria-invalid="true"` by tracking a `data-touched` attribute, evaluating synthetic `input` events (dispatched programmatically on page load to restore states or initialize interdependent constraints) will incorrectly mark untouched empty required fields as invalid immediately.
 **Action:** Always ensure that `data-touched` is only set when the event is trusted (`e.isTrusted`) to prevent programmatic initializations from prematurely triggering visual error states.
+
+## 2026-11-05 - Native Invalid Event e.isTrusted Guard
+**Learning:** The `invalid` event can be triggered synthetically (e.g., via programmatic validity checks). If this unguarded event sets a `data-touched` attribute, it circumvents the deferred error state logic, causing untouched fields to show visual errors prematurely.
+**Action:** Always wrap `data-touched` assignments inside `invalid` event listeners with `if (e && e.isTrusted)` to ensure only genuine user interaction or form submission triggers immediate error styling.
