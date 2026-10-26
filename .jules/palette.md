@@ -256,3 +256,7 @@
 ## 2026-11-05 - Native Invalid Event e.isTrusted Guard
 **Learning:** The `invalid` event can be triggered synthetically (e.g., via programmatic validity checks). If this unguarded event sets a `data-touched` attribute, it circumvents the deferred error state logic, causing untouched fields to show visual errors prematurely.
 **Action:** Always wrap `data-touched` assignments inside `invalid` event listeners with `if (e && e.isTrusted)` to ensure only genuine user interaction or form submission triggers immediate error styling.
+
+## 2026-11-10 - Button aria-live Anti-Pattern
+**Learning:** Attaching `aria-live="polite"` directly to an interactive element like a `<button>` creates a confusing UX for screen reader users. When the button text changes (e.g., to "Calculating..."), the screen reader may re-announce the button's role and state redundantly or in a jarring way, leading to a stuttering experience.
+**Action:** Remove `aria-live` from dynamic interactive elements. Instead, use a dedicated, hidden `sr-only` live region (like a global status announcer) to communicate state changes smoothly.

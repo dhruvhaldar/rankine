@@ -376,7 +376,7 @@
                 <label for="A_exit">Exit Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="A_exit-help" class="form-help">Must be &ge; Throat Area, &le; 100, and exit/throat ratio &le; 100</span>
                 <input type="number" id="A_exit" name="A_exit" min="0.05" max="100" step="any" inputmode="decimal" value="0.1" placeholder="e.g., 0.1" aria-describedby="A_exit-help" required>
-                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to calculate">Calculate & Plot <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
+                <button type="submit" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to calculate">Calculate & Plot <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if nozzle_plot %}
             <div id="nozzle-result" tabindex="-1" role="region" aria-label="Nozzle Flow Result">
@@ -403,7 +403,7 @@
                     <small id="machs-counter-desc" class="counter-text"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
                 <div id="machs-sr-counter" class="sr-only" aria-live="polite"></div>
-                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to generate polar">Generate Polar <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
+                <button type="submit" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to generate polar">Generate Polar <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if polar_plot %}
             <div id="shock-polar-result" tabindex="-1" role="region" aria-label="Shock Polar Result">
@@ -426,7 +426,7 @@
                 <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="time-help" class="form-help">Must be strictly positive and &le; 100</span>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" aria-describedby="time-help" required>
-                <button type="submit" aria-live="polite" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
+                <button type="submit" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if tube_plot %}
             <div id="shock-tube-result" tabindex="-1" role="region" aria-label="Shock Tube Result">
@@ -454,7 +454,7 @@
             const staleAnnouncer = document.createElement('div');
             staleAnnouncer.className = 'sr-only';
             staleAnnouncer.setAttribute('aria-live', 'polite');
-            staleAnnouncer.id = 'stale-announcer';
+            staleAnnouncer.id = 'global-status-announcer';
             document.body.appendChild(staleAnnouncer);
 
             const handleHashChange = () => {
@@ -675,7 +675,7 @@
                                 result.classList.add('stale-result');
                                 result.setAttribute('title', 'Result is stale. Please recalculate.');
 
-                                const announcer = document.getElementById('stale-announcer');
+                                const announcer = document.getElementById('global-status-announcer');
                                 if (announcer) {
                                     announcer.textContent = 'Result is now stale. Please recalculate.';
                                 }
@@ -732,9 +732,9 @@
 
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
-                const announcer = document.getElementById('stale-announcer');
+                const announcer = document.getElementById('global-status-announcer');
                 if (announcer) {
-                    announcer.textContent = '';
+                    announcer.textContent = 'Calculating...';
                 }
                 const btn = this.querySelector('button[type="submit"], button:not([type="button"])');
                 if(btn) {
