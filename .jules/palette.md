@@ -260,3 +260,7 @@
 ## 2026-11-10 - Button aria-live Anti-Pattern
 **Learning:** Attaching `aria-live="polite"` directly to an interactive element like a `<button>` creates a confusing UX for screen reader users. When the button text changes (e.g., to "Calculating..."), the screen reader may re-announce the button's role and state redundantly or in a jarring way, leading to a stuttering experience.
 **Action:** Remove `aria-live` from dynamic interactive elements. Instead, use a dedicated, hidden `sr-only` live region (like a global status announcer) to communicate state changes smoothly.
+
+## 2026-11-15 - Preserve Keyboard Nav and Hover Feedback on aria-disabled Elements
+**Learning:** Setting `pointer-events: none` and `tabindex="-1"` on elements alongside `aria-disabled="true"` is an accessibility anti-pattern. This removes the element from the keyboard tab sequence (preventing screen reader discovery) and disables mouse interactions (preventing hover tooltips and `not-allowed` cursor feedback), effectively defeating the purpose of using `aria-disabled` over the native `disabled` attribute.
+**Action:** Do not use `pointer-events: none` or remove focusability (`tabindex="-1"`) when using `aria-disabled="true"`. Instead, use a capturing click event listener on the `document` that targets `e.target.closest('[aria-disabled="true"]')` to prevent interactions natively with `e.preventDefault()` and `e.stopImmediatePropagation()`. Add a helpful `title` attribute to explain the disabled state to mouse users.
