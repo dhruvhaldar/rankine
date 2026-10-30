@@ -685,9 +685,8 @@
                                     result.setAttribute('aria-label', currentAria + ' (Stale)');
                                 }
                                 result.querySelectorAll('a, button').forEach(el => {
-                                    el.setAttribute('tabindex', '-1');
                                     el.setAttribute('aria-disabled', 'true');
-                                    el.style.pointerEvents = 'none';
+                                    el.setAttribute('title', 'Action disabled because the result is stale. Please recalculate.');
                                 });
                             }
                         }
@@ -718,6 +717,13 @@
                 }
             });
         });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('[aria-disabled="true"]')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }, true);
 
         document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
