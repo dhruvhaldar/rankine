@@ -219,18 +219,6 @@
         div[id$="-result"] {
             animation: slideUpFade 0.4s ease-out forwards;
         }
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-            div[id$="-result"] {
-                animation: none;
-            }
-            :target {
-                animation: none;
-            }
-            .stale-result::after {
-                animation: none;
-            }
-        }
         .stale-result {
             position: relative;
         }
@@ -257,6 +245,18 @@
             font-weight: bold;
             pointer-events: none;
             animation: fadeInOverlay 0.3s ease forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            div[id$="-result"] {
+                animation: none;
+            }
+            :target {
+                animation: none;
+            }
+            .stale-result::after {
+                animation: none;
+            }
         }
         footer {
             margin-top: 30px;
@@ -689,7 +689,7 @@
                                 if (currentAria && !currentAria.includes('(Stale)')) {
                                     result.setAttribute('aria-label', currentAria + ' (Stale)');
                                 }
-                                result.querySelectorAll('a, button').forEach(el => {
+                                result.querySelectorAll('a:not([href^="#"]), button').forEach(el => {
                                     el.setAttribute('aria-disabled', 'true');
                                     el.setAttribute('title', 'Action disabled because the result is stale. Please recalculate.');
                                 });
