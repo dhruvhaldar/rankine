@@ -271,3 +271,7 @@
 ## 2024-11-01 - Preserve Navigational Links in Stale States & CSS Override Source Order
 **Learning:** 1. Disabling all links during a "stale" or loading state is a UX anti-pattern if those links include in-page navigational aids (like "Edit Inputs"). Users must retain the ability to jump back to the form to correct the stale state. 2. When disabling animations via `@media (prefers-reduced-motion: reduce)`, the media query block must appear *after* the base animation declaration in the CSS file, otherwise the base animation's cascade source order will override the accessibility setting.
 **Action:** 1. Exclude internal anchor links when mass-disabling interactive elements (e.g., using `:not([href^="#"])`). 2. Always verify that `@media` overrides are placed at the end of the stylesheet or directly after the selectors they modify to ensure proper CSS cascade precedence.
+
+## 2026-11-25 - Dynamic aria-live Region Injection Anti-Pattern
+**Learning:** Dynamically injecting `aria-live` regions into the DOM via JavaScript (e.g., using `document.createElement`) often causes screen readers to ignore the initial state or fail to register the live region entirely, leading to missed announcements for critical UI updates (like inline error messages or global status changes).
+**Action:** Always hardcode `aria-live` regions directly in the initial HTML payload (even if they start empty) and retrieve them via `document.getElementById` rather than constructing them on the fly.
