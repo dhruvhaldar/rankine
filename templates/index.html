@@ -372,15 +372,19 @@
                 <label for="P0">Stagnation Pressure P<sub>0</sub> (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="P0-help" class="form-help">Must be strictly positive and &le; 10,000,000</span>
                 <input type="number" id="P0" name="P0" min="0" max="10000000" step="any" inputmode="decimal" value="101325" placeholder="e.g., 101325" aria-describedby="P0-help" required>
+                <div id="P0-error" class="inline-error-message" aria-live="polite"></div>
                 <label for="back_pressure">Back Pressure (Pa) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="back_pressure-help" class="form-help">Must be strictly positive and &le; 10,000,000</span>
                 <input type="number" id="back_pressure" name="back_pressure" min="0" max="10000000" step="any" inputmode="decimal" value="95000" placeholder="e.g., 95000" aria-describedby="back_pressure-help" required>
+                <div id="back_pressure-error" class="inline-error-message" aria-live="polite"></div>
                 <label for="A_throat">Throat Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="A_throat-help" class="form-help">Must be strictly positive and &le; 100</span>
                 <input type="number" id="A_throat" name="A_throat" min="0.01" max="100" step="any" inputmode="decimal" value="0.05" placeholder="e.g., 0.05" aria-describedby="A_throat-help" required>
+                <div id="A_throat-error" class="inline-error-message" aria-live="polite"></div>
                 <label for="A_exit">Exit Area (m&sup2;) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="A_exit-help" class="form-help">Must be &ge; Throat Area, &le; 100, and exit/throat ratio &le; 100</span>
                 <input type="number" id="A_exit" name="A_exit" min="0.05" max="100" step="any" inputmode="decimal" value="0.1" placeholder="e.g., 0.1" aria-describedby="A_exit-help" required>
+                <div id="A_exit-error" class="inline-error-message" aria-live="polite"></div>
                 <button type="submit" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to calculate">Calculate & Plot <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if nozzle_plot %}
@@ -404,6 +408,7 @@
                 <label for="machs">Mach Numbers (comma separated) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="machs-help" class="form-help">Max 10 numbers (between 1.0 and 100.0), max 100 characters</span>
                 <input type="text" id="machs" name="machs" maxlength="100" aria-describedby="machs-help machs-counter-desc" pattern="^\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*(,\s*(100(\.0+)?|[1-9]\d?(\.\d+)?)\s*){0,9}$" data-pattern-error="Please enter up to 10 comma-separated numbers between 1.0 and 100.0 (e.g., 2.0, 3.0)" value="2.0, 3.0, 5.0" placeholder="e.g., 2.0, 3.0, 5.0" spellcheck="false" autocorrect="off" autocapitalize="none" required>
+                <div id="machs-error" class="inline-error-message" aria-live="polite"></div>
                 <div class="counter-container">
                     <small id="machs-counter-desc" class="counter-text"><span id="machs-counter">13</span> / 100 characters</small>
                 </div>
@@ -431,6 +436,7 @@
                 <label for="time">Time (s) <span class="required-asterisk" aria-hidden="true">*</span>:</label>
                 <span id="time-help" class="form-help">Must be strictly positive and &le; 100</span>
                 <input type="number" id="time" name="time" min="0" max="100" step="any" inputmode="decimal" value="0.25" placeholder="e.g., 0.25" aria-describedby="time-help" required>
+                <div id="time-error" class="inline-error-message" aria-live="polite"></div>
                 <button type="submit" aria-keyshortcuts="Control+Enter Meta+Enter" title="Press Ctrl+Enter or Cmd+Enter to simulate">Simulate <kbd class="submit-shortcut" aria-hidden="true">⌘↵</kbd></button>
             </form>
             {% if tube_plot %}
@@ -452,15 +458,12 @@
             <span>License: <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer" aria-label="MIT License (opens in a new tab)">MIT<span aria-hidden="true"> ↗</span></a></span>
             <span>Made by <a href="https://dhruvhaldar.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Dhruv Haldar (opens in a new tab)">Dhruv Haldar<span aria-hidden="true"> ↗</span></a></span>
         </footer>
+        <div id="global-status-announcer" class="sr-only" aria-live="polite"></div>
     </main>
     <script nonce="{{ csp_nonce }}">
         document.addEventListener('DOMContentLoaded', () => {
             // Setup global announcer for stale results
-            const staleAnnouncer = document.createElement('div');
-            staleAnnouncer.className = 'sr-only';
-            staleAnnouncer.setAttribute('aria-live', 'polite');
-            staleAnnouncer.id = 'global-status-announcer';
-            document.body.appendChild(staleAnnouncer);
+            const staleAnnouncer = document.getElementById('global-status-announcer');
 
             const handleHashChange = () => {
                 if (window.location.hash) {
@@ -593,12 +596,15 @@
 
             // Dynamically set aria-invalid for accessibility based on HTML5 validation
             document.querySelectorAll('input, select, textarea').forEach(input => {
-                // Create inline error message element
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'inline-error-message';
-                errorMsg.setAttribute('aria-live', 'polite');
-                errorMsg.id = input.id + '-error';
-                input.parentNode.insertBefore(errorMsg, input.nextSibling);
+                // Get or create inline error message element
+                let errorMsg = document.getElementById(input.id + '-error');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.className = 'inline-error-message';
+                    errorMsg.setAttribute('aria-live', 'polite');
+                    errorMsg.id = input.id + '-error';
+                    input.parentNode.insertBefore(errorMsg, input.nextSibling);
+                }
 
                 // Add aria-describedby for accessibility
                 const currentDescribedBy = input.getAttribute('aria-describedby') || '';
