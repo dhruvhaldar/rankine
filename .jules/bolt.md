@@ -81,3 +81,6 @@
 ## 2024-05-18 - Integer Exponentiation Bypass in Nozzle Root Solver
 **Learning:** In the `rankine/isentropic.py` module, calculating the stagnation pressure ratio `p0_ratio` inside the `brentq` numerical root solver for normal shocks uses slow fractional exponentiation operations (`** 3.5` and `** -2.5`). For standard air where `gamma=1.4`, replacing these with chained multiplications (`X = term1 / term2; p0_ratio = term1 * X * X * math.sqrt(X)`) bypasses the overhead and yields ~4% faster evaluations inside the inner loop.
 **Action:** Always replace fractional exponentiations with chained multiplications inside inner tight loops when constants like standard air allow for integer algebraic simplification.
+## 2023-11-04 - Explicit Branching Scalar Fast-Path
+**Learning:** When a polymorphic function already contains explicit branching to handle arrays vs. scalars (e.g., for `hasattr` bounds validation with `np.min`/`np.max`), consolidating final mathematical operations into a single polymorphic statement (like `** 0.5`) outside the branch misses an optimization opportunity.
+**Action:** Push the final calculations into the pre-existing branches to utilize highly optimized scalar functions (like `math.sqrt()`) in the scalar path while maintaining array-optimized operations in the array path.
