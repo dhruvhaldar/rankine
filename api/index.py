@@ -1,6 +1,7 @@
 
 from flask import Flask, render_template, request, send_file, g, has_request_context
 import io
+import re
 import base64
 import secrets
 from werkzeug.exceptions import RequestEntityTooLarge, BadRequest, Forbidden, TooManyRequests, HTTPException, InternalServerError
@@ -58,7 +59,7 @@ class SecurityContextFilter(logging.Filter):
                 headers_dict = dict(request.headers)
                 sensitive_headers = {'cookie', 'authorization', 'x-api-key'}
                 for k in list(headers_dict.keys()):
-                    if k.lower().strip(' \t\n\r\x0b\x0c\x00:') in sensitive_headers:
+                    if re.sub(r'[\s\x00:]', '', k).lower() in sensitive_headers:
                         headers_dict[k] = '[REDACTED]'
 
                 headers_str = sanitize_for_log(str(headers_dict))

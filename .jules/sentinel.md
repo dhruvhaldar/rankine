@@ -144,3 +144,7 @@
 **Vulnerability:** The Host header validation against `ALLOWED_HOSTS` was nested inside the `if request.method == "POST":` block within `api/index.py`. This left all `GET` and other non-POST endpoints exposed to Host Header Injection.
 **Learning:** Security validations designed to protect the global state of an application (like Host Header validation) should not be conditionally bound to specific HTTP methods or state-changing request blocks.
 **Prevention:** Always extract global validations out of method-specific blocks and place them at the highest applicable level (e.g., at the start of a `before_request` hook) to ensure universal enforcement.
+## 2024-11-04 - Header Redaction Bypass via Middle-Injection
+**Vulnerability:** The application was vulnerable to Header Redaction Bypass because it relied on `strip()` to normalize HTTP header names for case-insensitive redaction matching. `strip()` only removes characters from the ends of a string, allowing attackers to inject malicious whitespace or null bytes into the middle of sensitive headers (e.g., `C\x00ookie`) to bypass redaction, while the underlying framework might still parse them.
+**Learning:** Normalizing header keys solely with `strip()` is insufficient when frameworks like Werkzeug can parse and ignore unexpected characters inside the string, while exact-match redaction checks fail.
+**Prevention:** Always use regex replacement like `re.sub(r'[\s\x00:]', '', k)` to strip all malicious whitespace and null bytes globally across the string before attempting an exact redaction match.
