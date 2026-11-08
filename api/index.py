@@ -97,7 +97,7 @@ def rate_limiter():
                 rate_limit_data[ip] = [t for t in rate_limit_data[ip] if current_time - t < RATE_LIMIT_WINDOW]
                 if not rate_limit_data[ip]:
                     rate_limit_data.pop(ip, None)
-            while len(rate_limit_data) > 10000:
+            while len(rate_limit_data) > 9000:
                 try:
                     rate_limit_data.pop(next(iter(rate_limit_data)))
                 except StopIteration:
