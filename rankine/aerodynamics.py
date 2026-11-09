@@ -30,9 +30,10 @@ class Aerodynamics:
         term = 1.0 - M * M
 
         # ⚡ Bolt Optimization: Push the final mathematical operation into the explicit branches
-        # to utilize math.sqrt() for the scalar fast-path while maintaining array-optimized **0.5
+        # to utilize math.sqrt() for the scalar fast-path while maintaining array-optimized operations.
+        # Use np.sqrt for arrays to avoid overhead of generic arithmetic power operator (**).
         if is_array:
-            return cp0 / (term ** 0.5)
+            return cp0 / np.sqrt(term)
         else:
             if term < 0:
                 raise ValueError("math domain error")
@@ -60,9 +61,10 @@ class Aerodynamics:
         term = M * M - 1.0
 
         # ⚡ Bolt Optimization: Push the final mathematical operation into the explicit branches
-        # to utilize math.sqrt() for the scalar fast-path while maintaining array-optimized **0.5
+        # to utilize math.sqrt() for the scalar fast-path while maintaining array-optimized operations.
+        # Use np.sqrt for arrays to avoid overhead of generic arithmetic power operator (**).
         if is_array:
-            return 2.0 * theta / (term ** 0.5)
+            return 2.0 * theta / np.sqrt(term)
         else:
             if term < 0:
                 raise ValueError("math domain error")
