@@ -737,6 +737,13 @@
         }, true);
 
         document.addEventListener('keydown', function(e) {
+            if (e.target.closest('[aria-disabled="true"]') && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        }, true);
+
+        document.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 const activeEl = document.activeElement;
                 const form = activeEl ? activeEl.closest('form') : null;
